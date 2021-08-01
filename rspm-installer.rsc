@@ -15,7 +15,7 @@
     :local pkgName $1;
     :local URL (($RSPMInstallerConfig->"BaseURL") . "lib/" . $pkgName . ".rsc");
     :local Owner ($RSPMInstallerConfig->"Owner");
-    :put "try download package at $pkgName";
+    :put "Downloading file $pkgName...";
     :local result [/tool fetch url=$URL output="user" as-value];
     :local scriptStr ($result->"data");
     # check existance
@@ -42,7 +42,7 @@
 :put "-----------------------------------";
 :put "| RouterOS Script Package Manager |";
 :put "-----------------------------------";
-:put "installer initializing ...";
+:put "Installer initializing ...";
 :local answer [$RSPMInput "WARNING: this is a PROTOTYPE version, FOR TEST ONLY (y/N)"];
 :if ($answer != "y") do={
     :put "Installation abort, use";
@@ -59,11 +59,14 @@
 
 # load global
 :foreach sid in $sidList do={
-    /system script run number=$sid;
-}
+    :local cmdStr "/system script run number=$sid;";
+    :local cmdFunc [:parse $cmdStr];
+    [$cmdFunc ];
+};
+
 # install rspm
-$installPackage "tool_http";
-$installPackage "rspm";
+[$installPackage "tool_http"];
+[$installPackage "rspm"];
 # invoke rspm.firstRun to complete the installation
 :global GetFunc;
 [[$GetFunc "rspm.firstRun"] Context=$RSPMInstallerConfig];
