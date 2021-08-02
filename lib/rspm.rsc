@@ -356,7 +356,8 @@
             } on-error {
                 /system script remove [$FindPackage $pkgName];
                 :set flagInstall true;
-                :set urlInstall (($config->"BaseURL") . "lib/$path.rsc");
+                :local fileName [$Replace $pkgName "." "_"];
+                :set urlInstall (($config->"BaseURL") . "lib/$fileName.rsc");
             }
         }
         # check flagInstall
