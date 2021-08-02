@@ -475,6 +475,14 @@ $Print [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/De
 # rspm config
 $Print [$GetFunc "rspm.install" $a];
 
+## loadRemoteScript
+{
+    :local url "https://raw.githubusercontent.com/Detavern/rspm/master/res/startup.rsc";
+    :local scriptStr [[$GetFunc "rspm.loadRemoteScript"] URL=$url Normalize=true];
+    /system scheduler remove [/system scheduler find name="rspm-startup"];
+    /system scheduler add name="rspm-startup" start-time=startup on-event=$scriptStr;
+}
+
 ## firstRun
 {
     :local config {

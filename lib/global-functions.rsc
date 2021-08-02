@@ -263,7 +263,18 @@
     }
     # type specific
     :if ($2 = $TypeofBool) do={
-        :return [:tobool $1];
+        :if ($1 = "false") do={
+            :return false;
+        };
+        :if ($1 = "true") do={
+            :return true;
+        }
+        :local b [:tobool $1];
+        :if ([$IsNil $b]) do={
+            :error "Global.ReadOption: target bool, get nil value";
+        } else {
+            :return $b;
+        }
     }
     :if ($2 = $TypeofNum) do={
         :return [:tonum $1];
