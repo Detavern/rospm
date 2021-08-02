@@ -470,7 +470,7 @@
 
 ## http
 :put [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rspm/master/rspm-installer.rsc"];
-$Print [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rspm/master/res/package-list.rsc"];
+$Print [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rspm/master/res/package-info.rsc"];
 
 # rspm config
 $Print [$GetFunc "rspm.install" $a];

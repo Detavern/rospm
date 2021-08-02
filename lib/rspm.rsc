@@ -147,7 +147,6 @@
     :global CreateConfig;
     :global FindPackage;
     :global InputV;
-    :global Print;
     # local
     :local context [$ReadOption $Context $TypeofArray];
     :local configPkgName "config.rspm.package";
@@ -231,7 +230,10 @@
     :global FindPackage;
     :global GetConfig;
     :global GetFunc;
+    :global Split;
+    :global Join;
     :global TypeofStr;
+    :global ScriptLengthLimit;
     :global ValidatePackageContent;
     :global Print;
     # local
@@ -269,6 +271,11 @@
         :put "Get: $pURL";
         :local resp [[$GetFunc "tool.http.httpGet"] URL=$pURL];
         :set pkgStr ($resp->"data");
+        :local pkgStrSplitted [$Split $pkgStr ("\n")];
+        :set pkgStr [$Join ("\r\n") $pkgStrSplitted];
+        :if ([:len $pkgStr] > $ScriptLengthLimit) do={
+            :error "rspm.install: package string length exceed limit";
+        };
         :local pkgFunc [:parse $pkgStr];
         :local pkg [$pkgFunc ];
         :local va {"type"="code"};

@@ -55,7 +55,6 @@
 :set sidList ($sidList, [$installPackage "global-variables"]);
 :set sidList ($sidList, [$installPackage "global-functions"]);
 :set sidList ($sidList, [$installPackage "global-functions_package"]);
-:set sidList ($sidList, [$installPackage "global-helpers"]);
 
 # load global
 :foreach sid in $sidList do={
