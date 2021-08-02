@@ -19,6 +19,7 @@
     :global ReadOption;
     :global TypeofBool;
     :global TypeofStr;
+    :global StartsWith;
     :global GetFunc;
     :global ScriptLengthLimit;
     # local
@@ -27,6 +28,9 @@
     :local result;
     :if ($pURL = "") do={
         :error "rspm.loadRemoteScript: need \$URL";
+    }
+    :if (![$StartsWith $pURL "http://"] and ![$StartsWith $pURL "https://"]) do={
+        :error "rspm.loadRemoteScript: url scheme not supported";
     }
     # get source
     :local resp [[$GetFunc "tool.http.httpGet"] URL=$pURL];
@@ -69,8 +73,8 @@
     :local configPkgName "config.rspm.package";
     :local pCheckExt [$ReadOption $CheckExt $TypeofBool true];
     :local config [$GetConfig $configPkgName];
-    :local pkgMapping ($config->"PackageMapping");
-    :local pkgList ($config->"PackageList");
+    :local pkgMapping ($config->"packageMapping");
+    :local pkgList ($config->"packageList");
     :local scriptOwner ($config->"Owner");
     # check installed package
     :local pkgVerEqList [$NewArray ];
@@ -204,21 +208,22 @@
     /system script remove [$FindPackage $configPkgName];
     /system script remove [$FindPackage $configPkgExtName];
     # make new config array
-    :set ($context->"PackageList") "noquote:\$packageList";
-    :set ($context->"PackageMapping") "noquote:\$packageMapping";
+    :set ($context->"packageList") "noquote:\$packageList";
+    :set ($context->"packageMapping") "noquote:\$packageMapping";
     # load remote package info
     :local packageInfoURL (($context->"BaseURL") . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
-    :local resp [[$GetFunc "tool.http.httpGet"] URL=$packageInfoURL];
-    :local packageInfo [$LoadVar ($resp->"data")];
+    :local packageInfoStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoURL];
+    :local packageInfo [$LoadVar $packageInfoStr];
     # make new config.rspm.package
     [$CreateConfig $configPkgName $context $packageInfo Owner=($context->"Owner")];
     # make new config.rspm.package.ext
     :local packageInfoExtURL (($context->"BaseURL") . "res/package-info-ext.rsc");
     :local contextExt [$NewArray ];
-    :set ($contextExt->"PackageList") "noquote:\$packageList";
-    :set ($contextExt->"PackageMapping") "noquote:\$packageMapping";
-    :local packageInfoExt [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoExtURL];
+    :set ($contextExt->"packageList") "noquote:\$packageList";
+    :set ($contextExt->"packageMapping") "noquote:\$packageMapping";
+    :local packageInfoExtStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoExtURL];
+    :local packageInfoExt [$LoadVar $packageInfoExtStr];
     [$CreateConfig $configPkgExtName $contextExt $packageInfoExt Owner=($context->"Owner")];
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
@@ -271,7 +276,7 @@
 
 # $install
 # kwargs: Package=<str>         package name
-# kwargs: URL=<str>             package url
+# kwargs: URL=<str>             package url, use for install ext package
 :local install do={
     #DEFINE global
     :global IsNothing;
@@ -290,11 +295,12 @@
     :local pkgStr "";
     :local meta;
     :local config [$GetConfig "config.rspm.package"];
+    :local configExt [$GetConfig "config.rspm.package.ext"];
     :if ([$IsNothing $pkgName] and ($pURL = "")) do={
         :error "rspm.install: need either \$Package or \$URL";
     }
     :if (![$IsNothing $pkgName]) do={
-        :local pkgMapping ($config->"PackageMapping");
+        :local pkgMapping ($config->"packageMapping");
         :if ([$IsNothing ($pkgMapping->$pkgName)]) do={
             :error "rspm.install: \$Package not found in list, try update and install again."
         }
@@ -313,15 +319,12 @@
         :set meta ($pkg->"metaInfo");
     }
     :if ($pURL != "") do={
-        :if (![$StartsWith $pURL "http://"] and ![$StartsWith $pURL "https://"]) do={
-            :error "rspm.install: url scheme not supported";
-        }
         # get pkgstr
         :put "Get: $pURL";
         :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$pURL Normalize=true];
         :local pkgFunc [:parse $pkgStr];
         :local pkg [$pkgFunc ];
-        :local va {"type"="code"};
+        :local va {"type"="code";"url"=true};
         :put "Validating package $pkgName...";
         :if (![$ValidatePackageContent $pkg $va]) do={
             :error "rspm.install: package validate failed, check log for detail";
@@ -339,6 +342,10 @@
     :put "Adding package to local repository...";
     /system script add name=$fileName source=$pkgStr owner=($config->"Owner");
     :put "Package $pkgName installed.";
+    # write into config
+    :if ($pURL != "") do={
+
+    }
     # if global, run it
     :if (($meta->"global") = true) do={
         :local cmdStr "/system script run [/system script find name=\"$pkgName\"];";

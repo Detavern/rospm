@@ -63,6 +63,14 @@
             :return false;
         }
     }
+    # va: check meta url
+    :if ([$InKeys "url" $va]) do={
+        :local metaUrl [$ReadOption ($metaList->"url") $TypeofStr ""];
+        :if ($metaUrl = "") do={
+            :log warning "Global.ValidatePackageContent: url not found in meta: $pkgName";
+            :return false;
+        }
+    }
     :return true;
 }
 
@@ -506,8 +514,71 @@
 # $UpdateConfig
 # update configure with target array.
 # args: <str>                   <package name>
-# args: <array>                 values need update
+# args: <array>                 config array
+# opt kwargs: Output=<str>      output format: file(default), str, array
 :global UpdateConfig do={
+    # global declare
+    :global GetConfig;
+    :global IsArray;
+    :global DumpVar;
+    :global Join;
+    :global FindPackage;
+    :global TypeofStr;
+    :global ReadOption;
+    :global ScriptLengthLimit;
+    # local
+    :local pkgName $1;
+    :local pOutput [$ReadOption $Output $TypeofStr "file"];
+    :local fileName [$Replace $pkgName "." "_"];
+    :local config [$GetConfig $pkgName];
+    :local LSL [$NewArray ];
+    :local configArray [$NewArray ];
+    # update meta
+    # TODO: better clock info
+    :local clock [/system clock print as-value];
+    :local date ($clock->"date");
+    :local time ($clock->"time");
+    :local meta ($config->"metaInfo");
+    :set ($meta->"last_modify") "$date $time";
+    :set LSL ($LSL, [$DumpVar "metaInfo" $meta Output="array" Return=false]);
+    :set ($LSL->[:len $LSL]) "";
+    # update addition array
+    :foreach k,v in $config do={
+        :if ([$IsArray $v]) do={
+            :set ($configArray->$k) "noquote:\$$k";
+            :set LSL ($LSL, [$DumpVar $k $v Output="array" Return=false]);
+            :set ($LSL->[:len $LSL]) "";
+        } else {
+            :set ($configArray->$k) $v;
+        }
+    }
+    # update config array
+    :set LSL ($LSL, [$DumpVar "config" $configArray Output="array"]);
+    :set ($LSL->[:len $LSL]) "";
+    # output array
+    :if ($pOutput = "array") do={
+        :return $LSL;
+    }
+    # join
+    :local result [$Join ("\r\n") $LSL];
+    # script length
+    :if ([:len $result] >= $ScriptLengthLimit) do={
+        :error "Global.UpdateConfig: configuration file length reachs 30,000 characters limit, try split it";
+    }
+    # output str
+    :if ($pOutput = "str") do={
+        :return $result;
+    }
+    # output file
+    /system script set [$FindPackage $pkgName] source=$result;
+}
+
+
+# $UpdateConfigDep
+# update configure with target array.
+# args: <str>                   <package name>
+# args: <array>                 values need update
+:global UpdateConfigDep do={
     # global declare
     :global GetSource;
     :global GetConfig;

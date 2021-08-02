@@ -489,7 +489,7 @@ $Print [$GetFunc "rspm.install" $a];
         "BaseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
         "Owner"="rspm";
     }
-    $Print [[$GetFunc "rspm.firstRun"] Context=$config];
+    [[$GetFunc "rspm.firstRun"] Context=$config];
 }
 
 ## check package status
@@ -525,7 +525,7 @@ $Print [[$GetFunc "rspm.checkPackageStatus"] ];
         };
         "other"=123;
     };
-    $Print [$UpdateConfig "config.rspm" $a];
+    [$UpdateConfig "config.rspm.package.ext" $a];
 }
 
 
