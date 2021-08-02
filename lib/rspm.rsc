@@ -75,7 +75,7 @@
     :local config [$GetConfig $configPkgName];
     :local pkgMapping ($config->"packageMapping");
     :local pkgList ($config->"packageList");
-    :local scriptOwner ($config->"Owner");
+    :local scriptOwner ($config->"owner");
     # check installed package
     :local pkgVerEqList [$NewArray ];
     :local pkgVerGtList [$NewArray ];
@@ -201,8 +201,8 @@
     :local configPkgName "config.rspm.package";
     :local configPkgExtName "config.rspm.package.ext";
     # check context
-    :if (![$IsStr ($context->"BaseURL")]) do={
-        :error "rspm.firstRun: BaseURL not found";
+    :if (![$IsStr ($context->"baseURL")]) do={
+        :error "rspm.firstRun: baseURL not found";
     }
     # clean local config.rspm.package
     /system script remove [$FindPackage $configPkgName];
@@ -211,25 +211,25 @@
     :set ($context->"packageList") "noquote:\$packageList";
     :set ($context->"packageMapping") "noquote:\$packageMapping";
     # add resource version
-    :local resVersionURL (($context->"BaseURL") . "res/version.rsc");
+    :local resVersionURL (($context->"baseURL") . "res/version.rsc");
     :local resVersionStr [[$GetFunc "rspm.loadRemoteScript"] URL=$resVersionURL];
     :local resVersion [$LoadVar $resVersionStr];
     :set ($context->"version") $resVersion;
     # load remote package info
-    :local packageInfoURL (($context->"BaseURL") . "res/package-info.rsc");
+    :local packageInfoURL (($context->"baseURL") . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
     :local packageInfoStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoURL];
     :local packageInfo [$LoadVar $packageInfoStr];
     # make new config.rspm.package
-    [$CreateConfig $configPkgName $context $packageInfo Owner=($context->"Owner")];
+    [$CreateConfig $configPkgName $context $packageInfo Owner=($context->"owner")];
     # make new config.rspm.package.ext
-    :local packageInfoExtURL (($context->"BaseURL") . "res/package-info-ext.rsc");
+    :local packageInfoExtURL (($context->"baseURL") . "res/package-info-ext.rsc");
     :local contextExt [$NewArray ];
     :set ($contextExt->"packageList") "noquote:\$packageList";
     :set ($contextExt->"packageMapping") "noquote:\$packageMapping";
     :local packageInfoExtStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoExtURL];
     :local packageInfoExt [$LoadVar $packageInfoExtStr];
-    [$CreateConfig $configPkgExtName $contextExt $packageInfoExt Owner=($context->"Owner")];
+    [$CreateConfig $configPkgExtName $contextExt $packageInfoExt Owner=($context->"owner")];
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
     :local report [[$GetFunc "rspm.checkPackageState"] CheckExt=false];
@@ -269,7 +269,7 @@
         [[$GetFunc "rspm.install"] Package=$pn];
     }
     # register startup
-    :local startupResURL (($context->"BaseURL") . "res/startup.rsc");
+    :local startupResURL (($context->"baseURL") . "res/startup.rsc");
     :put "Get: $startupResURL";
     :local scriptStr [[$GetFunc "rspm.loadRemoteScript"] URL=$startupResURL Normalize=true];
     /system scheduler remove [/system scheduler find name="rspm-startup"];
@@ -367,7 +367,7 @@
                 /system script remove [$FindPackage $pkgName];
                 :set flagInstall true;
                 :local fileName [$Replace $pkgName "." "_"];
-                :set urlInstall (($config->"BaseURL") . "lib/$fileName.rsc");
+                :set urlInstall (($config->"baseURL") . "lib/$fileName.rsc");
             }
         }
         # check flagInstall
@@ -439,7 +439,7 @@
         # write into repository
         :local fileName [$Replace $pkgName "." "_"];
         :put "Adding package to local repository...";
-        /system script add name=$fileName source=$pkgStr owner=($config->"Owner");
+        /system script add name=$fileName source=$pkgStr owner=($config->"owner");
         :put "Package $pkgName installed.";
     }
     # if global, run it

@@ -486,8 +486,8 @@ $Print [$GetFunc "rspm.install" $a];
 ## firstRun
 {
     :local config {
-        "BaseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
-        "Owner"="rspm";
+        "baseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
+        "owner"="rspm";
     }
     [[$GetFunc "rspm.firstRun"] Context=$config];
 }
