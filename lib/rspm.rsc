@@ -415,6 +415,7 @@
         }
         :if ($flagInstall) do={
             # write into config
+            :put "Updating config.rspm.package.ext...";
             :local pkgExtNum ($pkgExtMapping->$pkgName);
             :if ([$IsNothing $pkgExtNum]) do={
                 :set ($pkgExtMapping->$pkgName) [:len $pkgExtList];
