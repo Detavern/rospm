@@ -5,6 +5,51 @@
 };
 
 
+# $loadRemoteScript
+# load remote script from url and put into strings
+# kwargs: URL=<str>                 url of remote script
+# opt kwargs: Normalize=<bool>      false(default), normalize the eol by "\r\n"
+# return: <str>             remote script
+:local loadRemoteScript do={
+    #DEFINE global
+    :global Split;
+    :global Join;
+    :global Strip;
+    :global NewArray;
+    :global ReadOption;
+    :global TypeofBool;
+    :global TypeofStr;
+    :global GetFunc;
+    :global ScriptLengthLimit;
+    # local
+    :local pNormalize [$ReadOption $Normalize $TypeofBool false];
+    :local pURL [$ReadOption $URL $TypeofStr ""];
+    :local result;
+    :if ($pURL = "") do={
+        :error "rspm.loadRemoteScript: need \$URL",
+    }
+    # get source
+    :local resp [[$GetFunc "tool.http.httpGet"] URL=$pURL];
+    :if ($pNormalize) do={
+        :local splitted [$Split ($resp->"data") ("\n")];
+        :local stripList [$NewArray];
+        :foreach line in $splitted do={
+            :local sc {("\r")};
+            :local lineS [$Strip $line $sc];
+            :set ($stripList->[:len $stripList]) $lineS;
+        };
+        :set result [$Join ("\r\n") $stripList];
+    } else {
+        :set result ($resp->"data");
+    };
+    :local lenResult [:len $result];
+    :if ($lenResult > $ScriptLengthLimit) do={
+        :error "rspm.loadRemoteScript: package string length($lenResult) exceed limit";
+    }
+    :return $result;
+}
+
+
 # $checkPackageState
 # opt kwargs: CheckExt=<bool>       default true, check custom packages or not
 # return: <array->str>
@@ -207,15 +252,12 @@
     # register startup
     :local startupResURL (($context->"BaseURL") . "res/startup.rsc");
     :put "Get: $startupResURL";
-    :local resp [[$GetFunc "tool.http.httpGet"] URL=$startupResURL];
+    :local scriptStr [[$GetFunc "rspm.loadRemoteScript"] URL=$startupResURL Normalize=true];
     /system scheduler remove [/system scheduler find name="rspm-startup"];
     :put "Adding rspm-startup schedule...";
-    /system scheduler add name="rspm-startup" start-time=startup on-event=($resp->"data");
+    /system scheduler add name="rspm-startup" start-time=startup on-event=$scriptStr;
     :return "";
 }
-
-
-:local loadRemoteResource do={}
 
 
 # $install
@@ -230,12 +272,9 @@
     :global FindPackage;
     :global GetConfig;
     :global GetFunc;
-    :global Split;
-    :global Join;
     :global TypeofStr;
     :global ScriptLengthLimit;
     :global ValidatePackageContent;
-    :global Print;
     # local
     :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pkgName $Package;
@@ -253,15 +292,7 @@
         :local url (($config->"BaseURL") . "lib/$path.rsc");
         # get pkgstr
         :put "Get: $url";
-        :local resp [[$GetFunc "tool.http.httpGet"] URL=$url];
-        :set pkgStr ($resp->"data");
-        # NOTE: replace "\n" with "\r\n", raw content get from github comes with eol "\n"
-        :local pkgStrSplitted [$Split $pkgStr ("\n")];
-        :set pkgStr [$Join ("\r\n") $pkgStrSplitted];
-        # check length
-        :if ([:len $pkgStr] > $ScriptLengthLimit) do={
-            :error "rspm.install: package string length exceed limit";
-        };
+        :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$url Normalize=true];
         :local pkgFunc [:parse $pkgStr];
         :local pkg [$pkgFunc ];
         :local va {"name"=$pkgName;"type"="code"};
@@ -276,15 +307,7 @@
         }
         # get pkgstr
         :put "Get: $pURL";
-        :local resp [[$GetFunc "tool.http.httpGet"] URL=$pURL];
-        :set pkgStr ($resp->"data");
-        # NOTE: replace "\n" with "\r\n", raw content get from github comes with eol "\n"
-        :local pkgStrSplitted [$Split $pkgStr ("\n")];
-        :set pkgStr [$Join ("\r\n") $pkgStrSplitted];
-        # check length
-        :if ([:len $pkgStr] > $ScriptLengthLimit) do={
-            :error "rspm.install: package string length exceed limit";
-        };
+        :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$pURL Normalize=true];
         :local pkgFunc [:parse $pkgStr];
         :local pkg [$pkgFunc ];
         :local va {"type"="code"};
@@ -339,6 +362,7 @@
 
 :local package {
     "metaInfo"=$metaInfo;
+    "loadRemoteScript"=$loadRemoteScript;
     "checkPackageState"=$checkPackageState;
     "firstRun"=$firstRun;
     "install"=$install;
