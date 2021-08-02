@@ -26,7 +26,7 @@
     :local pURL [$ReadOption $URL $TypeofStr ""];
     :local result;
     :if ($pURL = "") do={
-        :error "rspm.loadRemoteScript: need \$URL",
+        :error "rspm.loadRemoteScript: need \$URL";
     }
     # get source
     :local resp [[$GetFunc "tool.http.httpGet"] URL=$pURL];
