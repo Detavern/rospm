@@ -532,6 +532,7 @@
     :local pOutput [$ReadOption $Output $TypeofStr "file"];
     :local fileName [$Replace $pkgName "." "_"];
     :local config [$GetConfig $pkgName];
+    :local Owner [/system script get [/system script find name=$fileName] owner];
     :local LSL [$NewArray ];
     :local configArray {
         "metaInfo"="noquote:\$metaInfo";
@@ -582,7 +583,7 @@
         :return $result;
     }
     # output file
-    /system script set [$FindPackage $pkgName] source=$result;
+    /system script set [$FindPackage $pkgName] source=$result owner=$Owner;
 }
 
 

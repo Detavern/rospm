@@ -281,44 +281,100 @@
     #DEFINE global
     :global IsNothing;
     :global ReadOption;
-    :global StartsWith;
     :global Replace;
     :global FindPackage;
     :global GetConfig;
+    :global GetMeta;
     :global GetFunc;
     :global TypeofStr;
+    :global UpdateConfig;
     :global ScriptLengthLimit;
     :global ValidatePackageContent;
     # local
     :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pkgName $Package;
     :local pkgStr "";
+    :local flagInstall false;
+    :local urlInstall "";
     :local meta;
     :local config [$GetConfig "config.rspm.package"];
     :local configExt [$GetConfig "config.rspm.package.ext"];
+    :local pkgList ($config->"packageList");
+    :local pkgMapping ($config->"packageMapping");
+    :local pkgExtList ($configExt->"packageList");
+    :local pkgExtMapping ($configExt->"packageMapping");
+    # check
     :if ([$IsNothing $pkgName] and ($pURL = "")) do={
         :error "rspm.install: need either \$Package or \$URL";
     }
+    # install by package name
+    # - search package name in config.rspm.package
+    # - search package name in config.rspm.package.ext
+    #   - if found in package, try load pkg from local repo
+    #       - not exist, install pkg
+    #       - load failed, remove it, reinstall pkg
+    #       - load successful, compare version number, put upgrade hint 
+    #   - if found in package.ext, try load pkg from local repo
+    #       - load failed, remove it, then install it
+    #       - load successful, compare version number, put upgrade hint
     :if (![$IsNothing $pkgName]) do={
-        :local pkgMapping ($config->"packageMapping");
-        :if ([$IsNothing ($pkgMapping->$pkgName)]) do={
-            :error "rspm.install: \$Package not found in list, try update and install again."
+        # search in config.rspm.package
+        :local pkgNum ($pkgMapping->$pkgName);
+        :if ([$IsNothing $pkgNum]) do={
+            # search in config.rspm.package.ext
+            :local pkgExtNum ($pkgExtMapping->$pkgName);
+            :if ([$IsNothing $pkgExtNum]) do={
+                :error "rspm.install: \$Package not found in list, try update and install again."
+            } else {
+                :put "found in config.rspm.package.ext: $pkgName";
+                :do {
+                    :set meta [$GetMeta $pkgName];
+                    :local verL ($meta->"version");
+                    :local verR (($pkgExtList->$pkgExtNum)->"version");
+                    :put "found in local repository: current version is $verL(latest=$verR), package already installed.";
+                    :put "use this for upgrade package: [[$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+                } on-error {
+                    /system script remove [$FindPackage $pkgName];
+                    :set flagInstall true;
+                    :local proxyUrl (($pkgExtList->$pkgExtNum)->"proxyUrl");
+                    :if ([$IsNothing $proxyUrl]) do={
+                        :set urlInstall (($pkgExtList->$pkgExtNum)->"url");
+                    } else {
+                        :set urlInstall $proxyUrl;
+                    }
+                }
+            }
+        } else {
+            :put "found in config.rspm.package: $pkgName";
+            :do {
+                :set meta [$GetMeta $pkgName];
+                :local verL ($meta->"version");
+                :local verR (($pkgList->$pkgNum)->"version");
+                :put "found in local repository: current version is $verL(latest=$verR), package already installed.";
+                :put "use this for upgrade package: [[$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+                :return "";
+            } on-error {
+                /system script remove [$FindPackage $pkgName];
+                :set flagInstall true;
+                :set urlInstall (($config->"BaseURL") . "lib/$path.rsc");
+            }
         }
-        :local path [$Replace $pkgName "." "_"];
-        :local url (($config->"BaseURL") . "lib/$path.rsc");
-        # get pkgstr
-        :put "Get: $url";
-        :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$url Normalize=true];
-        :local pkgFunc [:parse $pkgStr];
-        :local pkg [$pkgFunc ];
-        :local va {"name"=$pkgName;"type"="code"};
-        :put "Validating package $pkgName...";
-        :if (![$ValidatePackageContent $pkg $va]) do={
-            :error "rspm.install: package validate failed, check log for detail";
-        };
-        :set meta ($pkg->"metaInfo");
+        # check flagInstall
+        :if ($flagInstall) do={
+            :put "Get: $urlInstall";
+            :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$urlInstall Normalize=true];
+            :local pkgFunc [:parse $pkgStr];
+            :local pkg [$pkgFunc ];
+            :local va {"name"=$pkgName;"type"="code"};
+            :put "Validating package $pkgName...";
+            :if (![$ValidatePackageContent $pkg $va]) do={
+                :error "rspm.install: package validate failed, check log for detail";
+            };
+            :set meta ($pkg->"metaInfo");
+        }
     }
-    :if ($pURL != "") do={
+    # install by url
+    :if (!$flagInstall and ($pURL != "")) do={
         # get pkgstr
         :put "Get: $pURL";
         :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$pURL Normalize=true];
@@ -329,22 +385,48 @@
         :if (![$ValidatePackageContent $pkg $va]) do={
             :error "rspm.install: package validate failed, check log for detail";
         };
-        :set meta ($pkg->"metaInfo");
-        :set pkgName ($meta->"name");
+        :local metaR ($pkg->"metaInfo");
+        :set pkgName ($metaR->"name");
+        :local metaUrl ($metaR->"url");
+        # check url
+        :if ($metaUrl != $pURL) do={
+            :set ($metaR->"proxyUrl") $pURL;
+        }
+        # check local repo
+        :do {
+            :local metaL [$GetMeta $pkgName];
+            :local verL ($metaL->"version");
+            :local verR ($metaR->"version");
+            :put "found in local repository: current version is $verL(latest=$verR), package already installed.";
+            :put "use this for upgrade package: [[$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+            :return "";
+        } on-error {
+            /system script remove [$FindPackage $pkgName];
+            :set flagInstall true;
+            :set meta $metaR;
+        }
+        :if ($flagInstall) do={
+            # write into config
+            :local pkgExtNum ($pkgExtMapping->$pkgName);
+            :if ([$IsNothing $pkgExtNum]) do={
+                :set ($pkgExtMapping->$pkgName) [:len $pkgExtList];
+                :set ($pkgExtList->[:len $pkgExtList]) $meta;
+            } else {
+                :set ($pkgExtList->$pkgExtNum) $meta;
+            }
+            :local updateArray {
+                "packageList"=$pkgExtList;
+                "packageMapping"=$pkgExtMapping;
+            };
+            [$UpdateConfig "config.rspm.package.ext" $updateArray];
+        }
     }
-    # same package
-    :local pl [$FindPackage $pkgName];
-    :if ([:len $pl] > 0) do={
-        :error "rspm.install: package already exist";
-    };
-    # write into repository
-    :local fileName [$Replace $pkgName "." "_"];
-    :put "Adding package to local repository...";
-    /system script add name=$fileName source=$pkgStr owner=($config->"Owner");
-    :put "Package $pkgName installed.";
-    # write into config
-    :if ($pURL != "") do={
-
+    :if ($flagInstall) do={
+        # write into repository
+        :local fileName [$Replace $pkgName "." "_"];
+        :put "Adding package to local repository...";
+        /system script add name=$fileName source=$pkgStr owner=($config->"Owner");
+        :put "Package $pkgName installed.";
     }
     # if global, run it
     :if (($meta->"global") = true) do={
