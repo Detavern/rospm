@@ -9,6 +9,7 @@
     "name"="global-variables";
     "version"="0.0.1";
     "description"="global variable package";
+    "global"=true;
 };
 
 # for framework
@@ -45,6 +46,5 @@
 # package info
 :local package {
     "metaInfo"=$metaInfo;
-    "global"=true;
 }
 :return $package;

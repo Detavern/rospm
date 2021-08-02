@@ -12,6 +12,7 @@
     "name"="global-helpers";
     "version"="0.0.1";
     "description"="global helper package";
+    "global"=true;
 };
 
 # ensure one of specific internal ID item is enabled
@@ -250,6 +251,5 @@
 # package info
 :local package {
     "metaInfo"=$metaInfo;
-    "global"=true;
 }
 :return $package;

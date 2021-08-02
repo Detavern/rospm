@@ -8,6 +8,7 @@
     "name"="global-functions.package";
     "version"="0.0.1";
     "description"="global functions for package operation";
+    "global"=true;
 };
 
 
@@ -594,6 +595,5 @@
 # package info
 :local package {
     "metaInfo"=$metaInfo;
-    "global"=true;
 }
 :return $package;

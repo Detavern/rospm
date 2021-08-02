@@ -279,6 +279,7 @@
     :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pkgName $Package;
     :local pkgStr "";
+    :local meta;
     :local config [$GetConfig "config.rspm.package"];
     :if ([$IsNothing $pkgName] and ($pURL = "")) do={
         :error "rspm.install: need either \$Package or \$URL";
@@ -300,6 +301,7 @@
         :if (![$ValidatePackageContent $pkg $va]) do={
             :error "rspm.install: package validate failed, check log for detail";
         };
+        :set meta ($pkg->"metaInfo");
     }
     :if ($pURL != "") do={
         :if (![$StartsWith $pURL "http://"] and ![$StartsWith $pURL "https://"]) do={
@@ -315,7 +317,7 @@
         :if (![$ValidatePackageContent $pkg $va]) do={
             :error "rspm.install: package validate failed, check log for detail";
         };
-        :local meta ($pkg->"metaInfo");
+        :set meta ($pkg->"metaInfo");
         :set pkgName ($meta->"name");
     }
     # same package
@@ -328,6 +330,12 @@
     :put "Adding package to local repository...";
     /system script add name=$fileName source=$pkgStr owner=($config->"Owner");
     :put "Package $pkgName installed.";
+    # if global, run it
+    :if (($meta->"global") = true) do={
+        :local cmdStr "/system script run [/system script find name=\"$pkgName\"];";
+        :local cmdFunc [:parse $cmdStr];
+        [$cmdFunc ];
+    }
     :return "";
 }
 

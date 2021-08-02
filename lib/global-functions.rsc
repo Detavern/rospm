@@ -8,6 +8,7 @@
     "name"="global-functions";
     "version"="0.0.1";
     "description"="global function package";
+    "global"=true;
 };
 
 # $IsNil
@@ -841,6 +842,5 @@
 # package info
 :local package {
     "metaInfo"=$metaInfo;
-    "global"=true;
 }
 :return $package;
