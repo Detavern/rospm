@@ -210,6 +210,11 @@
     # make new config array
     :set ($context->"packageList") "noquote:\$packageList";
     :set ($context->"packageMapping") "noquote:\$packageMapping";
+    # add resource version
+    :local resVersionURL (($context->"BaseURL") . "res/version.rsc");
+    :local resVersionStr [[$GetFunc "rspm.loadRemoteScript"] URL=$resVersionURL];
+    :local resVersion [$LoadVar $resVersionStr];
+    :set ($context->"version") $resVersion;
     # load remote package info
     :local packageInfoURL (($context->"BaseURL") . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
@@ -448,6 +453,7 @@
 
 
 # $update
+# update local package configuration file
 # kwargs: Package=<str>         package name
 :local update do={
     #DEFINE global
