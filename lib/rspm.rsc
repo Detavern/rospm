@@ -255,6 +255,13 @@
         :put "Get: $url";
         :local resp [[$GetFunc "tool.http.httpGet"] URL=$url];
         :set pkgStr ($resp->"data");
+        # NOTE: replace "\n" with "\r\n", raw content get from github comes with eol "\n"
+        :local pkgStrSplitted [$Split $pkgStr ("\n")];
+        :set pkgStr [$Join ("\r\n") $pkgStrSplitted];
+        # check length
+        :if ([:len $pkgStr] > $ScriptLengthLimit) do={
+            :error "rspm.install: package string length exceed limit";
+        };
         :local pkgFunc [:parse $pkgStr];
         :local pkg [$pkgFunc ];
         :local va {"name"=$pkgName;"type"="code"};
@@ -271,8 +278,10 @@
         :put "Get: $pURL";
         :local resp [[$GetFunc "tool.http.httpGet"] URL=$pURL];
         :set pkgStr ($resp->"data");
+        # NOTE: replace "\n" with "\r\n", raw content get from github comes with eol "\n"
         :local pkgStrSplitted [$Split $pkgStr ("\n")];
         :set pkgStr [$Join ("\r\n") $pkgStrSplitted];
+        # check length
         :if ([:len $pkgStr] > $ScriptLengthLimit) do={
             :error "rspm.install: package string length exceed limit";
         };
