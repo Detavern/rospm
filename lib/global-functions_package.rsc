@@ -527,6 +527,7 @@
     :global ReadOption;
     :global ScriptLengthLimit;
     :global NewArray;
+    :global Replace;
     # local
     :local pkgName $1;
     :local pOutput [$ReadOption $Output $TypeofStr "file"];

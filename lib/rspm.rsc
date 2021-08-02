@@ -331,8 +331,11 @@
                     :set meta [$GetMeta $pkgName];
                     :local verL ($meta->"version");
                     :local verR (($pkgExtList->$pkgExtNum)->"version");
-                    :put "found in local repository: current version is $verL(latest=$verR), package already installed.";
-                    :put "use this for upgrade package: [[$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+                    :put "found in local repository: current version is $verL(latest: $verR), package already installed.";
+                    :if ($verL < $verR) do={
+                        :put "use this for upgrade package: [[\$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+                    }
+                    :return "";
                 } on-error {
                     /system script remove [$FindPackage $pkgName];
                     :set flagInstall true;
@@ -350,8 +353,10 @@
                 :set meta [$GetMeta $pkgName];
                 :local verL ($meta->"version");
                 :local verR (($pkgList->$pkgNum)->"version");
-                :put "found in local repository: current version is $verL(latest=$verR), package already installed.";
-                :put "use this for upgrade package: [[$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+                :put "found in local repository: current version is $verL(latest: $verR), package already installed.";
+                :if ($verL < $verR) do={
+                    :put "use this for upgrade package: [[\$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+                }
                 :return "";
             } on-error {
                 /system script remove [$FindPackage $pkgName];
@@ -398,8 +403,10 @@
             :local metaL [$GetMeta $pkgName];
             :local verL ($metaL->"version");
             :local verR ($metaR->"version");
-            :put "found in local repository: current version is $verL(latest=$verR), package already installed.";
-            :put "use this for upgrade package: [[$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+            :put "found in local repository: current version is $verL(latest: $verR), package already installed.";
+            :if ($verL < $verR) do={
+                :put "use this for upgrade package: [[\$GetFunc \"rspm.upgrade\"] Package=$pkgName];";
+            }
             :return "";
         } on-error {
             /system script remove [$FindPackage $pkgName];
