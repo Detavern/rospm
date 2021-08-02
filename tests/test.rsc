@@ -507,23 +507,7 @@ $Print [[$GetFunc "rspm.checkPackageStatus"] ];
 ## config update
 {
     :local a {
-        "a"={
-            "aa"={
-                "aao"="value aao";
-            };
-            "a1"="value ao";
-        };
-        "b"={
-            "example.package.name"="custom";
-            "bb"={
-                "bbb"={
-                    0=1.1.1.1;
-                    1=2.2.2.2;
-                    2=3.3.3.3;
-                };
-            };
-        };
-        "other"=123;
+        "test"="test";
     };
     [$UpdateConfig "config.rspm.package.ext" $a];
 }

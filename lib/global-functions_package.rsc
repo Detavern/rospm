@@ -526,13 +526,16 @@
     :global TypeofStr;
     :global ReadOption;
     :global ScriptLengthLimit;
+    :global NewArray;
     # local
     :local pkgName $1;
     :local pOutput [$ReadOption $Output $TypeofStr "file"];
     :local fileName [$Replace $pkgName "." "_"];
     :local config [$GetConfig $pkgName];
     :local LSL [$NewArray ];
-    :local configArray [$NewArray ];
+    :local configArray {
+        "metaInfo"="noquote:\$metaInfo";
+    };
     :if (![$IsArray $2]) do={
         :error "Global.UpdateConfig: \$2 should a k,v array";
     }
@@ -552,9 +555,11 @@
     # update addition array
     :foreach k,v in $config do={
         :if ([$IsArray $v]) do={
-            :set ($configArray->$k) "noquote:\$$k";
-            :set LSL ($LSL, [$DumpVar $k $v Output="array" Return=false]);
-            :set ($LSL->[:len $LSL]) "";
+            :if ($k != "metaInfo") do={
+                :set ($configArray->$k) "noquote:\$$k";
+                :set LSL ($LSL, [$DumpVar $k $v Output="array" Return=false]);
+                :set ($LSL->[:len $LSL]) "";
+            }
         } else {
             :set ($configArray->$k) $v;
         }
