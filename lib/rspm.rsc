@@ -381,14 +381,14 @@
         :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$pURL Normalize=true];
         :local pkgFunc [:parse $pkgStr];
         :local pkg [$pkgFunc ];
+        :local metaR ($pkg->"metaInfo");
+        :set pkgName ($metaR->"name");
+        :local metaUrl ($metaR->"url");
         :local va {"type"="code";"url"=true};
         :put "Validating package $pkgName...";
         :if (![$ValidatePackageContent $pkg $va]) do={
             :error "rspm.install: package validate failed, check log for detail";
         };
-        :local metaR ($pkg->"metaInfo");
-        :set pkgName ($metaR->"name");
-        :local metaUrl ($metaR->"url");
         # check url
         :if ($metaUrl != $pURL) do={
             :set ($metaR->"proxyUrl") $pURL;
