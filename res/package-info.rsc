@@ -20,10 +20,6 @@
         "global"=true;
     };
     {
-        "name"="hello-world";
-        "version"="0.0.1";
-    };
-    {
         "name"="tool.http";
         "version"="0.0.1";
     };
@@ -38,9 +34,8 @@
     "global-functions"=1;
     "global-functions.package"=2;
     "global-helpers"=3;
-    "hello-world"=4;
-    "tool.http"=5;
-    "rspm"=6;
+    "tool.http"=4;
+    "rspm"=5;
 }
 
 :local packageInfo {

@@ -195,12 +195,14 @@
     # local
     :local context [$ReadOption $Context $TypeofArray];
     :local configPkgName "config.rspm.package";
+    :local configPkgExtName "config.rspm.package.ext";
     # check context
     :if (![$IsStr ($context->"BaseURL")]) do={
         :error "rspm.firstRun: BaseURL not found";
     }
     # clean local config.rspm.package
     /system script remove [$FindPackage $configPkgName];
+    /system script remove [$FindPackage $configPkgExtName];
     # make new config array
     :set ($context->"PackageList") "noquote:\$packageList";
     :set ($context->"PackageMapping") "noquote:\$packageMapping";
@@ -211,6 +213,13 @@
     :local packageInfo [$LoadVar ($resp->"data")];
     # make new config.rspm.package
     [$CreateConfig $configPkgName $context $packageInfo Owner=($context->"Owner")];
+    # make new config.rspm.package.ext
+    :local packageInfoExtURL (($context->"BaseURL") . "res/package-info-ext.rsc");
+    :local contextExt [$NewArray ];
+    :set ($contextExt->"PackageList") "noquote:\$packageList";
+    :set ($contextExt->"PackageMapping") "noquote:\$packageMapping";
+    :local packageInfoExt [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoExtURL];
+    [$CreateConfig $configPkgExtName $contextExt $packageInfoExt Owner=($context->"Owner")];
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
     :local report [[$GetFunc "rspm.checkPackageState"] CheckExt=false];
