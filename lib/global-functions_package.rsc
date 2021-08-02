@@ -533,6 +533,9 @@
     :local config [$GetConfig $pkgName];
     :local LSL [$NewArray ];
     :local configArray [$NewArray ];
+    :if (![$IsArray $2]) do={
+        :error "Global.UpdateConfig: \$2 should a k,v array";
+    }
     # update meta
     # TODO: better clock info
     :local clock [/system clock print as-value];
@@ -542,6 +545,10 @@
     :set ($meta->"last_modify") "$date $time";
     :set LSL ($LSL, [$DumpVar "metaInfo" $meta Output="array" Return=false]);
     :set ($LSL->[:len $LSL]) "";
+    # update by input
+    :foreach k,v in $2 do={
+        :set ($config->$k) $v;
+    }
     # update addition array
     :foreach k,v in $config do={
         :if ([$IsArray $v]) do={
