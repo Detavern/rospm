@@ -523,7 +523,7 @@ $Print [$GetFunc "rspm.install" $a];
 ## loadRemoteScript
 {
     :local url "https://raw.githubusercontent.com/Detavern/rspm/master/res/startup.rsc";
-    :local scriptStr [[$GetFunc "rspm.loadRemoteScript"] URL=$url Normalize=true];
+    :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$url Normalize=true];
     /system scheduler remove [/system scheduler find name="rspm-startup"];
     /system scheduler add name="rspm-startup" start-time=startup on-event=$scriptStr;
 }
@@ -560,4 +560,11 @@ $Print [[$GetFunc "rspm.checkPackageStatus"] ];
     [$UpdateConfig "config.rspm.package.ext" $a];
 }
 
+## upgrade
+[[$GetFunc "rspm.upgrade"] Package="rspm"];
+[[$GetFunc "rspm.upgrade"] Package="rspm.hello-world"];
 
+# rspm.state
+## checkState
+$Print [[$GetFunc "rspm.state.checkState"] Package="rspm"];
+$Print [[$GetFunc "rspm.state.checkState"] Package="notexist"];

@@ -5,55 +5,6 @@
 };
 
 
-# $loadRemoteScript
-# load remote script from url and put into strings
-# kwargs: URL=<str>                 url of remote script
-# opt kwargs: Normalize=<bool>      false(default), normalize the eol by "\r\n"
-# return: <str>             remote script
-:local loadRemoteScript do={
-    #DEFINE global
-    :global Split;
-    :global Join;
-    :global Strip;
-    :global NewArray;
-    :global ReadOption;
-    :global TypeofBool;
-    :global TypeofStr;
-    :global StartsWith;
-    :global GetFunc;
-    :global ScriptLengthLimit;
-    # local
-    :local pNormalize [$ReadOption $Normalize $TypeofBool false];
-    :local pURL [$ReadOption $URL $TypeofStr ""];
-    :local result;
-    :if ($pURL = "") do={
-        :error "rspm.loadRemoteScript: need \$URL";
-    }
-    :if (![$StartsWith $pURL "http://"] and ![$StartsWith $pURL "https://"]) do={
-        :error "rspm.loadRemoteScript: url scheme not supported";
-    }
-    # get source
-    :local resp [[$GetFunc "tool.http.httpGet"] URL=$pURL];
-    :if ($pNormalize) do={
-        :local splitted [$Split ($resp->"data") ("\n")];
-        :local stripList [$NewArray];
-        :foreach line in $splitted do={
-            :local sc {("\r")};
-            :local lineS [$Strip $line $sc];
-            :set ($stripList->[:len $stripList]) $lineS;
-        };
-        :set result [$Join ("\r\n") $stripList];
-    } else {
-        :set result ($resp->"data");
-    };
-    :local lenResult [:len $result];
-    :if ($lenResult > $ScriptLengthLimit) do={
-        :error "rspm.loadRemoteScript: package string length($lenResult) exceed limit";
-    }
-    :return $result;
-}
-
-
 # $checkPackageState
 # opt kwargs: CheckExt=<bool>       default true, check custom packages or not
 # return: <array->str>
@@ -68,7 +19,6 @@
     :global GetMeta;
     :global NewArray;
     :global StartsWith;
-    :global LoadVar;
     # local
     :local configPkgName "config.rspm.package";
     :local pCheckExt [$ReadOption $CheckExt $TypeofBool true];
@@ -191,7 +141,6 @@
     :global ReadOption;
     :global GetFunc;
     :global NewArray;
-    :global LoadVar;
     :global DumpVar;
     :global CreateConfig;
     :global FindPackage;
@@ -212,14 +161,12 @@
     :set ($context->"packageMapping") "noquote:\$packageMapping";
     # add resource version
     :local resVersionURL (($context->"baseURL") . "res/version.rsc");
-    :local resVersionStr [[$GetFunc "rspm.loadRemoteScript"] URL=$resVersionURL];
-    :local resVersion [$LoadVar $resVersionStr];
+    :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
     :set ($context->"version") $resVersion;
     # load remote package info
     :local packageInfoURL (($context->"baseURL") . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
-    :local packageInfoStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoURL];
-    :local packageInfo [$LoadVar $packageInfoStr];
+    :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
     # make new config.rspm.package
     [$CreateConfig $configPkgName $context $packageInfo Owner=($context->"owner")];
     # make new config.rspm.package.ext
@@ -227,8 +174,7 @@
     :local contextExt [$NewArray ];
     :set ($contextExt->"packageList") "noquote:\$packageList";
     :set ($contextExt->"packageMapping") "noquote:\$packageMapping";
-    :local packageInfoExtStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoExtURL];
-    :local packageInfoExt [$LoadVar $packageInfoExtStr];
+    :local packageInfoExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoExtURL];
     [$CreateConfig $configPkgExtName $contextExt $packageInfoExt Owner=($context->"owner")];
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
@@ -271,7 +217,7 @@
     # register startup
     :local startupResURL (($context->"baseURL") . "res/startup.rsc");
     :put "Get: $startupResURL";
-    :local scriptStr [[$GetFunc "rspm.loadRemoteScript"] URL=$startupResURL Normalize=true];
+    :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
     /system scheduler remove [/system scheduler find name="rspm-startup"];
     :put "Adding rspm-startup schedule...";
     /system scheduler add name="rspm-startup" start-time=startup on-event=$scriptStr;
@@ -373,7 +319,7 @@
         # check flagInstall
         :if ($flagInstall) do={
             :put "Get: $urlInstall";
-            :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$urlInstall Normalize=true];
+            :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$urlInstall Normalize=true];
             :local pkgFunc [:parse $pkgStr];
             :local pkg [$pkgFunc ];
             :local va {"name"=$pkgName;"type"="code"};
@@ -388,7 +334,7 @@
     :if (!$flagInstall and ($pURL != "")) do={
         # get pkgstr
         :put "Get: $pURL";
-        :set pkgStr [[$GetFunc "rspm.loadRemoteScript"] URL=$pURL Normalize=true];
+        :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pURL Normalize=true];
         :local pkgFunc [:parse $pkgStr];
         :local pkg [$pkgFunc ];
         :local metaR ($pkg->"metaInfo");
@@ -457,9 +403,7 @@
 # kwargs: Package=<str>         package name
 :local update do={
     #DEFINE global
-    :global IsNil;
     :global IsNothing;
-    :global LoadVar;
     :global GetConfig;
     :global GetFunc;
     :global UpdateConfig;
@@ -478,8 +422,7 @@
     # add resource version
     :local resVersionURL (($config->"baseURL") . "res/version.rsc");
     :put "Get: $resVersionURL";
-    :local resVersionStr [[$GetFunc "rspm.loadRemoteScript"] URL=$resVersionURL];
-    :local resVersion [$LoadVar $resVersionStr];
+    :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
     # check core
     :put "Checking core packages...";
     :if ($version >= $resVersion) do={
@@ -490,8 +433,7 @@
         # update package-info
         :local packageInfoURL (($config->"baseURL") . "res/package-info.rsc");
         :put "Get: $packageInfoURL";
-        :local packageInfoStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoURL];
-        :local packageInfo [$LoadVar $packageInfoStr];
+        :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
         :put "Updating local configuration: $configPkgName...";
         :foreach k,v in $packageInfo do={
             :set ($config->$k) $v;
@@ -501,8 +443,7 @@
         # update package-info-ext
         :local packageInfoExtURL (($config->"baseURL") . "res/package-info-ext.rsc");
         :put "Get: $packageInfoExtURL";
-        :local packageInfoExtStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoExtURL];
-        :local packageInfoExt [$LoadVar $packageInfoExtStr];
+        :local packageInfoExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoExtURL];
         :set newConfigExt $packageInfoExt;
         :local ml ($newConfigExt->"packageList");
         :local mp ($newConfigExt->"packageMapping");
@@ -514,6 +455,7 @@
                 :set ($ml->[:len $ml]) $m;
             }
         }
+        # TODO: update startup scheduler
     }
     # check ext
     :local counter 0;
@@ -529,8 +471,7 @@
         :local extVerL ($meta->"version");
         # load remote package check version
         :put "Get: $pkgURL";
-        :local pkgExtStr [[$GetFunc "rspm.loadRemoteScript"] URL=$pkgURL];
-        :local pkgExt [$LoadVar $pkgExtStr];
+        :local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
         # check pkg
         :local va {"type"="code";"name"=($meta->"name");"url"=true};
         :if (![$ValidatePackageContent $pkgExt $va]) do={
@@ -549,13 +490,76 @@
     :put "$counter extension packages need upgrade";
     :put "Updating local configuration: $configExtPkgName...";
     [$UpdateConfig $configExtPkgName $newConfigExt];
+    :put "The package list has been updated.";
 }
 
 # $upgrade
+# upgrade package according to local package list.
 # kwargs: Package=<str>         package name
 :local upgrade do={
     #DEFINE global
-    :global IsNil;
+    :global IsStr;
+    :global IsNothing;
+    :global InValues;
+    :global FindPackage;
+    :global GetFunc;
+    :global GetConfig;
+    :global Print;
+    # local
+    :local configPkgName "config.rspm.package";
+    :local config [$GetConfig $configPkgName];
+    # generate report
+    :put "Check package $Package state...";
+    :local report [[$GetFunc "rspm.state.checkState"] Package=$Package];
+    :local state ($report->"state");
+    :if (![$InValues "upgrade" ($report->"action")]) do={
+        :foreach ad in ($report->"advice") do={
+            :put $ad;
+        }
+        :error "rspm.upgrade: state not match.";
+    }
+    # in available action
+    :if ($state = "GT") do={
+        :if (($report->"configName") = $configPkgName) do={
+            :local versionR (($report->"metaConfig")->"version");
+            :put "Upgrading core package $Package, latest version is $versionR";
+            :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
+            :if (!$isLatest) do={
+                :error "rspm.upgrade: local package list is out of date, please update first.";
+            }
+            :local pkgUrl (($config->"baseURL") . "lib/$Package.rsc")
+            :put "Get: $pkgUrl";
+            :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
+            :put "Writing source into repository...";
+            /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
+        } else {
+            :local versionR (($report->"metaConfig")->"version");
+            :put "Upgrading extension package $Package, latest version is $versionR";
+            :local pkgUrl (($report->"metaConfig")->"proxyUrl");
+            :if ([$IsNothing $pkgUrl]) do={
+                :set pkgUrl (($report->"metaConfig")->"url");
+            }
+            :put "Get: $pkgUrl";
+            :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
+            :put "Writing source into repository...";
+            /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
+        }
+        :put "The package has been upgraded.";
+    }
+}
+
+
+# $remove
+:local remove do={
+    #DEFINE global
+    :global IsNothing;
+
+}
+
+
+# $register
+:local register do={
+    #DEFINE global
     :global IsNothing;
 
 }
@@ -564,7 +568,6 @@
 # $upgradeAll
 :local upgradeAll do={
     #DEFINE global
-    :global IsNil;
     :global IsNothing;
 
 }
@@ -572,12 +575,13 @@
 
 :local package {
     "metaInfo"=$metaInfo;
-    "loadRemoteScript"=$loadRemoteScript;
     "checkPackageState"=$checkPackageState;
     "firstRun"=$firstRun;
     "install"=$install;
     "update"=$update;
     "upgrade"=$upgrade;
+    "remove"=$remove;
+    "register"=$register;
     "upgradeAll"=$upgradeAll;
 }
 :return $package;

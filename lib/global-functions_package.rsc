@@ -129,6 +129,7 @@
 # $GetMeta
 # args: <str>                   find by <package name>
 # opt kwargs: ID=<id>           find by id
+# opt kwargs: VA=<array->str>   validate array
 # return: <array->str>          meta named array 
 :global GetMeta do={
     # global declare
@@ -139,11 +140,13 @@
     :global ReadOption;
     :global TypeofID;
     :global TypeofStr;
+    :global TypeofArray;
     :global ValidatePackageContent;
     # check
     :local tID;
     :local pkgName [$ReadOption $1 $TypeofStr ""];
     :local pID [$ReadOption $ID $TypeofID ];
+    :local pVA [$ReadOption $VA $TypeofArray ];
     :if ($pkgName != "") do={
         :local fileName [$Replace $pkgName "." "_"];
         :local idList [/system script find name=$fileName];
@@ -164,6 +167,11 @@
     :local pSource [:parse [/system script get $tID source]];
     :local pkg [$pSource ];
     :local va {"name"=$pkgName};
+    :if (![$IsNil $pVA]) do={
+        :foreach k,v in $pVA do={
+            :set ($va->$k) $v;
+        }
+    }
     if (![$ValidatePackageContent $pkg $va]) do={
         :error "Global.GetMeta: could not validate target package";
     }

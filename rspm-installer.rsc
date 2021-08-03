@@ -65,6 +65,8 @@
 
 # install rspm
 [$installPackage "tool_http"];
+[$installPackage "tool_remote"];
+[$installPackage "rspm_state"];
 [$installPackage "rspm"];
 # invoke rspm.firstRun to complete the installation
 :global GetFunc;
