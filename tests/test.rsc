@@ -325,6 +325,51 @@
     $Print $test;
 }
 
+## change value of sub array
+{
+    :local m {
+        "a"={
+            "aa"="vaa";
+            "ab"="vab";
+            "ac"="vac";
+        }
+        "b"={
+            "ba"="vba";
+            "bb"="vbb";
+            "bc"="vbc";
+        }
+    };
+    :local a ($m->"a");
+    :local b ($m->"b");
+    :set ($a->"aa") "new vaa";
+    $Print $m;
+}
+
+## change value in array when iter
+{
+    :local m {
+        {
+            "name"="alice";
+            "age"="20";
+            "id"="1";
+        };
+        {
+            "name"="bob";
+            "age"="21";
+            "id"="2";
+        };
+        {
+            "name"="cat";
+            "age"="22";
+            "id"="3";
+        }
+    }
+    :foreach v in $m do={
+        :set ($v->"age") 25;
+    };
+    $Print $m;
+}
+
 # Global helpers
 
 ## itemsFoundEnsureOneEnabled
@@ -502,6 +547,9 @@ $Print [[$GetFunc "rspm.checkPackageStatus"] ];
     $Print ($a->"a");
     $Print ($a->"b");
 }
+
+## update
+[[$GetFunc "rspm.update"]];
 
 
 ## config update

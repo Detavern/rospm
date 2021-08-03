@@ -459,7 +459,96 @@
     #DEFINE global
     :global IsNil;
     :global IsNothing;
-
+    :global LoadVar;
+    :global GetConfig;
+    :global GetFunc;
+    :global UpdateConfig;
+    :global NewArray;
+    :global InKeys;
+    :global ValidatePackageContent;
+    # local
+    :local configPkgName "config.rspm.package";
+    :local configExtPkgName "config.rspm.package.ext";
+    :put "Loading local configuration: $configPkgName...";
+    :local config [$GetConfig $configPkgName];
+    :put "Loading local configuration: $configExtPkgName...";
+    :local configExt [$GetConfig $configExtPkgName];
+    :local version ($config->"version");
+    :local newConfigExt;
+    # add resource version
+    :local resVersionURL (($config->"baseURL") . "res/version.rsc");
+    :put "Get: $resVersionURL";
+    :local resVersionStr [[$GetFunc "rspm.loadRemoteScript"] URL=$resVersionURL];
+    :local resVersion [$LoadVar $resVersionStr];
+    # check core
+    :put "Checking core packages...";
+    :if ($version >= $resVersion) do={
+        :put "RSPM packages already up-to-date";
+        :set newConfigExt $configExt;
+    } else {
+        :put "Latest version is $resVersion, your current version is $version";
+        # update package-info
+        :local packageInfoURL (($config->"baseURL") . "res/package-info.rsc");
+        :put "Get: $packageInfoURL";
+        :local packageInfoStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoURL];
+        :local packageInfo [$LoadVar $packageInfoStr];
+        :put "Updating local configuration: $configPkgName...";
+        :foreach k,v in $packageInfo do={
+            :set ($config->$k) $v;
+        }
+        :set ($config->"version") $resVersion;
+        [$UpdateConfig $configPkgName $config];
+        # update package-info-ext
+        :local packageInfoExtURL (($config->"baseURL") . "res/package-info-ext.rsc");
+        :put "Get: $packageInfoExtURL";
+        :local packageInfoExtStr [[$GetFunc "rspm.loadRemoteScript"] URL=$packageInfoExtURL];
+        :local packageInfoExt [$LoadVar $packageInfoExtStr];
+        :set newConfigExt $packageInfoExt;
+        :local ml ($newConfigExt->"packageList");
+        :local mp ($newConfigExt->"packageMapping");
+        # add local ext pkg into new
+        :foreach k,v in ($configExt->"packageMapping") do={
+            :if (![$InKeys $k $mp]) do={
+                :local m (($configExt->"packageList")->$v);
+                :set ($mp->($m->"name")) [:len $ml];
+                :set ($ml->[:len $ml]) $m;
+            }
+        }
+    }
+    # check ext
+    :local counter 0;
+    :put "Checking extension packages...";
+    :foreach meta in ($newConfigExt->"packageList") do={
+        :local pkgURL;
+        :if ([$IsNothing ($meta->"proxyUrl")]) do={
+            :set pkgURL ($meta->"url"); 
+        } else {
+            :set pkgURL ($meta->"proxyUrl"); 
+        }
+        :local extName ($meta->"name");
+        :local extVerL ($meta->"version");
+        # load remote package check version
+        :put "Get: $pkgURL";
+        :local pkgExtStr [[$GetFunc "rspm.loadRemoteScript"] URL=$pkgURL];
+        :local pkgExt [$LoadVar $pkgExtStr];
+        # check pkg
+        :local va {"type"="code";"name"=($meta->"name");"url"=true};
+        :if (![$ValidatePackageContent $pkgExt $va]) do={
+            :put "Error occured when loading remote resource of $extName, check log for detail";
+        } else {
+            :local extVerR (($pkgExt->"metaInfo")->"version");
+            :if ($extVerL < $extVerR) do={
+                :set counter ($counter+1);
+                :foreach k,v in ($pkgExt->"metaInfo") do={
+                    :set ($meta->$k) $v;
+                }
+            }
+        }
+    }
+    # update ext config
+    :put "$counter extension packages need upgrade";
+    :put "Updating local configuration: $configExtPkgName...";
+    [$UpdateConfig $configExtPkgName $newConfigExt];
 }
 
 # $upgrade
