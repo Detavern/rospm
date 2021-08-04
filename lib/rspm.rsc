@@ -504,6 +504,7 @@
     :global GetConfig;
     # local
     :local configPkgName "config.rspm.package";
+    :put "Loading local configuration: $configPkgName...";
     :local config [$GetConfig $configPkgName];
     # generate report
     :put "Check package $Package state...";
@@ -541,8 +542,8 @@
             :put "Writing source into repository...";
             /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
         }
-        :put "The package has been upgraded.";
     }
+    :put "The package has been upgraded.";
 }
 
 
@@ -551,19 +552,19 @@
 # kwargs: Package=<str>         package name
 :local remove do={
     #DEFINE global
-    :global IsNothing;
     :global GetFunc;
     :global GetConfig;
     :global InValues;
     :global FindPackage;
     # local
     :local configPkgName "config.rspm.package";
+    :put "Loading local configuration: $configPkgName...";
     :local config [$GetConfig $configPkgName];
     # generate report
     :put "Check package $Package state...";
     :local report [[$GetFunc "rspm.state.checkState"] Package=$Package];
     :local state ($report->"state");
-    :if (![$InValues "upgrade" ($report->"action")]) do={
+    :if (![$InValues "remove" ($report->"action")]) do={
         :foreach ad in ($report->"advice") do={
             :put $ad;
         }
@@ -576,16 +577,52 @@
         :put "Removing this package will corrupt RSPM.";
         :error "rspm.upgrade: package is essential";
     } else {
+        :put "Removing the package $Package...";
         /system script remove [$FindPackage $Package];
+        :put "The package has been removed.";
     }
 }
 
 
 # $register
+# register a local package into package manager.
+# kwargs: Package=<str>         package name
 :local register do={
     #DEFINE global
-    :global IsNothing;
-
+    :global GetFunc;
+    :global GetConfig;
+    :global InValues;
+    :global UpdateConfig;
+    :global FindPackage;
+    # local
+    :local configPkgName "config.rspm.package";
+    :local configExtPkgName "config.rspm.package.ext";
+    :put "Loading local configuration: $configPkgName...";
+    :local config [$GetConfig $configPkgName];
+    :put "Loading local configuration: $configExtPkgName...";
+    :local configExt [$GetConfig $configExtPkgName];
+    # generate report
+    :put "Check package $Package state...";
+    :local report [[$GetFunc "rspm.state.checkState"] Package=$Package];
+    :local state ($report->"state");
+    :if (![$InValues "register" ($report->"action")]) do={
+        :foreach ad in ($report->"advice") do={
+            :put $ad;
+        }
+        :error "rspm.upgrade: state not match.";
+    }
+    # in available action
+    :if ($state = "NEC") do={
+        :local meta ($report->"metaScript");
+        :local pkgName ($meta->"name");
+        :local ml ($configExt->"packageList");
+        :local mp ($configExt->"packageMapping");
+        :set ($mp->$pkgName) [:len $ml];
+        :set ($ml->[:len $ml]) $meta;
+        :put "Updating extension package list...";
+        [$UpdateConfig $configExtPkgName $configExt];
+    };
+    :put "The package has been registed.";
 }
 
 
