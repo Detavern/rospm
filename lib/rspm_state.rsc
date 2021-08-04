@@ -26,29 +26,37 @@
 # $checkState
 # compare package in local repository and configuration file.
 # | ----------------------- | ----------------------- | -----------------------
+# |     meta from script    |     meta from config    |    state & advice
+# | ----------------------- | ----------------------- | -----------------------
+# |       read error        |          exist          |   ERR, remove script file manually
+# |         exist           |        read error       |   ERR, config corrupted
+# |       not exist         |        not exist        |   ERR, update config
+# | ----------------------- | ----------------------- | -----------------------
 # |     meta from script    |     meta from config    |    state & action
 # | ----------------------- | ----------------------- | -----------------------
-# |       read error        |          exist          |   error, remove script file manually
-# |         exist           |        read error       |   error, config corrupted
-# |       not exist         |        not exist        |   error, update config
-# | ----------------------- | ----------------------- | -----------------------
 # |  exist(higher version)  |          exist          |   LT,   remove;install(downgrade)
-# |   exist(same version)   |          exist          |   SAME, remove
+# |   exist(same version)   |          exist          |   SAME, remove;install(reinstall)
 # |         exist           |  exist(higher version)  |   GT,   remove;upgrade
 # |       not exist         |          exist          |   NES,  install
 # |         exist           |        not exist        |   NEC,  register
 # | ----------------------- | ----------------------- | -----------------------
 # return example:
 # {
+#     "state"=<state code>;
+#     "advice"={"desc1";"desc2"};
+#     "action"={"install";"upgrade";"remove";"register"};
 #     "metaScript"={} or nil;
 #     "metaConfig"={} or nil;
 #     "configName"="config.rspm.package" or "";
-#     "action"={"install";"upgrade";"remove";"register"};
-#     "state"=<state code>;
-#     "advice"={"desc1";"desc2"};
 # }
-# kwargs: Package=<str>         package name
-# return: <array->str>
+# error return example:
+# {
+#     "state"="ERR";
+#     "advice"="";
+# }
+# kwargs: Package=<str>             package name
+# opt kwargs: Suppress=<bool>       suppress error
+# return: <array->str>(<report>)
 :local checkState do={
     #DEFINE global
     :global Nil;
@@ -61,6 +69,8 @@
     :global FindPackage;
     :global GetConfig;
     :global GetMeta;
+    :global ReadOption;
+    :global TypeofBool;
     # check
     :if (![$IsStr $Package]) do={
         :error "rspm.state.checkState: \$Package should be str.";
@@ -77,9 +87,32 @@
     :local state;
     :local actionList [$NewArray ];
     :local adviceList [$NewArray ];
+    :local flagSuppress [$ReadOption $Suppress $TypeofBool false];
     # read config
-    :local config [$GetConfig $configPkgName];
-    :local configExt [$GetConfig $configExtPkgName];
+    :local config;
+    :local configExt;
+    # suppress read config error
+    :local flagReadConfig true;
+    :do {
+        :set config [$GetConfig $configPkgName];
+        :set configExt [$GetConfig $configExtPkgName];
+    } on-error {
+        :set flagReadConfig false;
+    };
+    :if (!$flagReadConfig) do={
+        :if ($flagSuppress) do={
+            :local err {
+                "state"="ERR";
+                "advice"={
+                    "Read local package list error, configuration may corrupted.";
+                    "Using \"rspm.reset.resetConfig\" to reset local configuration.";
+                };
+            }
+            :return $err;
+        } else {
+            :error "rspm.state.checkState: error occurred when read package list.";
+        }
+    }
     # find in config
     :local pkgNum (($config->"packageMapping")->$Package);
     :if ([$IsNum $pkgNum]) do={
@@ -103,14 +136,52 @@
         :local va {"type"="code"};
         :if ($configName = $configExtPkgName) do={
             :set ($va->"url") true;
+        };
+        # suppress error when reading script meta
+        :local flagReadScript true;
+        :do {
+            :set metaScript [$GetMeta $Package VA=$va];
+        } on-error {
+            :set flagReadScript false;
+        };
+        :if (!$flagReadScript) do={
+            :local ad {
+                "The package $Package has found in local repository but can't get meta from it.";
+                "It occurred when your local script is not a valid package, or corrupted.";
+                "Using \"/system script remove [$FindPackage $Package]\" to manually delete it.";
+            }
+            :if ($flagSuppress) do={
+                :local err {
+                    "state"="ERR";
+                    "advice"=$ad;
+                };
+                :return $err;
+            } else {
+                :foreach v in $ad do={
+                    :put $v;
+                }
+                :error "rspm.state.checkState: error occurred when read script meta.";
+            };
         }
-        :set metaScript [$GetMeta $Package VA=$va];
     }
     # make action list
     :if ([$IsNil $metaConfig] and [$IsNil $metaScript]) do={
-        :put "The package $Package is not found in the repository and the package list.";
-        :put "Using [[\$GetFunc \"rspm.update\"]] to get latest package list.";
-        :error "rspm.state.checkState: package $Package not found";
+        :local ad {
+            "The package $Package is not found in the repository and the package list.";
+            "Using [[\$GetFunc \"rspm.update\"]] to get latest package list.";
+        };
+        :if ($flagSuppress) do={
+            :local err {
+                "state"="ERR";
+                "advice"=$ad;
+            };
+            :return $err;
+        } else {
+            :foreach v in $ad do={
+                :put $v;
+            }
+            :error "rspm.state.checkState: package $Package not found";
+        }
     }
     # state
     :local flag true;
@@ -167,9 +238,50 @@
 }
 
 
+# $checkAllState
+# opt kwargs: CheckExt=<bool>           default true, check custom packages or not
+# opt kwargs: CheckVersion=<bool>       default true, check version online
+# return: <array->report>
+:local checkAllState do={
+    #DEFINE global
+    :global NewArray;
+    :global FindPackage;
+    :global GetConfig;
+    :global GetFunc;
+    :global ReadOption;
+    :global TypeofBool;
+    # local
+    :local pCheckExt [$ReadOption $CheckExt $TypeofBool true];
+    :local pCheckVersion [$ReadOption $CheckVersion $TypeofBool true];
+    :local reportList [$NewArray ];
+    :local configPkgName "config.rspm.package";
+    :local configExtPkgName "config.rspm.package.ext";
+    :local config [$GetConfig $configPkgName];
+    :local configExt [$GetConfig $configExtPkgName];
+    # check version
+    :local flagVersion [[$GetFunc "rspm.state.checkVersion"]];
+    :if ($pCheckVersion and !$flagVersion) do={
+        :error "rspm.state.checkAllState: local package list is out of date, please update first.";
+    }
+    # core
+    :foreach meta in ($config->"packageList") do={
+        :local pkgName ($meta->"name");
+        :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName Suppress=true];
+        :set ($reportList->[:len $reportList]) $report;
+    }
+    # ext
+    :foreach meta in ($configExt->"packageList") do={
+        :local pkgName ($meta->"name");
+        :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName Suppress=true];
+        :set ($reportList->[:len $reportList]) $report;
+    }
+}
+
+
 :local package {
     "metaInfo"=$metaInfo;
     "checkVersion"=$checkVersion;
     "checkState"=$checkState;
+    "checkAllState"=$checkAllState;
 }
 :return $package;

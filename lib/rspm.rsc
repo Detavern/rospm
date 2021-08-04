@@ -5,133 +5,6 @@
 };
 
 
-# $checkPackageState
-# opt kwargs: CheckExt=<bool>       default true, check custom packages or not
-# return: <array->str>
-:local checkPackageState do={
-    #DEFINE global
-    :global IsStr;
-    :global IsNil;
-    :global TypeofBool;
-    :global TypeofArray;
-    :global ReadOption;
-    :global GetConfig;
-    :global GetMeta;
-    :global NewArray;
-    :global StartsWith;
-    # local
-    :local configPkgName "config.rspm.package";
-    :local pCheckExt [$ReadOption $CheckExt $TypeofBool true];
-    :local config [$GetConfig $configPkgName];
-    :local pkgMapping ($config->"packageMapping");
-    :local pkgList ($config->"packageList");
-    :local scriptOwner ($config->"owner");
-    # check installed package
-    :local pkgVerEqList [$NewArray ];
-    :local pkgVerGtList [$NewArray ];
-    :local pkgVerLtList [$NewArray ];
-    :local pkgPendingList [$NewArray ];
-    # custom package
-    :local cpkgVerEqList [$NewArray ];
-    :local cpkgVerGtList [$NewArray ];
-    :local cpkgVerLtList [$NewArray ];
-    :local pkgIDList [/system script find owner=$scriptOwner];
-    :foreach i in $pkgIDList do={
-        :local flag false;
-        :local metaL;
-        # load metaL from package
-        :do {
-            :set metaL [$GetMeta ID=$i];
-            :local nameL ($metaL->"name");
-            :if (![$StartsWith $nameL "config."] and ![$StartsWith $nameL "env."]) do={
-                :set flag true;
-            }
-        } on-error {
-            :local fileName [/system script get $i name];
-            :if ([$IsNil $fileName]) do={
-                :log warning "rspm.checkPackageStatus: could not find package id=$i";
-            } else {
-                :log warning "rspm.checkPackageStatus: could not load package name=$fileName, maybe corrupt, this package will be removed";
-                /system script remove numbers=$i;
-            }
-        }
-        # load metaR from local config
-        :if ($flag) do={
-            :local rpkgID ($pkgMapping->($metaL->"name"));
-            :if ([$IsNothing $rpkgID]) do={
-                :if ($pCheckExt) do={
-                # TODO: custom package
-                }
-            } else {
-                :set ($pkgMapping->($metaL->"name")) -1;
-                :local metaR ($pkgList->$rpkgID);
-                :local versionL ($metaL->"version");
-                :local versionR ($metaR->"version");
-                :local cmp [$NewArray ];
-                :set ($cmp->"remote") $metaR;
-                :set ($cmp->"local") $metaL;
-                :if ($versionR = $versionL) do={
-                    :set ($pkgVerEqList->[:len $pkgVerEqList]) $cmp;
-                } else {
-                    :if ($versionR > $versionL) do={
-                        :set ($pkgVerGtList->[:len $pkgVerGtList]) $cmp;
-                    } else {
-                        :set ($pkgVerLtList->[:len $pkgVerLtList]) $cmp;
-                    };
-                };
-            };
-        };
-    }
-    # make install pending list
-    :foreach v in $pkgList do={
-        :local name ($v->"name");
-        :if (($pkgMapping->$name) >= 0) do={
-            :set ($pkgPendingList->[:len $pkgPendingList]) $v;
-        };
-    }
-    # read package state
-    :put "Reading package state information...";
-    :local lenPkgLt [:len $pkgVerLtList];
-    :if ($lenPkgLt > 0) do={
-        :put "$lenPkgLt packages have unknown version number, please check these packages!";
-        :foreach v in $pkgVerLtList do={
-            :local pn (($v->"remote")->"name");
-            :local pvr (($v->"remote")->"version");
-            :local pvl (($v->"local")->"version");
-            :put "    package: $pn, remote version: $pvr, local version: $pvl";
-        };
-    };
-    :local lenPkgGt [:len $pkgVerGtList];
-    :put "$lenPkgGt packages can be upgraded.";
-    :foreach v in $pkgVerGtList do={
-        :local pn (($v->"remote")->"name");
-        :local pvr (($v->"remote")->"version");
-        :local pvl (($v->"local")->"version");
-        :put "    package: $pn, remote version: $pvr, local version: $pvl";
-    };
-    :local lenPkgEq [:len $pkgVerEqList];
-    :put "$lenPkgEq packages have up to date.";
-    :local lenPkgPending [:len $pkgPendingList];
-    :put "$lenPkgPending packages need install.";
-    :foreach v in $pkgPendingList do={
-        :local pn ($v->"name");
-        :local pv ($v->"version");
-        :put "    package: $pn, remote version: $pv";
-    };
-
-    # result
-    :local result [$NewArray ];
-    :set ($result->"pkgVerEqList") $pkgVerEqList;
-    :set ($result->"pkgVerGtList") $pkgVerGtList;
-    :set ($result->"pkgVerLtList") $pkgVerLtList;
-    :set ($result->"pkgPendingList") $pkgPendingList;
-    :set ($result->"cpkgVerEqList") $cpkgVerEqList;
-    :set ($result->"cpkgVerGtList") $cpkgVerGtList;
-    :set ($result->"cpkgVerLtList") $cpkgVerLtList;
-    :return $result;
-}
-
-
 # $firstRun
 # kwargs: Context=<array>       context comes from installer
 :local firstRun do={
@@ -176,41 +49,41 @@
     [$CreateConfig $configPkgExtName $packageInfoExt Owner=($context->"owner")];
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
-    :local report [[$GetFunc "rspm.checkPackageState"] CheckExt=false];
-    # remote version lt local, warn it and let user determine
-    :foreach v in ($report->"pkgVerLtList") do={
-        :local pn (($v->"remote")->"name");
-        :local pvr (($v->"remote")->"version");
-        :local pvl (($v->"local")->"version");
-        :put "Package: $pn, its remote version is $pvr, but local version is $pvl.";
-        :local flag true;
-        :local flagKeep false;
-        :while ($flag) do={
-            :local answer [$InputV "Enter [Y]es to use remote version, [N]o to keep local version." ];
-            :if ($answer = "Y" or $answer = "N") do={
-                :set flag false;
-                :set flagKeep $answer;
-            } else {
-                :put "Unrecognized value, input again!";
-            }
+    :local reportList [[$GetFunc "rspm.state.checkAllState"] CheckExt=false CheckVersion=false];
+    :foreach report in $reportList do={
+        :local state ($report->"state");
+        # remote version lt local, warn it and let user determine
+        :if ($state = "LT") do={
+            :local pn (($report->"metaConfig")->"name");
+            :local pvr (($report->"metaConfig")->"version");
+            :local pvl (($report->"metaScript")->"version");
+            :put "The package $pn its remote version is $pvr, but local version is $pvl.";
+            :local flag true;
+            :local flagInstall false;
+            :while ($flag) do={
+                :local answer [$InputV "Enter [Y]es to install(downgrade to) remote version, [N]o to keep local version." ];
+                :if ($answer = "Y" or $answer = "N") do={
+                    :set flag false;
+                    :set flagInstall ($answer = "Y");
+                } else {
+                    :put "Unrecognized value, input again!";
+                }
+            };
+            # keep or not
+            :if ($flagInstall) do={
+                # TODO:
+                [[$GetFunc "rspm.install"] Package=$pn];
+            };
         };
-        # keep or not
-        :if (!$flagKeep) do={
-            /system script remove [$FindPackage $pn];
+        # remote version gt local, let user know it will be updated
+        :if ($state = "GT") do={
+            :local pn (($report->"metaConfig")->"name");
+            [[$GetFunc "rspm.upgrade"] Package=$pn];
+        };
+        :if ($state = "NES") do={
+                # TODO:
             [[$GetFunc "rspm.install"] Package=$pn];
         };
-    };
-    # remote version gt local, let user know it will be updated
-    :foreach v in ($report->"pkgVerGtList") do={
-        :local pn (($v->"remote")->"name");
-        [[$GetFunc "rspm.upgrade"] Package=$pn];
-    };
-    # remote version eq local, keep silence
-    # install pending package
-    :foreach v in ($report->"pkgPendingList") do={
-        :local pn ($v->"name");
-        /system script remove [$FindPackage $pn];
-        [[$GetFunc "rspm.install"] Package=$pn];
     }
     # register startup
     :local startupResURL (($context->"baseURL") . "res/startup.rsc");
@@ -593,7 +466,6 @@
     :global GetConfig;
     :global InValues;
     :global UpdateConfig;
-    :global FindPackage;
     # local
     :local configPkgName "config.rspm.package";
     :local configExtPkgName "config.rspm.package.ext";
@@ -630,13 +502,65 @@
 :local upgradeAll do={
     #DEFINE global
     :global IsNothing;
-
+    :global GetFunc;
+    :global GetConfig;
+    :global InValues;
+    :global NewArray;
+    :global FindPackage;
+    # local
+    :local configPkgName "config.rspm.package";
+    :local configExtPkgName "config.rspm.package.ext";
+    :put "Loading local configuration: $configPkgName...";
+    :local config [$GetConfig $configPkgName];
+    :put "Loading local configuration: $configExtPkgName...";
+    :local configExt [$GetConfig $configExtPkgName];
+    # check latest
+    :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
+    :if (!$isLatest) do={
+        :error "rspm.upgrade: local package list is out of date, please update first.";
+    }
+    # generate upgrade list
+    :local reportList [[$GetFunc "rspm.state.checkAllState"] ];
+    :local upgradeList [$NewArray ];
+    :foreach report in $reportList do={
+        :if ([$InValues "upgrade" ($report->"action")]) do={
+            :put ($upgradeList->[:len $upgradeList]) $report;
+        }
+    };
+    # do upgrade
+    :local lenUpradeList [:len $upgradeList];
+    :put "$lenUpradeList packages need upgrade.";  
+    :foreach report in $upgradeList do={
+        :local state ($report->"state");
+        :if ($state = "GT") do={
+            :if (($report->"configName") = $configPkgName) do={
+                :local versionR (($report->"metaConfig")->"version");
+                :put "Upgrading core package $Package, latest version is $versionR";
+                :local pkgUrl (($config->"baseURL") . "lib/$Package.rsc")
+                :put "Get: $pkgUrl";
+                :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
+                :put "Writing source into repository...";
+                /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
+            } else {
+                :local versionR (($report->"metaConfig")->"version");
+                :put "Upgrading extension package $Package, latest version is $versionR";
+                :local pkgUrl (($report->"metaConfig")->"proxyUrl");
+                :if ([$IsNothing $pkgUrl]) do={
+                    :set pkgUrl (($report->"metaConfig")->"url");
+                }
+                :put "Get: $pkgUrl";
+                :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
+                :put "Writing source into repository...";
+                /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
+            }
+        }
+    };
+    :put "$lenUpradeList packages have been upgraded.";  
 }
 
 
 :local package {
     "metaInfo"=$metaInfo;
-    "checkPackageState"=$checkPackageState;
     "firstRun"=$firstRun;
     "install"=$install;
     "update"=$update;
