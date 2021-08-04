@@ -156,9 +156,6 @@
     # clean local config.rspm.package
     /system script remove [$FindPackage $configPkgName];
     /system script remove [$FindPackage $configPkgExtName];
-    # make new config array
-    :set ($context->"packageList") "noquote:\$packageList";
-    :set ($context->"packageMapping") "noquote:\$packageMapping";
     # add resource version
     :local resVersionURL (($context->"baseURL") . "res/version.rsc");
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
@@ -167,15 +164,16 @@
     :local packageInfoURL (($context->"baseURL") . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
     :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
+    # update config
+    :foreach k,v in $context do={
+        :set ($packageInfo->$k) $v;
+    }
     # make new config.rspm.package
-    [$CreateConfig $configPkgName $context $packageInfo Owner=($context->"owner")];
+    [$CreateConfig $configPkgName $packageInfo Owner=($context->"owner")];
     # make new config.rspm.package.ext
     :local packageInfoExtURL (($context->"baseURL") . "res/package-info-ext.rsc");
-    :local contextExt [$NewArray ];
-    :set ($contextExt->"packageList") "noquote:\$packageList";
-    :set ($contextExt->"packageMapping") "noquote:\$packageMapping";
     :local packageInfoExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoExtURL];
-    [$CreateConfig $configPkgExtName $contextExt $packageInfoExt Owner=($context->"owner")];
+    [$CreateConfig $configPkgExtName $packageInfoExt Owner=($context->"owner")];
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
     :local report [[$GetFunc "rspm.checkPackageState"] CheckExt=false];
@@ -504,7 +502,6 @@
     :global FindPackage;
     :global GetFunc;
     :global GetConfig;
-    :global Print;
     # local
     :local configPkgName "config.rspm.package";
     :local config [$GetConfig $configPkgName];
@@ -550,10 +547,37 @@
 
 
 # $remove
+# remove an installed package from local repository.
+# kwargs: Package=<str>         package name
 :local remove do={
     #DEFINE global
     :global IsNothing;
-
+    :global GetFunc;
+    :global GetConfig;
+    :global InValues;
+    :global FindPackage;
+    # local
+    :local configPkgName "config.rspm.package";
+    :local config [$GetConfig $configPkgName];
+    # generate report
+    :put "Check package $Package state...";
+    :local report [[$GetFunc "rspm.state.checkState"] Package=$Package];
+    :local state ($report->"state");
+    :if (![$InValues "upgrade" ($report->"action")]) do={
+        :foreach ad in ($report->"advice") do={
+            :put $ad;
+        }
+        :error "rspm.upgrade: state not match.";
+    }
+    # in available action
+    :local epkgList ($config->"essentialPackageList");
+    :if ([$InValues $Package $epkgList]) do={
+        :put "Package $Package is an essential package for RSPM.";
+        :put "Removing this package will corrupt RSPM.";
+        :error "rspm.upgrade: package is essential";
+    } else {
+        /system script remove [$FindPackage $Package];
+    }
 }
 
 

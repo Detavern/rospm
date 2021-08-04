@@ -434,9 +434,8 @@
 
 # $CreateConfig
 # create a new configuration package.
-# args: <str>                   config name
+# args: <str>                   <config package name>
 # args: <array->str>            config array
-# args: <array->str>            array of var
 # opt kwargs: Output=<str>      output format: file(default), str, array
 # opt kwargs: Owner=<str>       script owner
 # return: <str>                 string of config package
@@ -452,26 +451,30 @@
     :global Replace;
     :global ReadOption;
     :global ScriptLengthLimit;
-    :global Print;
     # check params
     :if (![$IsStr $1]) do={
         :error "Global.CreateConfig: \$1 should be str";
     }
     :if (![$IsArray $2]) do={
-        :error "Global.CreateConfig: \$2 should be array";
+        :error "Global.CreateConfig: \$2 should be a k,v array";
     }
     # local
-    :local pConfig $2;
+    :local pkgName $1;
+    :local config $2;
+    :local fileName [$Replace $pkgName "." "_"];
     :local pOutput [$ReadOption $Output $TypeofStr "file"];
     :local pOwner [$ReadOption $Owner $TypeofStr ""];
     :local LSL [$NewArray ];
-    # dump meta
+    :local configArray {
+        "metaInfo"="noquote:\$metaInfo";
+    };
     # TODO: better clock info
     :local clock [/system clock print as-value];
     :local date ($clock->"date");
     :local time ($clock->"time");
+    # dump meta
     :local meta {
-        "name"=$1;
+        "name"=$pkgName;
         "type"="config";
         "created_at"="$date $time";
         "last_modify"="$date $time";
@@ -479,33 +482,36 @@
     :set LSL ($LSL, [$DumpVar "metaInfo" $meta Output="array" Return=false]);
     :set ($LSL->[:len $LSL]) "";
     # dump additions
-    :if ([$IsArray $3]) do={
-        :foreach k,v in $3 do={
-            :local sLSL [$DumpVar $k $v Output="array" Return=false];
-            :set LSL ($LSL, $sLSL);
-            :set ($LSL->[:len $LSL]) "";
-        };
-    };
+    :foreach k,v in $config do={
+        :if ([$IsArray $v]) do={
+            :if ($k != "metaInfo") do={
+                :set ($configArray->$k) "noquote:\$$k";
+                :set LSL ($LSL, [$DumpVar $k $v Output="array" Return=false]);
+                :set ($LSL->[:len $LSL]) "";
+            }
+        } else {
+            :set ($configArray->$k) $v;
+        }
+    }
     # dump config
-    :set ($pConfig->"metaInfo") "noquote:\$metaInfo"
-    :set LSL ($LSL, [$DumpVar "config" $pConfig Output="array"]);
+    :set LSL ($LSL, [$DumpVar "config" $configArray Output="array"]);
     :set ($LSL->[:len $LSL]) "";
-    # output
+    # output array
     :if ($pOutput = "array") do={
         :return $LSL;
     }
     # join
     :local result [$Join ("\r\n") $LSL];
-    # script length
+    # check script length
     :if ([:len $result] >= $ScriptLengthLimit) do={
         :error "Global.CreateConfig: configuration file length reachs 30,000 characters limit, try split it";
     }
+    # output str
     :if ($pOutput = "str") do={
         :return $result;
     }
-    # make file
+    # output file
     :if ($pOutput = "file") do={
-        :local fileName [$Replace $1 "." "_"];
         :if ([$IsEmpty [/system script find name=$fileName]]) do={
             :if ($pOwner = "") do={
                 /system script add name=$fileName source=$result;
@@ -521,12 +527,13 @@
 
 # $UpdateConfig
 # update configure with target array.
-# args: <str>                   <package name>
+# args: <str>                   <config package name>
 # args: <array>                 config array
 # opt kwargs: Output=<str>      output format: file(default), str, array
 :global UpdateConfig do={
     # global declare
     :global GetConfig;
+    :global IsStr;
     :global IsArray;
     :global DumpVar;
     :global Join;
@@ -536,24 +543,28 @@
     :global ScriptLengthLimit;
     :global NewArray;
     :global Replace;
+    # check params
+    :if (![$IsStr $1]) do={
+        :error "Global.UpdateConfig: \$1 should be str";
+    };
+    :if (![$IsArray $2]) do={
+        :error "Global.UpdateConfig: \$2 should a k,v array";
+    };
     # local
     :local pkgName $1;
-    :local pOutput [$ReadOption $Output $TypeofStr "file"];
-    :local fileName [$Replace $pkgName "." "_"];
     :local config [$GetConfig $pkgName];
-    :local Owner [/system script get [/system script find name=$fileName] owner];
+    :local fileName [$Replace $pkgName "." "_"];
+    :local pOutput [$ReadOption $Output $TypeofStr "file"];
+    :local pOwner [/system script get [/system script find name=$fileName] owner];
     :local LSL [$NewArray ];
     :local configArray {
         "metaInfo"="noquote:\$metaInfo";
     };
-    :if (![$IsArray $2]) do={
-        :error "Global.UpdateConfig: \$2 should a k,v array";
-    }
-    # update meta
     # TODO: better clock info
     :local clock [/system clock print as-value];
     :local date ($clock->"date");
     :local time ($clock->"time");
+    # update meta and dump it
     :local meta ($config->"metaInfo");
     :set ($meta->"last_modify") "$date $time";
     :set LSL ($LSL, [$DumpVar "metaInfo" $meta Output="array" Return=false]);
@@ -562,7 +573,7 @@
     :foreach k,v in $2 do={
         :set ($config->$k) $v;
     }
-    # update addition array
+    # dump addition array
     :foreach k,v in $config do={
         :if ([$IsArray $v]) do={
             :if ($k != "metaInfo") do={
@@ -574,7 +585,7 @@
             :set ($configArray->$k) $v;
         }
     }
-    # update config array
+    # dump config array
     :set LSL ($LSL, [$DumpVar "config" $configArray Output="array"]);
     :set ($LSL->[:len $LSL]) "";
     # output array
@@ -583,7 +594,7 @@
     }
     # join
     :local result [$Join ("\r\n") $LSL];
-    # script length
+    # check script length
     :if ([:len $result] >= $ScriptLengthLimit) do={
         :error "Global.UpdateConfig: configuration file length reachs 30,000 characters limit, try split it";
     }
@@ -592,7 +603,7 @@
         :return $result;
     }
     # output file
-    /system script set [$FindPackage $pkgName] source=$result owner=$Owner;
+    /system script set [$FindPackage $pkgName] source=$result owner=$pOwner;
 }
 
 

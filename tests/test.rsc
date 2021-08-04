@@ -197,10 +197,6 @@
 ## create config
 {
     :local config {
-        "packageList"="noquote:\$packageList";
-        "description"="noquote:\$description";
-    };
-    :local add {
         "packageList"={
             "p1"={
                 "version"="0.0.1";
@@ -214,7 +210,7 @@
         };
         "description"="some description";
     };
-    :put [$CreateConfig "config.rspm" $config $add];
+    :put [$CreateConfig "config.rspm" $config];
 }
 
 
