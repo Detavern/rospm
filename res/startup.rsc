@@ -3,6 +3,7 @@
 :local frameworkScriptList {
     "global-variables";
     "global-functions";
+    "global-functions_datetime";
     "global-functions_package";
 }
 
