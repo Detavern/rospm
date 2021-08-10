@@ -89,6 +89,19 @@
 }
 
 
+# $IsTime
+# validate the type of variable.
+# args: <var>                   variable
+:global IsTime do={
+    :global TypeofTime;
+    :if ([:typeof $1] = $TypeofTime) do={
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 # $IsArray
 # validate the type of variable.
 # args: <var>                   variable
@@ -224,7 +237,7 @@
     :global IsNothing;
     :global IsNil;
     :global IsStr;
-    :global RecoverType;
+    :global TypeRecovery;
     :global TypeofBool;
     :global TypeofNum;
     :global TypeofID;
@@ -240,7 +253,7 @@
             :set default $3;
         } else {
             :if ([$IsStr $3]) do={
-                :set default [$RecoverType $3];
+                :set default [$TypeRecovery $3];
                 :if ([:typeof $default]!=$2) do={
                     :error "Global.ReadOption: type of \$default should match \$Typeof";
                 }
@@ -411,11 +424,11 @@
 }
 
 
-# $RecoverType
+# $TypeRecovery
 # recover type and value from a string
 # args: <str>                   value to recover
 # return: <var>                 recovered value
-:global RecoverType do={
+:global TypeRecovery do={
     :local value;
     :do {
         :local cmdStr "{:local rT do={:return \$1}; :local v $1; \$rT \$v;}";
@@ -449,16 +462,16 @@
     :global IsNothing;
     :global IsStr;
     :global Input;
-    :global RecoverType;
+    :global TypeRecovery;
     # local
     :if (![$IsStr $1]) do={
         :error "Global.InputV: first param should be str"
     }
     :if ([$IsNothing $2]) do={
         :local valueStr [$Input $1];
-        :return [$RecoverType $valueStr];
+        :return [$TypeRecovery $valueStr];
     } else {
-        :return [$RecoverType $2];
+        :return [$TypeRecovery $2];
     }
 }
 
@@ -838,6 +851,7 @@
     }
     :return $result;
 }
+
 
 # package info
 :local package {

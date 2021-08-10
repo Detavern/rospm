@@ -71,7 +71,6 @@
             };
             # keep or not
             :if ($flagInstall) do={
-                # TODO:
                 [[$GetFunc "rspm.install"] Package=$pn];
             };
         };
@@ -81,7 +80,6 @@
             [[$GetFunc "rspm.upgrade"] Package=$pn];
         };
         :if ($state = "NES") do={
-                # TODO:
             [[$GetFunc "rspm.install"] Package=$pn];
         };
     }
@@ -175,6 +173,28 @@
         :error "rspm.install: state not match.";
     }
     # in available action
+    :if ($state = "NES") do={
+        :local versionR (($report->"metaConfig")->"version");
+        :if (($report->"configName") = $configPkgName) do={
+            :put "Installing core package $Package, latest version is $versionR";
+            :local pkgUrl (($config->"baseURL") . "lib/$Package.rsc")
+            :put "Get: $pkgUrl";
+            :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
+        } else {
+            :put "Installing extension package $Package, latest version is $versionR";
+            :local pkgUrl (($report->"metaConfig")->"proxyUrl");
+            :if ([$IsNothing $pkgUrl]) do={
+                :set pkgUrl (($report->"metaConfig")->"url");
+            }
+            :if ($pkgStr = "") do={
+                :put "Get: $pkgUrl";
+                :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
+            }
+        };
+        :put "Writing source into repository...";
+        /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+    }
+    # downgrade
     # TODO: ask continue
     :if ($state = "LT") do={
         :local versionL (($report->"metaScript")->"version");
@@ -198,6 +218,7 @@
         :put "Writing source into repository...";
         /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
     }
+    # reinstall
     # TODO: ask continue
     :if ($state = "SAME") do={
         :local versionR (($report->"metaConfig")->"version");
@@ -208,27 +229,6 @@
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
             :put "Reinstalling extension package $Package, latest version is $versionR";
-            :local pkgUrl (($report->"metaConfig")->"proxyUrl");
-            :if ([$IsNothing $pkgUrl]) do={
-                :set pkgUrl (($report->"metaConfig")->"url");
-            }
-            :if ($pkgStr = "") do={
-                :put "Get: $pkgUrl";
-                :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-            }
-        };
-        :put "Writing source into repository...";
-        /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
-    }
-    :if ($state = "NES") do={
-        :local versionR (($report->"metaConfig")->"version");
-        :if (($report->"configName") = $configPkgName) do={
-            :put "Installing core package $Package, latest version is $versionR";
-            :local pkgUrl (($config->"baseURL") . "lib/$Package.rsc")
-            :put "Get: $pkgUrl";
-            :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-        } else {
-            :put "Installing extension package $Package, latest version is $versionR";
             :local pkgUrl (($report->"metaConfig")->"proxyUrl");
             :if ([$IsNothing $pkgUrl]) do={
                 :set pkgUrl (($report->"metaConfig")->"url");

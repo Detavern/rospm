@@ -1,6 +1,7 @@
 # Global Functions | Package
 # =========================================================
 # ALL global functions follows upper camel case.
+# Global Package for package creation, modification, deletion.
 #
 # USE as your wish
 
@@ -40,18 +41,18 @@
     # check meta
     :local metaList ($1->"metaInfo");
     :if (![$IsArray $metaList]) do={
-        :log warning "Global.ValidatePackageContent: metaInfo not found in this package";
+        :log warning "Global.Package.ValidatePackageContent: metaInfo not found in this package";
         :return false;
     }
     # check validate array
     :local va $2;
     :if (![$IsArray $va]) do={
-        :error "Global.ValidatePackageContent: \$2 should be a validate array";
+        :error "Global.Package.ValidatePackageContent: \$2 should be a validate array";
     }
     # va: check meta name
     :if ([$InKeys "name" $va]) do={
         :if (($metaList->"name") != ($va->"name")) do={
-            :log warning "Global.ValidatePackageContent: mismatch package name: $pkgName";
+            :log warning "Global.Package.ValidatePackageContent: mismatch package name: $pkgName";
             :return false;
         }
     }
@@ -59,7 +60,7 @@
     :if ([$InKeys "type" $va]) do={
         :local metaType [$ReadOption ($metaList->"type") $TypeofStr "code"];
         :if ($metaType != ($va->"type")) do={
-            :log warning "Global.ValidatePackageContent: mismatch package type: $pkgName";
+            :log warning "Global.Package.ValidatePackageContent: mismatch package type: $pkgName";
             :return false;
         }
     }
@@ -67,7 +68,7 @@
     :if ([$InKeys "url" $va]) do={
         :local metaUrl [$ReadOption ($metaList->"url") $TypeofStr ""];
         :if ($metaUrl = "") do={
-            :log warning "Global.ValidatePackageContent: url not found in meta: $pkgName";
+            :log warning "Global.Package.ValidatePackageContent: url not found in meta: $pkgName";
             :return false;
         }
     }
@@ -95,7 +96,7 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.ValidatePackage: script \"$fileName\" not found"
+        :error "Global.Package.ValidatePackage: script \"$fileName\" not found"
     }
     # parse code and get result;
     :local pSource [:parse [/system script get ($idList->0) source]];
@@ -118,7 +119,7 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.GetSource: script \"$fileName\" not found"
+        :error "Global.Package.GetSource: script \"$fileName\" not found"
     }
     # get source;
     :local pSource [/system script get ($idList->0) source];
@@ -151,7 +152,7 @@
         :local fileName [$Replace $pkgName "." "_"];
         :local idList [/system script find name=$fileName];
         :if ([$IsEmpty $idList]) do={
-            :error "Global.GetMeta: script \"$fileName\" not found"
+            :error "Global.Package.GetMeta: script \"$fileName\" not found"
         } else {
             :set tID ($idList->0);
         }
@@ -161,7 +162,7 @@
         :set pkgName [$Replace [/system script get $pID name] "_" "."];
     }
     :if ([$IsNothing $tID]) do={
-        :error "Global.GetMeta: need either <name> or <id>";
+        :error "Global.Package.GetMeta: need either <name> or <id>";
     }
     # parse code and get result;
     :local pSource [:parse [/system script get $tID source]];
@@ -173,7 +174,7 @@
         }
     }
     if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.GetMeta: could not validate target package";
+        :error "Global.Package.GetMeta: could not validate target package";
     }
     :return ($pkg->"metaInfo");
 }
@@ -195,7 +196,7 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.GetFunc: script \"$fileName\" not found"
+        :error "Global.Package.GetFunc: script \"$fileName\" not found"
         :return "";
     }
     # parse code and get result;
@@ -203,7 +204,7 @@
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="code"};
     if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.GetFunc: could not validate target package";
+        :error "Global.Package.GetFunc: could not validate target package";
     }
     :return ($pkg->$funcName);
 }
@@ -223,7 +224,7 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.GetConfig: script \"$fileName\" not found"
+        :error "Global.Package.GetConfig: script \"$fileName\" not found"
         :return "";
     }
     # parse code and get result;
@@ -231,7 +232,7 @@
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="config"};
     if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.GetConfig: could not validate target package";
+        :error "Global.Package.GetConfig: could not validate target package";
     }
     :return $pkg;
 }
@@ -251,7 +252,7 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.GetEnv: script \"$fileName\" not found"
+        :error "Global.Package.GetEnv: script \"$fileName\" not found"
         :return "";
     }
     # parse code and get result;
@@ -259,7 +260,7 @@
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="env"};
     if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.GetEnv: could not validate target package";
+        :error "Global.Package.GetEnv: could not validate target package";
     }
     :return $pkg;
 }
@@ -453,10 +454,10 @@
     :global ScriptLengthLimit;
     # check params
     :if (![$IsStr $1]) do={
-        :error "Global.CreateConfig: \$1 should be str";
+        :error "Global.Package.CreateConfig: \$1 should be str";
     }
     :if (![$IsArray $2]) do={
-        :error "Global.CreateConfig: \$2 should be a k,v array";
+        :error "Global.Package.CreateConfig: \$2 should be a k,v array";
     }
     # local
     :local pkgName $1;
@@ -504,7 +505,7 @@
     :local result [$Join ("\r\n") $LSL];
     # check script length
     :if ([:len $result] >= $ScriptLengthLimit) do={
-        :error "Global.CreateConfig: configuration file length reachs 30,000 characters limit, try split it";
+        :error "Global.Package.CreateConfig: configuration file length reachs 30,000 characters limit, try split it";
     }
     # output str
     :if ($pOutput = "str") do={
@@ -519,7 +520,7 @@
                 /system script add name=$fileName source=$result owner=$pOwner;
             }
         } else {
-            :error "Global.CreateConfig: same configuration file already exist!";
+            :error "Global.Package.CreateConfig: same configuration file already exist!";
         }
     }
 }
@@ -545,10 +546,10 @@
     :global Replace;
     # check params
     :if (![$IsStr $1]) do={
-        :error "Global.UpdateConfig: \$1 should be str";
+        :error "Global.Package.UpdateConfig: \$1 should be str";
     };
     :if (![$IsArray $2]) do={
-        :error "Global.UpdateConfig: \$2 should a k,v array";
+        :error "Global.Package.UpdateConfig: \$2 should a k,v array";
     };
     # local
     :local pkgName $1;
@@ -596,7 +597,7 @@
     :local result [$Join ("\r\n") $LSL];
     # check script length
     :if ([:len $result] >= $ScriptLengthLimit) do={
-        :error "Global.UpdateConfig: configuration file length reachs 30,000 characters limit, try split it";
+        :error "Global.Package.UpdateConfig: configuration file length reachs 30,000 characters limit, try split it";
     }
     # output str
     :if ($pOutput = "str") do={
@@ -651,7 +652,7 @@
                 :set posLS ($posLS + 1);
             }
         } else {
-            :error "Global.UpdateConfig: scope start position not found";
+            :error "Global.Package.UpdateConfig: scope start position not found";
         }
     }
     # find end position
@@ -669,7 +670,7 @@
                 :set posLE ($posLE + 1);
             }
         } else {
-            :error "Global.UpdateConfig: scope end position not found";
+            :error "Global.Package.UpdateConfig: scope end position not found";
         }
     }
     # update config array
@@ -683,17 +684,75 @@
     :local result [$Join ("\r\n") $resultList];
     # script length check
     :if ([:len $result] >= $ScriptLengthLimit) do={
-        :error "Global.UpdateConfig: configuration file length reachs 30,000 characters limit, try split it"
+        :error "Global.Package.UpdateConfig: configuration file length reachs 30,000 characters limit, try split it"
     }
     # set source
     :local idList [/system script find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.UpdateConfig: script \"$fileName\" not found"
+        :error "Global.Package.UpdateConfig: script \"$fileName\" not found"
     }
     # parse code and get result;
     /system script set numbers=($idList->0) source=$result;
     :return "";
 }
+
+
+# $SetGlobalVar
+# set global variables 
+# args: <str>                       variable's name
+# args: <var>                       variable's value
+# opt kwargs: Timeout=<time>        timeout(sec)
+:global SetGlobalVar do={
+    # global declare
+    :global IsStr;
+    :global Join;
+    :global TypeofStr;
+    :global TypeofTime;
+    :global ReadOption;
+    :global TypeRecovery;
+    :global GetCurrentDatetime;
+    :global ShiftDatetime;
+    :global GetSDT;
+    # check
+    :if (![$IsStr $1]) do={
+        :error "Global.Package.SetGlobalVar: \$1 should be str";
+    };
+    :local name $1;
+    :local value [$TypeRecovery $2];
+    :local timeout [$ReadOption $Timeout $TypeofTime 0:0:0]
+    :if ($timeout < 0:0:0) do={
+        :error "Global.Package.SetGlobalVar: \$Timeout should greater than 00:00:00";
+    };
+    :local funcStr;
+    :if ([:typeof $value] = $TypeofStr) do={
+        :set funcStr ":global $name \"$value\";";
+    } else {
+        :set funcStr ":global $name $value;";
+    };
+    # parse exec
+    :local func [:parse $funcStr];
+    [$func ];
+    # timeout check
+    :if ($timeout > 0:0:0 and $timeout < 0:1:0) do={
+        :error "Global.Package.SetGlobalVar: \$Timeout should longer than 1 minute";
+    }
+    # timeout
+    :if ($timeout > 0:0:0) do={
+        :local scheduleName "RSPM_SetGlobalVar_$name_Timeout";
+        :local cdt [$GetCurrentDatetime ];
+        :local tdt [$ShiftDatetime $cdt $timeout];
+        :local sdt [$GetSDT $tdt];
+        :local startTime ($sdt->"time");
+        :local startDate ($sdt->"date");
+        :local eventStrList {
+            "/system script environment remove $name;";
+            "/system scheduler remove $scheduleName;";
+        }
+        :local eventStr [$Join ("\r\n") $eventStrList];
+        /system scheduler add name=$scheduleName start-date=$startDate start-time=$startTime on-event=$eventStr;
+    }
+}
+
 
 
 # package info

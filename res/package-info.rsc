@@ -11,6 +11,11 @@
         "global"=true;
     };
     {
+        "name"="global-functions.datetime";
+        "version"="0.0.1";
+        "global"=true;
+    };
+    {
         "name"="global-functions.package";
         "version"="0.0.1";
         "global"=true;
@@ -42,18 +47,20 @@
 :local packageMapping {
     "global-variables"=0;
     "global-functions"=1;
-    "global-functions.package"=2;
-    "global-helpers"=3;
-    "tool.http"=4;
-    "tool.remote"=5;
-    "rspm.state"=6;
-    "rspm"=7;
+    "global-functions.datetime"=2;
+    "global-functions.package"=3;
+    "global-helpers"=4;
+    "tool.http"=5;
+    "tool.remote"=6;
+    "rspm.state"=7;
+    "rspm"=8;
 }
 
 # the minimum requirement packages of rspm
 :local essentialPackageList {
     "global-variables";
     "global-functions";
+    "global-functions.datetime";
     "global-functions.package";
     "tool.http";
     "tool.remote";

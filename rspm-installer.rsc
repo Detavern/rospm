@@ -54,6 +54,7 @@
 :local sidList [:toarray ""];
 :set sidList ($sidList, [$installPackage "global-variables"]);
 :set sidList ($sidList, [$installPackage "global-functions"]);
+:set sidList ($sidList, [$installPackage "global-functions_datetime"]);
 :set sidList ($sidList, [$installPackage "global-functions_package"]);
 
 # load global

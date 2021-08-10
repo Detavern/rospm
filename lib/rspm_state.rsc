@@ -16,10 +16,11 @@
     :local configPkgName "config.rspm.package";
     :local config [$GetConfig $configPkgName];
     :local versionL ($config->"version");
+    # TODO: cache
     # remote version
     :local versionURL (($config->"baseURL") . "res/version.rsc");
     :local versionR [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
-    :return ($versionL >= $versionR)
+    :return ($versionL >= $versionR);
 }
 
 

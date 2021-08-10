@@ -43,6 +43,10 @@
 # script limitation
 :global ScriptLengthLimit 30000;
 
+# datetime
+:global MonthsOfTheYear {31;28;31;30;31;30;31;31;30;31;30;31};
+:global MonthsName {"jan";"feb";"mar";"apr";"may";"jun";"jul";"aug";"sep";"oct";"nov";"dec"};
+
 # package info
 :local package {
     "metaInfo"=$metaInfo;
