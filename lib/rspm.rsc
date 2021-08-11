@@ -264,6 +264,7 @@
     :global UpdateConfig;
     :global NewArray;
     :global InKeys;
+    :global SetGlobalVar;
     :global ValidatePackageContent;
     # local
     :local configPkgName "config.rspm.package";
@@ -278,6 +279,7 @@
     :local resVersionURL (($config->"baseURL") . "res/version.rsc");
     :put "Get: $resVersionURL";
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
+    [$SetGlobalVar "RSPMRemoteVersion" $resVersion Timeout=00:30:00];
     # check core
     :put "Checking core packages...";
     :if ($version >= $resVersion) do={
