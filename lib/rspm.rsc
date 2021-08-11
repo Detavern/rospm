@@ -192,7 +192,8 @@
             }
         };
         :put "Writing source into repository...";
-        /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+        :local fileName [$Replace $pkgName "." "_"];
+        /system script add name=$fileName source=$pkgStr owner=($config->"owner");
     }
     # downgrade
     # TODO: ask continue
