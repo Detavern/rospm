@@ -2,7 +2,7 @@
     "baseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
     "owner"="rspm";
 };
-:global RSPMInput do={
+:global RSPMInstallerInput do={
     :terminal style escaped;
     :put $1; 
     :return;
@@ -11,7 +11,7 @@
 # args: <str>           name of package
 :local installPackage do={
     :global RSPMInstallerConfig;
-    :global RSPMInput;
+    :global RSPMInstallerInput;
     :local pkgName $1;
     :local URL (($RSPMInstallerConfig->"baseURL") . "lib/" . $pkgName . ".rsc");
     :local Owner ($RSPMInstallerConfig->"owner");
@@ -24,7 +24,7 @@
         :local scriptOwner [/system script get ($idList->0) owner];
         :if ($scriptOwner != ($RSPMInstallerConfig->"owner")) do={
             :put "Same script name \"$pkgName\" with owner \"$scriptOwner\" found in repository.";
-            :local answer [$RSPMInput "Press y to replace it (y/N)"];
+            :local answer [$RSPMInstallerInput "Press y to replace it (y/N)"];
             :if ($answer != "y") do={
                 :put "Abort";
                 :return "";
@@ -43,7 +43,7 @@
 :put "| RouterOS Script Package Manager |";
 :put "-----------------------------------";
 :put "Installer initializing ...";
-:local answer [$RSPMInput "WARNING: this is a PROTOTYPE version, FOR TEST ONLY (y/N)"];
+:local answer [$RSPMInstallerInput "WARNING: this is a PROTOTYPE version, FOR TEST ONLY (y/N)"];
 :if ($answer != "y") do={
     :put "Installation abort, use";
     :put "/import rspm-installer.rsc";
@@ -74,6 +74,6 @@
 [[$GetFunc "rspm.firstRun"] Context=$RSPMInstallerConfig];
 
 # remove RSPM global envs
-:local removeList [/system script environment find name~"RSPM"];
+:local removeList [/system script environment find name~"RSPMInstaller"];
 /system script environment remove numbers=$removeList;
 :put "RSPM setup finished, enjoy!";
