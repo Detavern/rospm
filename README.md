@@ -431,7 +431,7 @@ it is an array of current date & time.
 You can call it a `datetime` array.
 
 `datetime` format:
-`<year>;<month>;<date>;<hour>;<minute>;<second>`
+`<year>;<month>;<day>;<hour>;<minute>;<second>`
 
 Each of its elements is `num` type. 
 
@@ -484,18 +484,184 @@ Key time: 19:29:35
     /system scheduler add name="example" start-time=($sdt->"time") start-date=($sdt->"date") on-event=":put \"do sth\";"
 }
 ```
+#### Data Structure
+
+```
+# <SDT> array (system datetime)
+{
+    "date"=<str>;       # "aug/18/2021"
+    "time"=<time>;      # 20:10:10
+}
+
+# <datetime> array
+{
+    <year>;             # num, calender year
+    <month>;            # num, calendar month 1-12
+    <day>;              # num, calendar date according to the month
+    <hour>;             # num, 0-23
+    <minute>;           # num, 0-59
+    <second>;           # num, 0-59
+}
+
+# <timedelta> array
+{
+    "years"=<num>;
+    "months"=<num>;
+    "days"=<num>;
+    "hours"=<num>;
+    "minutes"=<num>;
+    "seconds"=<num>;
+}
+```
 
 #### `$IsSDT`
-#### `$IsDatetime`
-#### `$IsTimeDelta`
-#### `$IsLeapYear`
-#### `$GetCurrentClock`
-#### `$GetCurrentSDT`
-#### `$GetCurrentDatetime`
-#### `$GetSDT`
-#### `$GetDatetime`
-#### `$ShiftDatetime`
+```
+[admin@MikroTik] > {
+    :local v [/system clock print as-value];
+    $Print [$IsSDT $v];
+    :local v {"date"="aug/8/2021";"time"=00:00:00};
+    $Print [$IsSDT $v];
+}
 
+Type  : bool
+Value : true
+Type  : bool
+Value : true
+```
+
+#### `$IsDatetime`
+```
+[admin@MikroTik] > {
+    :local v {2021; 8; 12; 0; 0; 0};
+    $Print [$IsDatetime $v];
+    :local v {2021; 2; 30; 0; 0; 0};
+    $Print [$IsDatetime $v];
+}
+
+Type  : bool
+Value : true
+Type  : bool
+Value : false
+```
+
+#### `$IsTimeDelta`
+```
+[admin@MikroTik] > {
+    :local v {"days"=-100};
+    $Print [$IsTimeDelta $v];
+    :local v {"dayss"=-1};
+    $Print [$IsTimeDelta $v];
+}
+
+Type  : bool
+Value : true
+Type  : bool
+Value : false
+```
+
+#### `$IsLeapYear`
+```
+[admin@MikroTik] > {
+    $Print [$IsLeapYear 2020];
+    $Print [$IsLeapYear 2021];
+}
+
+Type  : bool
+Value : true
+Type  : bool
+Value : false
+```
+
+#### `$GetCurrentClock`
+```
+# $GetCurrentClock
+# get current info from system clock
+# return: <str>                 clock info array
+
+[admin@MikroTik] > $Print [$GetCurrentClock ];
+
+Type  : array
+Key date: aug/11/2021
+Key dst-active: false
+Key gmt-offset: 0
+Key time: 20:00:00
+Key time-zone-autodetect: true
+Key time-zone-name: UTC
+```
+
+#### `$GetCurrentSDT`
+```
+# $GetCurrentSDT
+# get current SDT from system clock
+# return: <array>               SDT array
+
+[admin@MikroTik] > $Print [$GetCurrentSDT ];
+
+Type  : array
+Key date: aug/11/2021
+Key time: 20:00:00
+```
+
+#### `$GetCurrentDatetime`
+```
+# $GetCurrentDatetime
+# get current datetime from system clock
+# return: <array>               datetime array
+
+[admin@MikroTik] > :put [$GetCurrentDatetime ];
+
+2021;8;11;20;00;00
+```
+#### `$GetSDT`
+```
+# $GetSDT
+# args: <var>                   <datetime>, <timestamp>
+# return: <sdt>                 array of sdt
+
+[admin@MikroTik] > $Print [$GetSDT [$GetCurrentDatetime ]];
+
+Type  : array
+Key date: aug/11/2021
+Key time: 20:00:00
+```
+
+#### `$GetDatetime`
+```
+# $GetDatetime
+# args: <var>                   <sdt>, <timestamp>
+# return: <datetime>            datetime
+
+[admin@MikroTik] > :put [$GetDatetime [$GetCurrentSDT ]];
+
+2021;8;11;20;00;00
+```
+
+#### `$ShiftDatetime`
+```
+# $ShiftDatetime
+# datetime shift
+# args: <datetime>              array of datetime
+# args: <time>/<timedelta>      time or timedelta
+# return: <array>               shifted datetime
+
+[admin@MikroTik] > {
+    :local dt {2021;8;11;20;00;00};
+    :local td {"days"=-10000};
+    :local shifted [$ShiftDatetime $dt $td];
+    :put $shifted;
+}
+
+1994;3;26;20;00;00
+
+[admin@MikroTik] > {
+    :local dt {2021;8;11;20;00;00};
+    :local td {"seconds"=10000000};
+    :local shifted [$ShiftDatetime $dt $td];
+    :put $shifted;
+}
+
+2021;12;5;13;46;40
+```
 
 ### Array Operations
 

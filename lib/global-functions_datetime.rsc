@@ -17,7 +17,7 @@
 # <year>      num, calender year
 # <month>     num, calendar month 1-12
 # <day>       num, calendar day
-# <hour>      num, 0-24
+# <hour>      num, 0-23
 # <minute>    num, 0-59
 # <second>    num, 0-59
 #
@@ -135,7 +135,7 @@
 
 # $GetCurrentClock
 # get current info from system clock
-# return: <str>                 date
+# return: <str>                 clock array
 :global GetCurrentClock do={
     :local clock [/system clock print as-value];
     :return $clock;
