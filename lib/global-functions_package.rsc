@@ -188,6 +188,7 @@
     :global RSplit;
     :global Replace;
     :global IsEmpty;
+    :global IsNothing;
     :global ValidatePackageContent;
     # split package & function
     :local splitted [$RSplit $1 "." 1];
@@ -196,7 +197,7 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.GetFunc: script \"$fileName\" not found"
+        :error "Global.Package.GetFunc: script \"$fileName\" not found";
         :return "";
     }
     # parse code and get result;
@@ -206,7 +207,11 @@
     if (![$ValidatePackageContent $pkg $va]) do={
         :error "Global.Package.GetFunc: could not validate target package";
     }
-    :return ($pkg->$funcName);
+    :local func ($pkg->$funcName);
+    :if ([$IsNothing $func]) do={
+        :error "Global.Package.GetFunc: function $funcName not found in package.";
+    }
+    :return $func;
 }
 
 
