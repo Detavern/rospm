@@ -43,7 +43,7 @@
 :put "| RouterOS Script Package Manager |";
 :put "-----------------------------------";
 :put "Installer initializing ...";
-:local answer [$RSPMInstallerInput "WARNING: this is a PROTOTYPE version, FOR TEST ONLY (y/N)"];
+:local answer [$RSPMInstallerInput "WARNING: this is an APLHA version, FOR TEST ONLY (y/N)"];
 :if ($answer != "y") do={
     :put "Installation abort, use";
     :put "/import rspm-installer.rsc";
