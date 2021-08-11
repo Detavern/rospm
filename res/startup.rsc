@@ -3,8 +3,11 @@
 :local frameworkScriptList {
     "global-variables";
     "global-functions";
+    "global-functions_array";
+    "global-functions_string";
     "global-functions_datetime";
     "global-functions_package";
+    "global-functions_misc";
 }
 
 :foreach fileName in $frameworkScriptList do={

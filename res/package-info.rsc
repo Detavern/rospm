@@ -11,12 +11,27 @@
         "global"=true;
     };
     {
+        "name"="global-functions.array";
+        "version"="0.0.1";
+        "global"=true;
+    };
+    {
+        "name"="global-functions.string";
+        "version"="0.0.1";
+        "global"=true;
+    };
+    {
         "name"="global-functions.datetime";
         "version"="0.0.1";
         "global"=true;
     };
     {
         "name"="global-functions.package";
+        "version"="0.0.1";
+        "global"=true;
+    };
+    {
+        "name"="global-functions.misc";
         "version"="0.0.1";
         "global"=true;
     };
@@ -47,21 +62,27 @@
 :local packageMapping {
     "global-variables"=0;
     "global-functions"=1;
-    "global-functions.datetime"=2;
-    "global-functions.package"=3;
-    "global-helpers"=4;
-    "tool.http"=5;
-    "tool.remote"=6;
-    "rspm.state"=7;
-    "rspm"=8;
+    "global-functions.array"=2;
+    "global-functions.string"=3;
+    "global-functions.datetime"=4;
+    "global-functions.package"=5;
+    "global-functions.misc"=6;
+    "global-helpers"=7;
+    "tool.http"=8;
+    "tool.remote"=9;
+    "rspm.state"=10;
+    "rspm"=11;
 }
 
 # the minimum requirement packages of rspm
 :local essentialPackageList {
     "global-variables";
     "global-functions";
+    "global-functions.array";
+    "global-functions.string";
     "global-functions.datetime";
     "global-functions.package";
+    "global-functions.misc";
     "tool.http";
     "tool.remote";
     "rspm.state";

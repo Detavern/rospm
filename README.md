@@ -2,7 +2,7 @@
 
 ## alpha version *(for test only, no warranty)*
 
-RSPM is the package manager for RouterOS script.
+RSPM is a package manager for RouterOS script.
 You can use RSPM to install and share script packages.
 
 AS A PLUS, RSPM also provide many useful script packages for RouterOS,
@@ -11,6 +11,9 @@ which support RSPM itself and fulfill the missing
 
 All RSPM packages and configurations will store locally
 in you script repository(`/system script`) and keep working after reboot.
+
+The main propose of this project is
+to help you conveniently write and organize your script.
 
 ## Requirements
 
@@ -85,7 +88,7 @@ You can use this command to remove installed package.
 
 ### Reinstall package
 
-If you once installed some `extension packages` via URL and removed it later.
+If you once had installed some `extension packages` via URL and removed it later.
 And now, you want to install it again.
 You can use package name to install it directly,
 since the `metaInfo` is already written into local configurations.
@@ -112,9 +115,21 @@ Register use following command:
 [[$GetFunc "rspm.register"] Package="rspm.hello-world"];
 ```
 
-## Common Operations
+## Global Variables
 
-### `$Print`
+There are many global variables which will be loaded automatically when startup,
+that you can use when writing your own script.
+
+**DO NOT CORRUPT any value of those UNLESS you know what you are doing, otherwise the tiny world will be ruined.**
+
+I will not list global variables here,
+you can take a look at [/lib/global-variables.rsc](https://github.com/Detavern/rspm/blob/master/lib/global-variables.rsc) for detail.
+
+## Global Functions
+
+### Common Operations
+
+#### `$Print`
 
 Your dearest friend, not only print value by also its type:
 
@@ -125,7 +140,8 @@ Value : 1
 ```
 
 You may notice here it mentions the type of `1` is `str`.
-And you will get `num` if using vanilla command `:put [:typeof 1];`.
+
+You will get `num` if using vanilla command `:put [:typeof 1];`.
 
 It is not an error, but how the vanilla script's function works!
 It seems all values passing into the function without
@@ -138,7 +154,7 @@ Type  : num
 Value : 1
 ```
 
-And there is some trick to bypassing it:
+However, there is some trick to bypassing it:
 ```
 [admin@MikroTik] > $Print (1)
 Type  : num
@@ -149,6 +165,71 @@ Type  : num
 Value : 1
 ```
 
-## String Operations
+#### `$IsNothing`
 
-## Datetime Operations
+```
+[admin@MikroTik] > {
+    :local v;
+    $Print [$IsNothing $v];
+
+    :local v ([$NewArray]->"key not exist");
+    $Print [$IsNothing $v];    
+}
+
+Type  : bool
+Value : true
+Type  : bool
+Value : true
+```
+
+#### `$IsNil`
+
+```
+[admin@MikroTik] > {
+    :local v [find "" "a"];
+    $Print [$IsNil $v];
+
+    :local v [$FuncNotExist ];
+    $Print [$IsNil $v];
+}
+
+Type  : bool
+Value : true
+Type  : bool
+Value : true
+```
+
+#### `$Is<Type>`
+
+```
+[admin@MikroTik] > {
+    # IsStr
+    :local v "foo";
+    $Print [$IsStr $v];
+    # IsNum
+    :local v 100;
+    $Print [$IsNum $v];
+    # IsIP
+    :local v 1.1.1.1;
+    $Print [$IsIP $v];
+    # IsTime
+    :local v 1w3d00:00:00;
+    $Print [$IsTime $v];
+    # Is Bool; IsIPPrefix; IsIPv6; IsIPv6Prefix; IsArray;
+}
+
+Type  : bool
+Value : true
+...
+...
+```
+
+#### `$Is<Type>`
+
+
+### String Operations
+
+### Datetime Operations
+
+### Array Operations
+
