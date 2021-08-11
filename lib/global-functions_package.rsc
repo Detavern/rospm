@@ -698,13 +698,18 @@
 
 
 # $SetGlobalVar
-# set global variables 
+# set global variables
+# TODO: let it still work after reboot
 # args: <str>                       variable's name
-# args: <var>                       variable's value
+# args: <var>                       variable's value, not nil
 # opt kwargs: Timeout=<time>        timeout(sec)
 :global SetGlobalVar do={
     # global declare
     :global IsStr;
+    :global IsNil;
+    :global IsNothing;
+    :global IsStr;
+    :global IsEmpty;
     :global Join;
     :global TypeofStr;
     :global TypeofTime;
@@ -718,6 +723,9 @@
         :error "Global.Package.SetGlobalVar: \$1 should be str";
     };
     :local name $1;
+    :if ([$IsNothing $2] or [$IsNil $2]) do={
+        :error "Global.Package.SetGlobalVar: \$2 should be neither nothing nor nil";
+    };
     :local value [$TypeRecovery $2];
     :local timeout [$ReadOption $Timeout $TypeofTime 0:0:0]
     :if ($timeout < 0:0:0) do={
@@ -738,21 +746,78 @@
     }
     # timeout
     :if ($timeout > 0:0:0) do={
-        :local scheduleName "RSPM_SetGlobalVar_$name_Timeout";
         :local cdt [$GetCurrentDatetime ];
         :local tdt [$ShiftDatetime $cdt $timeout];
         :local sdt [$GetSDT $tdt];
         :local startTime ($sdt->"time");
         :local startDate ($sdt->"date");
-        :local eventStrList {
-            "/system script environment remove $name;";
-            "/system scheduler remove $scheduleName;";
+        :local scheduleName "RSPM_SetGlobalVar_$name_Timeout";
+        :local idList [/system scheduler find name=$scheduleName];
+        :if ([$IsEmpty $idList]) do={
+            :local eventStrList {
+                "/system script environment remove $name;";
+                "/system scheduler remove $scheduleName;";
+            }
+            :local eventStr [$Join ("\r\n") $eventStrList];
+            /system scheduler add name=$scheduleName start-date=$startDate start-time=$startTime on-event=$eventStr;
+        } else {
+            :local sID ($idList->0);
+            /system scheduler set numbers=$sID start-date=$startDate start-time=$startTime;
         }
-        :local eventStr [$Join ("\r\n") $eventStrList];
-        /system scheduler add name=$scheduleName start-date=$startDate start-time=$startTime on-event=$eventStr;
     }
 }
 
+
+# $LoadGlobalVar
+# load global variables from environment, raise error if value is nil or nothing. 
+# args: <str>                       variable's name
+# return: <var>                     value, return nil if not found
+:global LoadGlobalVar do={
+    # global declare
+    :global Nil;
+    :global IsStr;
+    :global IsNil;
+    :global IsEmpty;
+    :global IsNothing;
+    # check
+    :if (![$IsStr $1]) do={
+        :error "Global.Package.LoadGlobalVar: \$1 should be str";
+    };
+    :local varName $1;
+    # load
+    :local eID [/system script environment find name=$varName];
+    :if ([$IsEmpty $eID]) do={
+        :return $Nil;
+    } else {
+        :local funcStr ":global $varName;:return \$$varName;";
+        :local func [:parse $funcStr];
+        :local result [$func ];
+        :if ([$IsNil $result] or [$IsNothing $result]) do={
+            :error "Global.Package.LoadGlobalVar: load a nil or nothing value";
+        };
+        :return $result;
+    }
+}
+
+
+# $UnsetGlobalVar
+# unset a global variable
+# args: <str>                       variable's name
+:global UnsetGlobalVar do={
+    # global declare
+    :global IsStr;
+    :global IsEmpty;
+    # check
+    :if (![$IsStr $1]) do={
+        :error "Global.Package.UnsetGlobalVar: \$1 should be str";
+    };
+    :local varName $1;
+    # from environment
+    /system script environment remove [/system script environment find name=$varName];
+    # from scheduler
+    :local scheduleName "RSPM_SetGlobalVar_$varName_Timeout";
+    /system scheduler remove [/system scheduler find name=$scheduleName];
+}
 
 
 # package info

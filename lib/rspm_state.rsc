@@ -7,19 +7,30 @@
 
 # $checkVersion
 # check if the package list version is the latest.
-# return: <bool>            latest or not
+# opt kwargs: ForceUpdate=<bool>        false(default), force reload remote version
+# return: <bool>                        latest or not
 :local checkVersion do={
     #DEFINE global
+    :global IsNil;
     :global GetConfig;
     :global GetFunc;
+    :global ReadOption;
+    :global TypeofBool;
+    :global SetGlobalVar;
+    :global LoadGlobalVar;
     # local
+    :local forceUpdate [$ReadOption $ForceUpdate $TypeofBool false];
     :local configPkgName "config.rspm.package";
     :local config [$GetConfig $configPkgName];
     :local versionL ($config->"version");
-    # TODO: cache
     # remote version
-    :local versionURL (($config->"baseURL") . "res/version.rsc");
-    :local versionR [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
+    :local versionRName "RSPMRemoteVersion";
+    :local versionR [$LoadGlobalVar $versionRName];
+    :if ([$IsNil $versionR] or $forceUpdate) do={
+        :local versionURL (($config->"baseURL") . "res/version.rsc");
+        :set versionR [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
+        [$SetGlobalVar $versionRName $VersionR Timeout=00:30:00];
+    };
     :return ($versionL >= $versionR);
 }
 

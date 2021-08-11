@@ -259,9 +259,22 @@
 }
 
 ## setglobalvar with timeout
-{
-    [$SetGlobalVar "VAR" "hello world" Timeout=10w];
-}
+[$SetGlobalVar "VAR" "hello world" Timeout=10w];
+
+# error
+[$SetGlobalVar "VAR" $Nil Timeout=10w];
+[$SetGlobalVar "VAR" $Nothing Timeout=10w];
+
+## load global
+$Print [$LoadGlobalVar "VAR"];
+
+### error
+$Print [$LoadGlobalVar "Nil"];
+$Print [$LoadGlobalVar "Nothing"];
+
+## unset
+[$UnsetGlobalVar "VAR"];
+
 
 # Some Marginal situation
 
