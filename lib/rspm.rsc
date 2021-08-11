@@ -513,7 +513,7 @@
     :local upgradeList [$NewArray ];
     :foreach report in $reportList do={
         :if ([$InValues "upgrade" ($report->"action")]) do={
-            :put ($upgradeList->[:len $upgradeList]) $report;
+            :set ($upgradeList->[:len $upgradeList]) $report;
         }
     };
     # do upgrade
