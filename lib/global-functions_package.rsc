@@ -726,7 +726,9 @@
     :if ([$IsNothing $2] or [$IsNil $2]) do={
         :error "Global.Package.SetGlobalVar: \$2 should be neither nothing nor nil";
     };
-    :local value [$TypeRecovery $2];
+    # FIXME: :local value [$TypeRecovery $2];
+    # [$TypeRecovery "0.0.1"] -> 0.0.0.1(ip)
+    :local value $2;
     :local timeout [$ReadOption $Timeout $TypeofTime 0:0:0]
     :if ($timeout < 0:0:0) do={
         :error "Global.Package.SetGlobalVar: \$Timeout should greater than 00:00:00";

@@ -638,6 +638,11 @@ $Print [[$GetFunc "rspm.checkPackageStatus"] ];
 [[$GetFunc "rspm.upgrade"] Package="rspm.hello-world"];
 
 # rspm.state
+
+## check version
+[[$GetFunc "rspm.state.checkVersion"] ForceUpdate=true];
+
+
 ## checkState
 $Print [[$GetFunc "rspm.state.checkState"] Package="rspm"];
 $Print [[$GetFunc "rspm.state.checkState"] Package="notexist"];
