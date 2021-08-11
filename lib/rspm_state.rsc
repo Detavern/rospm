@@ -29,7 +29,7 @@
     :if ([$IsNil $versionR] or $forceUpdate) do={
         :local versionURL (($config->"baseURL") . "res/version.rsc");
         :set versionR [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
-        [$SetGlobalVar $versionRName $VersionR Timeout=00:30:00];
+        [$SetGlobalVar $versionRName $versionR Timeout=00:30:00];
     };
     :return ($versionL >= $versionR);
 }
