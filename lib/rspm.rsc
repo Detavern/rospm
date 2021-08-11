@@ -383,7 +383,7 @@
     }
     # in available action
     :if ($state = "GT") do={
-        :local pkgStr;
+        :local pkgUrl;
         :local versionR (($report->"metaConfig")->"version");
         :local versionL (($report->"metaScript")->"version");
         :if (($report->"configName") = $configPkgName) do={
