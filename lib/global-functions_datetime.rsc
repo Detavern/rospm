@@ -14,12 +14,12 @@
 #
 # <datetime> array
 # {<year>; <month>; <day>; <hour>; <minute>; <second>}
-# <year>      calender year
-# <month>     calendar month 1-12
-# <day>       calendar day
-# <hour>      0-24
-# <minute>    0-59
-# <second>    0-59
+# <year>      num, calender year
+# <month>     num, calendar month 1-12
+# <day>       num, calendar day
+# <hour>      num, 0-24
+# <minute>    num, 0-59
+# <second>    num, 0-59
 #
 # <timedelta> array
 # {
@@ -377,6 +377,7 @@
     :local dt $1;
     :local td [$GetFullTimedelta $2];
     # SS MM HH + only
+    # TODO: negative
     :local rSS (($dt->5) + ($td->"seconds"));
     :local SS ($rSS % 60);
     :local aMM ($rSS / 60);

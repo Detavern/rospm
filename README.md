@@ -415,5 +415,89 @@ Value : a,b,c,d,e
 
 ### Datetime Operations
 
+We will take an useful example of scheduler to explore these operations.
+
+Suppose you want to execute a script 1 week after current time.
+
+At first, we need to know current time.
+```
+[admin@MikroTik] > :put [$GetCurrentDatetime ];
+
+2021;8;11;19;29;35
+```
+
+Then you get `2021;8;11;19;29;35` as the result,
+it is an array of current date & time.
+So you can call it a `datetime` array.
+
+`datetime` format:
+
+`<year>;<month>;<date>;<hour>;<minute>;<second>`
+
+Each of its elements is `num` type. 
+
+Second, we need to adjust the datetime array one week forward:
+
+```
+[admin@MikroTik] > {
+    # current time
+    :local t [$GetCurrentDatetime ];
+    # make a timedelta of 1 week
+    :local timedelta {"days"=7};
+    # calc the shift
+    :put [$ShiftDatetime $t $timedelta];
+}
+
+2021;8;18;19;29;35
+```
+
+Here we defined a `timedelta` array with key `days`,
+you can also use other available keys such as `years`, `months`, `hours`, `minutes` and `seconds`.
+Their value can be positive or negative.
+
+Have a look at `/system scheduler add`, you can notice that new schedule use `start-date` and `start-time` to determine the final execute time.
+
+Therefore, we need to convert our shifted `datetime` into some struct that scheduler can use.
+Here it is:
+
+```
+[admin@MikroTik] > {
+    :local t [$GetCurrentDatetime ];
+    :local timedelta {"days"=7};
+    :local shifted [$ShiftDatetime $t $timedelta];
+    # convert into SDT (Abbr. SDT, system datetime)
+    $Print [$GetSDT $shifted];
+}
+
+Type  : array
+Key date: aug/18/2021
+Key time: 19:29:35
+```
+
+Finally we could create our new schedule:
+
+```
+[admin@MikroTik] > {
+    :local t [$GetCurrentDatetime ];
+    :local timedelta {"days"=7};
+    :local shifted [$ShiftDatetime $t $timedelta];
+    :local sdt [$GetSDT $shifted];
+    # schedule
+    /system scheduler add name="example" start-time=($sdt->"time") start-date=($sdt->"date") on-event=":put \"do sth\";"
+}
+```
+
+#### `$IsSDT`
+#### `$IsDatetime`
+#### `$IsTimeDelta`
+#### `$IsLeapYear`
+#### `$GetCurrentClock`
+#### `$GetCurrentSDT`
+#### `$GetCurrentDatetime`
+#### `$GetSDT`
+#### `$GetDatetime`
+#### `$ShiftDatetime`
+
+
 ### Array Operations
 
