@@ -224,10 +224,194 @@ Value : true
 ...
 ```
 
-#### `$Is<Type>`
+#### `$InKeys` & `$InValues`
 
+```
+[admin@MikroTik] > {
+    # InKeys
+    :local v {
+        "foo"="vf";
+        "bar"="vb";
+    };
+    $Print [$InKeys "foo" $v];
+    $Print [$InValues "vb" $v];
+}
+
+Type  : bool
+Value : true
+Type  : bool
+Value : true
+```
+
+#### `$Assert`
+
+```
+[admin@MikroTik] > {
+    :local v {
+        "foo"="vf";
+        "bar"="vb";
+    };
+    $Assert [$InKeys "foo" $v];
+    $Assert [$InValues "value not exist" $v] "value not found";
+}
+
+Assert error: value not found
+```
+
+#### `$InputV`
+
+Load value into the variable from terminal interactively.
+
+```
+# $InputV
+# args: <str>                   info
+# opt args: <str>               answer
+# return: <var>                 recovered value
+
+[admin@MikroTik] > {
+    :local v [$InputV "Please enter an ip address"];
+    # Enter an ip address from terminal, like 1.1.1.1
+    $Print $v;
+}
+
+Please enter an ip address
+value: 1.1.1.1
+
+Type  : ip
+Value : 1.1.1.1
+```
 
 ### String Operations
+
+#### `$Replace`
+
+```
+# $Replace
+# args: <str>                   string
+# args: <str>                   old
+# args: <str>                   new
+# return: <str>                 string replaced
+
+[admin@MikroTik] > $Print [$Replace "hello world" "world" "Alice"];
+
+Type  : str
+Value : hello Alice
+```
+
+#### `$Split`
+
+```
+# $Split
+# args: <str>                   target string
+# args: <str>                   sub string
+# opt args: <num>               split count
+# return: <array>               array
+
+[admin@MikroTik] > {
+    $Print [$Split "a,b,c,d" ","];
+    $Print [$Split "a,b,c,d" "," 1];
+}
+
+Type  : array
+Key 0: a
+Key 1: b
+Key 2: c
+Key 3: d
+
+Type  : array
+Key 0: a
+Key 1: b,c,d
+```
+
+#### `$RSplit`
+
+```
+# $RSplit
+# args: <str>                   target string
+# args: <str>                   sub string
+# opt args: <num>               split count
+# return: <array>               array
+
+[admin@MikroTik] > {
+    $Print [$RSplit "a,b,c,d" ","];
+    $Print [$RSplit "a,b,c,d" "," 1];
+}
+
+Type  : array
+Key 0: a
+Key 1: b
+Key 2: c
+Key 3: d
+
+Type  : array
+Key 0: a,b,c
+Key 1: d
+```
+
+#### `$StartsWith` & `$EndsWith`
+
+```
+# $StartsWith / $EndsWith
+# args: <str>                   target string
+# args: <str>                   sub string
+# return: <bool>                true or not
+
+[admin@MikroTik] > {
+    $Print [$StartsWith "hello world" "hello"];
+    $Print [$EndsWith "hello world" "world"];
+}
+
+Type  : bool
+Value : true
+Type  : bool
+Value : true
+```
+
+#### `$Strip`
+
+```
+# $Strip
+# args: <str>                   target string
+# opt args: <str>               characters to be removed
+# opt kwargs: Mode=<str>        mode: b(both,default), l(left), r(right)
+# return: <str>                 stripped string
+
+[admin@MikroTik] > {
+    $Print [$Strip ("  \r\nhello world  \t  ")];
+    $Print [$Strip ("hello world") "hed"];
+    $Print [$Strip ("hello world") "hed" Mode="l"];
+    $Print [$Strip ("hello world") "hed" Mode="r"];
+}
+
+Type  : str
+Value : hello world
+
+Type  : str
+Value : llo worl
+
+Type  : str
+Value : llo world
+
+Type  : str
+Value : hello worl
+```
+
+#### `$Join`
+
+```
+# $Join
+# args: <str>                   separator
+# args: <array>                 array of concatenation
+# return: <str>                 result
+
+[admin@MikroTik] > {
+    :local a {"a";"b";"c";"d";"e"};
+    $Print [$Join "," $a];
+}
+
+Type  : str
+Value : a,b,c,d,e
+```
 
 ### Datetime Operations
 

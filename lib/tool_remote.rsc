@@ -38,8 +38,7 @@
         :local splitted [$Split ($resp->"data") ("\n")];
         :local stripList [$NewArray];
         :foreach line in $splitted do={
-            :local sc {("\r")};
-            :local lineS [$Strip $line $sc];
+            :local lineS [$Strip $line ("\r")];
             :set ($stripList->[:len $stripList]) $lineS;
         };
         :set result [$Join ("\r\n") $stripList];

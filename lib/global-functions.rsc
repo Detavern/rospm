@@ -363,7 +363,7 @@
 
 
 # $Input
-# get value from intraction
+# get value from interaction
 # args: <str>                   info
 # return: <var>                 value
 :global Input do={
@@ -374,9 +374,9 @@
 
 
 # $InputV
-# get value from intraction and recover its type and value
+# get value from interaction and recover its type and value
 # args: <str>                   info
-# args: <str>                   default value
+# opt args: <str>               answer
 # return: <var>                 recovered value
 :global InputV do={
     # global declare

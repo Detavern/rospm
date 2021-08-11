@@ -56,7 +56,7 @@
 # $Split
 # args: <str>                   target string
 # args: <str>                   sub string
-# args: <num>                   split count
+# opt args: <num>               split count
 # return: <array>               array
 :global Split do={
     # global declare
@@ -109,7 +109,7 @@
 # $RSplit
 # args: <str>                   target string
 # args: <str>                   sub string
-# args: <num>                   split count
+# opt args: <num>               split count
 # return: <array>               array
 :global RSplit do={
     # global declare
@@ -207,24 +207,31 @@
 
 # $Strip
 # args: <str>                   target string
-# args: <array>                 array of characters to be removed
+# opt args: <str>               characters to be removed
 # opt kwargs: Mode=<str>        mode: b(both,default), l(left), r(right)
 # return: <str>                 stripped string
 :global Strip do={
     # global declare
-    :global TypeofArray;
     :global TypeofStr;
     :global ReadOption;
+    :global NewArray;
     :global InValues;
     # local
     :local pMode [$ReadOption $Mode $TypeofStr "b"];
-    :local defaultCL {("\r"); ("\n"); ("\t"); " "};
-    :local charList [$ReadOption $2 $TypeofArray $defaultCL];
+    :local charStr [$ReadOption $2 $TypeofStr ("\r\n\t ")];
     :local string $1;
     :local flag true;
     :local posL 0;
     :local posM [:len $string];
-    :local posR $posM ;
+    :local posR $posM;
+    # charList
+    :local charList [$NewArray ];
+    :for cursor from=0 to=([:len $charStr] - 1) step=1 do={
+        :local char [:pick $charStr $cursor ($cursor + 1)];
+        :if (![$InValues $char $charList]) do={
+            :set ($charList->[:len $charList]) $char;
+        }
+    }
     # left side
     :if (($pMode = "b") or ($pMode = "l")) do={
         :set flag true;
