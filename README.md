@@ -419,7 +419,7 @@ We will take an useful example of scheduler to explore these operations.
 
 Suppose you want to execute a script 1 week after current time.
 
-At first, we need to know current time.
+**At first, we need to know current time.**
 ```
 [admin@MikroTik] > :put [$GetCurrentDatetime ];
 
@@ -428,15 +428,14 @@ At first, we need to know current time.
 
 Then you get `2021;8;11;19;29;35` as the result,
 it is an array of current date & time.
-So you can call it a `datetime` array.
+You can call it a `datetime` array.
 
 `datetime` format:
-
 `<year>;<month>;<date>;<hour>;<minute>;<second>`
 
 Each of its elements is `num` type. 
 
-Second, we need to adjust the datetime array one week forward:
+**Second, we need to adjust the datetime array one week forward:**
 
 ```
 [admin@MikroTik] > {
@@ -457,8 +456,7 @@ Their value can be positive or negative.
 
 Have a look at `/system scheduler add`, you can notice that new schedule use `start-date` and `start-time` to determine the final execute time.
 
-Therefore, we need to convert our shifted `datetime` into some struct that scheduler can use.
-Here it is:
+**Therefore, we need to convert our shifted `datetime` into some struct that scheduler can use.**
 
 ```
 [admin@MikroTik] > {
@@ -474,7 +472,7 @@ Key date: aug/18/2021
 Key time: 19:29:35
 ```
 
-Finally we could create our new schedule:
+**Finally we could create our new schedule:**
 
 ```
 [admin@MikroTik] > {
