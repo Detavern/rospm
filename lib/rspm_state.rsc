@@ -47,7 +47,7 @@
 # |     meta from script    |     meta from config    |    state & action
 # | ----------------------- | ----------------------- | -----------------------
 # |  exist(higher version)  |          exist          |   LT,   remove;install(downgrade)
-# |   exist(same version)   |          exist          |   SAME, remove;install(reinstall)
+# |   exist(same version)   |          exist          |   SAME, remove;register(do nothing);install(reinstall)
 # |         exist           |  exist(higher version)  |   GT,   remove;upgrade
 # |       not exist         |          exist          |   NES,  install
 # |         exist           |        not exist        |   NEC,  register
@@ -217,8 +217,11 @@
         :if ($versionConfig = $versionScript) do={
             :set state "SAME";
             :set ($actionList->[:len $actionList]) "remove";
+            :set ($actionList->[:len $actionList]) "install";
+            :set ($actionList->[:len $actionList]) "register";
             :set ($adviceList->[:len $adviceList]) "The package $Package is up to date(version: $versionConfig).";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
+            :set ($adviceList->[:len $adviceList]) "Using \"rspm.install\" to reinstall this package.";
         }
         :if ($versionConfig > $versionScript) do={
             :set state "GT";

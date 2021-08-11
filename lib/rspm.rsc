@@ -471,7 +471,7 @@
         :foreach ad in ($report->"advice") do={
             :put $ad;
         }
-        :error "rspm.upgrade: state not match.";
+        :error "rspm.register: state not match.";
     }
     # in available action
     :if ($state = "NEC") do={
