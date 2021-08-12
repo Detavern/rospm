@@ -377,16 +377,39 @@
     :local dt $1;
     :local td [$GetFullTimedelta $2];
     # SS MM HH + only
-    # TODO: negative
+    # SS
+    :local SS;
+    :local aMM;
     :local rSS (($dt->5) + ($td->"seconds"));
-    :local SS ($rSS % 60);
-    :local aMM ($rSS / 60);
+    :if ($rSS < 0) do={
+        :set SS ($rSS % 60 + 60);
+        :set aMM ($rSS / 60 - 1);
+    } else {
+        :set SS ($rSS % 60);
+        :set aMM ($rSS / 60);
+    }
+    # MM
+    :local MM;
+    :local aHH;
     :local rMM (($dt->4) + ($td->"minutes") + $aMM);
-    :local MM ($rMM % 60);
-    :local aHH ($rMM / 60);
+    :if ($rMM < 0) do={
+        :set MM ($rMM % 60 + 60);
+        :set aHH ($rMM / 60 - 1);
+    } else {
+        :set MM ($rMM % 60);
+        :set aHH ($rMM / 60);
+    }
+    # HH
+    :local HH;
+    :local add;
     :local rHH (($dt->3) + ($td->"hours") + $aHH);
-    :local HH ($rHH % 24);
-    :local add ($rHH / 24);
+    :if ($rHH < 0) do={
+        :set HH ($rHH % 24 + 24);
+        :set add ($rHH / 24 - 1);
+    } else {
+        :set HH ($rHH % 24);
+        :set add ($rHH / 24);
+    }
     # dd mm yy +/-
     # dd
     :local rmm ($dt->1);
@@ -445,6 +468,14 @@
     }
     # yy
     :local yy ($ryy + ($td->"years") + $ayy);
+    # trim dd by mm
+    :set ddMax ($MonthsOfTheYear->($mm - 1));
+    :if (($mm = 2) and [$IsLeapYear $yy]) do={
+        :set ddMax ($ddMax + 1);
+    }
+    :if ($dd > $ddMax) do={
+        :set dd $ddMax;
+    }
     # return
     :local result {$yy; $mm; $dd; $HH; $MM; $SS};
     :return $result;

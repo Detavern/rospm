@@ -649,8 +649,12 @@ Key time: 20:00:00
     :local td {"days"=-10000};
     :local shifted [$ShiftDatetime $dt $td];
     :put $shifted;
+    :local t -10000d;
+    :local shifted [$ShiftDatetime $dt $t];
+    :put $shifted;
 }
 
+1994;3;26;20;00;00
 1994;3;26;20;00;00
 
 [admin@MikroTik] > {
@@ -658,9 +662,30 @@ Key time: 20:00:00
     :local td {"seconds"=10000000};
     :local shifted [$ShiftDatetime $dt $td];
     :put $shifted;
+    :local t 00:00:10000000;
+    :local shifted [$ShiftDatetime $dt $t];
+    :put $shifted;
 }
 
 2021;12;5;13;46;40
+2021;12;5;13;46;40
+```
+
+When you use `months` key in `timedelta`, do realize that it may cause the change of date:
+
+```
+[admin@MikroTik] > {
+    :local dt {2021;8;31;20;00;00};
+    :local td {"months"=18};
+    :local shifted [$ShiftDatetime $dt $td];
+    :put $shifted;
+    :local td {"months"=-18};
+    :local shifted [$ShiftDatetime $dt $td];
+    :put $shifted;
+}
+
+2023;2;28;20;0;0
+2020;2;29;20;0;0
 ```
 
 ### Array Operations
