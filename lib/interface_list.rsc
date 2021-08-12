@@ -5,35 +5,36 @@
 };
 
 
-# $addList
-# kwargs: iName=<str>
-:local addList do={
+# $add
+# add a new interface list
+# kwargs: Name=<str>        # new interface list name
+:local add do={
     #DEFINE global
     :global IsStr;
     :global IsEmpty;
     # check params
-    :if (![$IsStr $iName]) do={
-        :error "addList: require \$iName";
+    :if (![$IsStr $Name]) do={
+        :error "interface.list.add: require \$Name";
     }
     # add if not exist
-    :local listIDList [/interface list find name=$iName];
+    :local listIDList [/interface list find name=$Name];
     :if ([$IsEmpty $listIDList]) do={
-        /interface list add name=$iName;
+        /interface list add name=$Name;
     } else {
-        :error "addList: list name $iName already exist";
+        :error "interface.list.add: list name $Name already exist";
     }
 }
 
 
-# $ensureList
-# kwargs: iName=<str>
-:local ensureList do={
+# $ensure
+# kwargs: Name=<str>            # ensure a list name is exist
+:local ensure do={
     #DEFINE global
     :global IsStr;
     :global IsEmpty;
     # check params
     :if (![$IsStr $iName]) do={
-        :error "ensureList: require \$iName";
+        :error "interface.list.ensure: require \$iName";
     }
     # ensure iName
     :local listIDList [/interface list find name=$iName];
@@ -43,59 +44,11 @@
 }
 
 
-# $setListAttrs
-# kwargs: iName=<str>
-# kwargs: iAttrs=<array>
-:local setListAttrs do={
-    #DEFINE global
-    :global IsStr;
-    :global IsNil;
-    :global IsArray;
-    :global IsEmpty;
-    :global InValues;
-    # local
-    :local attrsUseEmptyStr {"include"; "exclude"};
-    # check params
-    :if (![$IsStr $iName]) do={
-        :error "setListAttrs: require \$iName<str>";
-    }
-    :if (![$IsArray $iAttrs]) do={
-        :error "setListAttrs: require \$iAttrs<array>";
-    }
-    # check list's existance
-    :local idList [/interface list find name=$iName];
-    :if ([$IsEmpty $idList]) do={
-        :error "setListAttrs: interface list name $iName not found";
-    }
-    :local itemID ($idList->0);
-    # iter iAttrs
-    :foreach k,v in $iAttrs do={
-        :if (![$IsStr $k]) do={
-            :error "setListAttrs: require \$key<str> in \$iAttrs";
-        }
-        :if (![$IsNil $v]) do={
-            :local cmd "/interface list set numbers=$itemID $k=$v;";
-            :put $cmd;
-        } else {
-            # unset specific attribute by different ways
-            :local cmd "";
-            ## by empty string 
-            :if ([$InValues $k $attrsUseEmptyStr]) do={
-                :set cmd "/interface list set numbers=$itemID $k=\"\";";
-                :put $cmd;
-            }
-            ## exec it
-            :local cmdFunc [:parse $cmd];
-            $cmdFunc;
-        }
-    }
-}
-
-
-# $ensureListInclude
-# kwargs: iName=<str>
-# kwargs: includeList=<array->str>
-:local ensureListInclude do={
+# $ensureInclude
+# ensure target list's include list
+# kwargs: Name=<str>            # target list name
+# kwargs: List=<array->str>     # list of included list name
+:local ensureInclude do={
     #DEFINE global
     :global IsStr;
     :global IsArray;
@@ -103,36 +56,37 @@
     :global Append;
     :global UniqueArray;
     # check params
-    :if (![$IsStr $iName]) do={
-        :error "ensureListInclude: require \$iName";
+    :if (![$IsStr $Name]) do={
+        :error "interface.list.ensureInclude: require \$Name";
     }
-    :if (![$IsArray $includeList]) do={
-        :error "ensureListInclude: require \$includeList";
+    :if (![$IsArray $List]) do={
+        :error "interface.list.ensureInclude: require \$List";
     }
     # check list's existance
-    :local idList [/interface list find name=$iName];
+    :local idList [/interface list find name=$Name];
     :if ([$IsEmpty $idList]) do={
-        :error "ensureListInclude: interface list name $iName not found";
+        :error "interface.list.ensureInclude: interface list name $Name not found";
     }
     :local itemID ($idList->0);
-    :foreach v in $includeList do={
+    :foreach v in $List do={
         :local vIDList [/interface list find name=$v];
         :if ([$IsEmpty $vIDList]) do={
-            :error "ensureListInclude: interface list name $v in \$includeList not found";
-        } 
+            :error "interface.list.ensureInclude: interface list name $v in \$List not found";
+        }
     }
     # get current include
     :local srcIncludeList [/interface list get number=$itemID "include"];
-    :local mergedList [$UniqueArray [$Append $srcIncludeList $includeList]];
+    :local mergedList [$UniqueArray [$Append $srcIncludeList $List]];
     # set it
     /interface list set numbers=$itemID include=$mergedList;
 }
 
 
-# $ensureListExclude
-# kwargs: iName=<str>
-# kwargs: excludeList=<array->str>
-:local ensureListExclude do={
+# $ensureExclude
+# ensure target list's exclude list
+# kwargs: Name=<str>            # target list name
+# kwargs: List=<array->str>     # list of excluded list name
+:local ensureExclude do={
     #DEFINE global
     :global IsStr;
     :global IsArray;
@@ -140,71 +94,73 @@
     :global Append;
     :global UniqueArray;
     # check params
-    :if (![$IsStr $iName]) do={
-        :error "ensureListExclude: require \$iName";
+    :if (![$IsStr $Name]) do={
+        :error "interface.list.ensureExclude: require \$Name";
     }
-    :if (![$IsArray $excludeList]) do={
-        :error "ensureListExclude: require \$excludeList";
+    :if (![$IsArray $List]) do={
+        :error "interface.list.ensureExclude: require \$List";
     }
     # check list's existance
-    :local idList [/interface list find name=$iName];
+    :local idList [/interface list find name=$Name];
     :if ([$IsEmpty $idList]) do={
-        :error "ensureListExclude: interface list name $iName not found";
+        :error "interface.list.ensureExclude: interface list name $Name not found";
     }
     :local itemID ($idList->0);
-    :foreach v in $excludeList do={
+    :foreach v in $List do={
         :local vIDList [/interface list find name=$v];
         :if ([$IsEmpty $vIDList]) do={
-            :error "ensureListExclude: interface list name $v in \$excludeList not found";
+            :error "interface.list.ensureExclude: interface list name $v in \$List not found";
         } 
     }
     # get current include
     :local srcExcludeList [/interface list get number=$itemID "include"];
-    :local mergedList [$UniqueArray [$Append $srcExcludeList $excludeList]];
+    :local mergedList [$UniqueArray [$Append $srcExcludeList $List]];
     # set it
     /interface list set numbers=$itemID include=$mergedList;
 }
 
 
-# $addListMember
-# kwargs: iName=<str>
-# kwargs: intfList=<array->str>
-:local addListMember do={
+# $addMembers
+# Add interfaces into interface list
+# will raise error when add already exist interface
+# kwargs: Name=<str>            # target list name
+# kwargs: List=<array->str>     # list of interface name
+:local addMembers do={
     #DEFINE global
     :global IsStr;
     :global IsArray;
     :global IsEmpty;
     # check params
-    :if (![$IsStr $iName]) do={
-        :error "addListMember: require \$iName";
+    :if (![$IsStr $Name]) do={
+        :error "interface.list.addMembers: require \$Name";
     }
-    :if (![$IsArray $intfList]) do={
-        :error "addListMember: require \$intfList";
+    :if (![$IsArray $List]) do={
+        :error "interface.list.addMembers: require \$List";
     }
     # check list's existance
-    :local idList [/interface list find name=$iName];
+    :local idList [/interface list find name=$Name];
     :if ([$IsEmpty $idList]) do={
-        :error "addListMember: interface list name $iName not found";
+        :error "interface.list.addMembers: interface list name $Name not found";
     }
     :local itemID ($idList->0);
-    :foreach v in $intfList do={
+    :foreach v in $List do={
         # NOTE: different ros version may infect this
         :local vIDList [/interface find name=$v !dynamic];
         :if ([$IsEmpty $vIDList]) do={
-            :error "addListMember: static interface name $v not found";
+            :error "interface.list.addMembers: static interface name $v not found";
         } 
     }
     # add membership
-    :foreach v in $intfList do={
-        /interface list member add interface=$v list=$iName;
+    :foreach v in $List do={
+        /interface list member add interface=$v list=$Name;
     }
 }
 
 
-# $ensureListMember
-# kwargs: iName=<str>
-# kwargs: intfList=<array->str>
-:local ensureListMember do={
+# $ensureMembers
+# kwargs: Name=<str>            # target list name
+# kwargs: List=<array->str>     # list of interface name
+:local ensureMembers do={
     #DEFINE global
     :global IsStr;
     :global IsArray;
@@ -212,30 +168,30 @@
     #DEFINE helper
     :global itemsFoundEnsureOneEnabled;
     # check params
-    :if (![$IsStr $iName]) do={
-        :error "ensureListMember: require \$iName";
+    :if (![$IsStr $Name]) do={
+        :error "interface.list.ensureMembers: require \$Name";
     }
-    :if (![$IsArray $intfList]) do={
-        :error "ensureListMember: require \$intfList";
+    :if (![$IsArray $List]) do={
+        :error "interface.list.ensureMembers: require \$List";
     }
     # check list's existance
-    :local idList [/interface list find name=$iName];
+    :local idList [/interface list find name=$Name];
     :if ([$IsEmpty $idList]) do={
-        :error "ensureListMember: interface list name $iName not found";
+        :error "interface.list.ensureMembers: interface list name $Name not found";
     }
     :local itemID ($idList->0);
-    :foreach v in $intfList do={
+    :foreach v in $List do={
         # NOTE: different ros version may infect this
         :local vIDList [/interface find name=$v !dynamic];
         :if ([$IsEmpty $vIDList]) do={
-            :error "ensureListMember: static interface name $v not found";
+            :error "interface.list.ensureMembers: static interface name $v not found";
         } 
     }
     # ensure membership
-    :foreach v in $intfList do={
-        :local vIDList [/interface list member find interface=$v list=$iName];
+    :foreach v in $List do={
+        :local vIDList [/interface list member find interface=$v list=$Name];
         :if ([$IsEmpty $vIDList]) do={
-            /interface list member add interface=$v list=$iName;
+            /interface list member add interface=$v list=$Name;
         } else {
             $itemsFoundEnsureOneEnabled "/interface list member" $vIDList;
         }
@@ -243,35 +199,42 @@
 }
 
 
-# $setListMemberAttrs
-# kwargs: iName=<str>
-# kwargs: intfList=<array->str>
-:local setListMemberAttrs do={
+# $setMembersAttrs
+# TODO: set all interfaces' attribute of certain list
+# kwargs: Name=<str>            # target list name
+# kwargs: Attrs=<array->str>    # array of attributes
+:local setMembersAttrs do={
 }
 
 
-# $findAllInterface
-# find all enabled interface by list name
-# kwargs:           List=<str>
-:local findAllInterface do={
+# $findMembers
+# find all interface by list name
+# kwargs: Name=<str>            # target list name
+# opt kwargs: Enabled=<bool>    # false(default), find enabled interface only if true
+:local findMembers do={
     #DEFINE global
     :global IsStr;
     :global IsEmpty;
     :global NewArray;
     :global UniqueArray;
+    :global ReadOption;
+    :global TypeofBool;
     :global findAllItemsByTemplate;
     # check params
-    :if (![$IsStr $List]) do={
-        :error "findAllInterface: require \$List";
+    :if (![$IsStr $Name]) do={
+        :error "interface.list.findMembers: require \$Name";
     }
-    :local intfIDList [/interface list find name=$List !disabled];
+    :local intfIDList [/interface list find name=$Name !disabled];
     :if ([$IsEmpty $intfIDList]) do={
-        :error "findAllInterface: specific \$List not exist"
+        :error "interface.list.findMembers: specific \$Name not exist or disabled"
     }
+    :local pEnabled [$ReadOption $Enabled $TypeofBool false];
     # find list itself
     :local template [$NewArray];
-    :set ($template->"disabled") no;
-    :set ($template->"list") $List;
+    :set ($template->"list") $Name;
+    :if ($pEnabled) do={
+        :set ($template->"disabled") no;
+    }
     :local nameList [$findAllItemsByTemplate "/interface list member" $template Output="interface"];
     # find in include
     :local includeList [/interface list get ($intfIDList->0) include];
@@ -287,14 +250,13 @@
 
 :local package {
     "metaInfo"=$metaInfo;
-    "addList"=$addList;
-    "ensureList"=$ensureList;
-    "setListAttrs"=$setListAttrs;
-    "ensureListInclude"=$ensureListInclude;
-    "ensureListExclude"=$ensureListExclude;
-    "addListMember"=$addListMember;
-    "ensureListMember"=$ensureListMember;
-    "setListMemberAttrs"=$setListMemberAttrs;
-    "findAllInterface"=$findAllInterface;
+    "add"=$add;
+    "ensure"=$ensure;
+    "ensureInclude"=$ensureInclude;
+    "ensureExclude"=$ensureExclude;
+    "addMembers"=$addMembers;
+    "ensureMembers"=$ensureMembers;
+    "setMembersAttrs"=$setMembersAttrs;
+    "findMembers"=$findMembers;
 }
 :return $package;

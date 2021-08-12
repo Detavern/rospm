@@ -15,9 +15,9 @@
 
 
 # $Append
-# Append variable for array without keys
+# Append variable for array without keys(num key)
 # source array will not be changed
-# args: <array>                 target array
+# args: <array>                 source array
 # args: <var>                   var to append
 # return: <array>               new array
 :global Append do={
@@ -27,10 +27,23 @@
 }
 
 
+# $Appends
+# Append variable for array without keys(num key)
+# source array will change
+# args: <array>                 source array
+# args: <var>                   var to append
+# return: <array>               changed source array
+:global Appends do={
+    :local a $1;
+    :set ($a->[:len $a]) $2;
+    :return $a;
+}
+
+
 # $Prepend
 # Prepend variable for array without keys
 # source array will not be changed
-# args: <array>                 target array
+# args: <array>                 source array
 # args: <var>                   var to prepend
 # return: <array>               new array
 :global Prepend do={
@@ -43,7 +56,7 @@
 # $Insert
 # Insert variable for array without keys
 # source array will not be changed
-# args: <array>                 target array
+# args: <array>                 source array
 # args: <var>                   var to insert
 # args: <num>                   insert position
 # return: <array>               new array
@@ -68,7 +81,7 @@
 # $Extend
 # Extend array without keys
 # source array will not change
-# args: <array>                 target array
+# args: <array>                 source array
 # args: <array>                 array of var to extend at position
 # args: <num>                   extend position
 # return: <array>               new array

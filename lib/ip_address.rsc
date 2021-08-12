@@ -40,7 +40,7 @@
         :if ([$IsArray $intfL]) do={
             :set intfList $intfL;
         } else {
-            :set intfList [[$GetFunc "interface.list.findAllInterface"] List=$intfL];
+            :set intfList [[$GetFunc "interface.list.findMembers"] Name=$intfL Enabled=true];
         }
     }
     :if ([$IsNothing $intfList]) do={
