@@ -134,7 +134,7 @@ you can take a look at [/lib/global-variables.rsc](https://github.com/Detavern/r
 Your dearest friend, not only print value by also its type:
 
 ```
-[admin@MikroTik] > $Print 1      
+[admin@MikroTik] > $Print 1
 Type  : str
 Value : 1
 ```

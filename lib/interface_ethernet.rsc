@@ -5,86 +5,90 @@
 };
 
 
-# :put [$renameEthernet src-default-name=<default-name|str> name=<new name>]
-# $renameEthernet
-# kwargs: srcID=[<id>]
-# kwargs: srcDefaultName=[<str>]
-# kwargs: srcName=[<str>]
-# kwargs: iName=<str>
-:local renameEthernet do={
+# $rename
+# kwargs: NewName=<str>                 # ethernet's new name
+# opt kwargs: DefaultName=<str>         # ethernet's original default-name   
+# opt kwargs: Name=<str>                # ethernet's original name
+:local rename do={
     #DEFINE global
     :global TypeofStr;
     :global IsEmpty;
     :global IsStr;
-    :global EmptyArray;
     # check name
-    :if (![$IsStr $iName]) do={
-        :error "renameEthernet: require \$iName";
+    :if (![$IsStr $NewName]) do={
+        :error "interface.ethernet.rename: require \$NewName";
     }
-    # find ID by srcDefaultName & replace its name
-    :if ([$IsStr $srcDefaultName]) do={
-        :local nicIDList [/interface ethernet find default-name=$srcDefaultName];
+    # find ID by DefaultName & replace its name
+    :if ([$IsStr $DefaultName]) do={
+        :local nicIDList [/interface ethernet find default-name=$DefaultName];
         :if ([$IsEmpty $nicIDList]) do={
-            :error "renameEthernet: srcDefaultName not found";
+            :error "interface.ethernet.rename: $DefaultName not found";
         } else {
             :local nicID ($nicIDList->0);
-            /interface ethernet set name=$iName numbers=$nicID;
+            /interface ethernet set name=$NewName numbers=$nicID;
         }
         :return true;
     }
-    # find ID by srcName & replace its name
-    :if ([$IsStr $srcName]) do={
-        :local nicIDList [/interface ethernet find name=$srcName];
+    # find ID by Name & replace its name
+    :if ([$IsStr $Name]) do={
+        :local nicIDList [/interface ethernet find name=$Name];
         :if ([$IsEmpty $nicIDList]) do={
-            :error "renameEthernet: srcName not found";
+            :error "interface.ethernet.rename: $Name not found";
         } else {
             :local nicID ($nicIDList->0);
-            /interface ethernet set name=$iName numbers=$nicID;
+            /interface ethernet set name=$NewName numbers=$nicID;
         }
         :return true;
     }
-    :error "renameEthernet: require one of \$srcID, \$srcDefaultName, \$srcName";
+    :error "interface.ethernet.rename: require one of \$DefaultName, \$Name";
 }
 
 
-# :put [$renameAllByTemplate template={<default-name|str>=<name|str>;}]
-# $renameAllByTemplate
-# kwargs: template={<default-name|str>=<name|str>;}
-:local renameAllByTemplate do={
+# $renameAll
+# kwargs: Template=<array->str>         # original default-name pattern to new name pattern array
+# Example Template
+# {
+#     "ether"="ETH-";
+#     "sfp"="SFP-";
+#     "sfp-sfpplus"="SFPP-";
+# }
+# ether1        ->      ETH-1
+# sfp1          ->      SFP-1
+# sfp-sfpplus1  ->      SFPP-1
+:local renameAll do={
     #DEFINE global
     :global TypeofStr;
     :global IsArray;
     :global Replace;
     :global StartsWith;
     # check template
-    :if (![$IsArray $template]) do={
-        :error "renameAllByTemplate: require \$template";
+    :if (![$IsArray $Template]) do={
+        :error "interface.ethernet.renameAll: require \$Template";
     }
     # for
     :foreach i in=[/interface ethernet find] do={
-        :local iName [/interface ethernet get $i "default-name"];
-        :local iNameP "";
+        :local newName [/interface ethernet get $i "default-name"];
+        :local newNameP "";
         # select longest match pattern
-        :foreach k,v in=$template do={
-            :if ([$StartsWith $iName $k]) do={
-                :if ([:len $k]>[:len $iNameP]) do={
-                    :set iNameP $k;
+        :foreach k,v in=$Template do={
+            :if ([$StartsWith $newName $k]) do={
+                :if ([:len $k]>[:len $newNameP]) do={
+                    :set newNameP $k;
                 }
             }
         }
         # replace it
-        :if ($iNameP!="") do={
-            :local name [$Replace $iName $iNameP ($template->$iNameP)];
+        :if ($newNameP != "") do={
+            :local name [$Replace $newName $newNameP ($Template->$newNameP)];
             /interface ethernet set name=$name numbers=$i;
         }
     }
 }
 
 
-# :put [$renameAllByTemplate template={<default-name|str>=<name|str>;}]
-# $renameAllByTemplate
-# kwargs: template={<default-name|str>=<name|str>;}
-:local resetDefaultName do={
+# $resetAll
+# reset all ethernet interface by its default-name attributes
+:local resetAll do={
     :foreach i in=[/interface ethernet find] do={
         :local defaultName [/interface ethernet get $i "default-name"];
         /interface ethernet set name=$defaultName numbers=$i;
@@ -94,8 +98,8 @@
 
 :local package {
     "metaInfo"=$metaInfo;
-    "renameEthernet"=$renameEthernet;
-    "renameAllByTemplate"=$renameAllByTemplate;
-    "resetDefaultName"=$resetDefaultName;
+    "rename"=$rename;
+    "renameAll"=$renameAll;
+    "resetAll"=$resetAll;
 }
 :return $package;
