@@ -550,12 +550,12 @@ $Print [$LoadGlobalVar "Nothing"];
 
 # /ip address
 ## get address
-:put [[$GetFunc "ip.address.findAllAddress"] Interface="ETH-1"];
+:put [[$GetFunc "ip.address.findAddresses"] Interface="ETH-1"];
 {
     :local intfList {"ETH-1"; "ETH-2"};
-    :put [[$GetFunc "ip.address.findAllAddress"] InterfaceList=$intfList];
+    :put [[$GetFunc "ip.address.findAddresses"] InterfaceList=$intfList];
 }
-:put [[$GetFunc "ip.address.findAllAddress"] InterfaceList="WAN"];
+:put [[$GetFunc "ip.address.findAddresses"] InterfaceList="WAN"];
 
 
 # /ip route

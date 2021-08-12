@@ -5,46 +5,43 @@
 };
 
 
-# $findAddresses
-# opt kwargs: Interface=<str>
-# opt kwargs: InterfaceList=<array->str>|<str>
-# opt kwargs: Output=<str>                          "cidr", "ip"
-# return: <array->str>                              list of address(cidr format)
-:global findAddresses do={
+# $find
+# opt kwargs: Interface=<str>                       find addresses by interface name
+# opt kwargs: InterfaceList=<array->str>|<str>      find addresses by interface list name or interface array
+# opt kwargs: Output=<str>                          "cidr"=<str>, "ip"=<ip>(default)
+# return: <array->str>                              list of addresses
+:global find do={
     #DEFINE global
-    :global IsNil;
+    :global IsStr;
     :global IsNothing;
     :global IsArray;
     :global IsEmpty;
     :global TypeofStr;
     :global TypeofArray;
     :global NewArray;
-    :global Print;
     :global Split;
-    :global Append;
+    :global Appends;
     :global ReadOption;
     :global GetFunc;
     #DEFINE helper
     :global findAllItemsByTemplate;
     # read opt
     :local intf [$ReadOption $Interface $TypeofStr];
-    # REVIEW: type mismatch
     :local intfL [$ReadOption $InterfaceList $TypeofArray];
     :local pOutput [$ReadOption $Output $TypeofStr "ip"];
     # local
     :local intfList;
-    :if (![$IsNil $intf]) do={
+    :if ([$IsStr $intf] and ($intf != "")) do={
         :set intfList {$intf};
     }
-    :if (![$IsNil $intfL]) do={
-        :if ([$IsArray $intfL]) do={
-            :set intfList $intfL;
-        } else {
-            :set intfList [[$GetFunc "interface.list.findMembers"] Name=$intfL Enabled=true];
-        }
+    :if ([$IsStr $intfL]) do={
+        :set intfList [[$GetFunc "interface.list.findMembers"] Name=$intfL Enabled=true];
+    }
+    :if ([$IsArray $intfL]) do={
+        :set intfList $intfL;
     }
     :if ([$IsNothing $intfList]) do={
-        :error "findAddresses: one of \$Interface, \$InterfaceList needed"
+        :error "ip.address.find: one of \$Interface, \$InterfaceList needed";
     }
     # find address by interface name list
     :local addressList [$NewArray ];
@@ -59,7 +56,7 @@
         :local splitted [$NewArray ];
         :foreach v in $addressList do={
             :local ipAddr [:toip ([$Split $v "/" 1]->0)];
-            :set splitted [$Append $splitted $ipAddr];
+            [$Appends $splitted $ipAddr];
         }
         :return $splitted;
     } else {
@@ -70,6 +67,6 @@
 
 :local package {
     "metaInfo"=$metaInfo;
-    "findAddresses"=$findAddresses;
+    "find"=$find;
 }
 :return $package;
