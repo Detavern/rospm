@@ -7,7 +7,7 @@
 
 # $add
 # add a new interface list
-# kwargs: Name=<str>        # new interface list name
+# kwargs: Name=<str>            new interface list name
 :local add do={
     #DEFINE global
     :global IsStr;
@@ -27,7 +27,7 @@
 
 
 # $ensure
-# kwargs: Name=<str>            # ensure a list name is exist
+# kwargs: Name=<str>            ensure a list name is exist
 :local ensure do={
     #DEFINE global
     :global IsStr;
@@ -46,8 +46,8 @@
 
 # $ensureInclude
 # ensure target list's include list
-# kwargs: Name=<str>            # target list name
-# kwargs: List=<array->str>     # list of included list name
+# kwargs: Name=<str>                target list name
+# kwargs: List=<array->str>         list of included list name
 :local ensureInclude do={
     #DEFINE global
     :global IsStr;
@@ -84,8 +84,8 @@
 
 # $ensureExclude
 # ensure target list's exclude list
-# kwargs: Name=<str>            # target list name
-# kwargs: List=<array->str>     # list of excluded list name
+# kwargs: Name=<str>                target list name
+# kwargs: List=<array->str>         list of excluded list name
 :local ensureExclude do={
     #DEFINE global
     :global IsStr;
@@ -123,8 +123,8 @@
 # $addMembers
 # Add interfaces into interface list
 # will raise error when add already exist interface
-# kwargs: Name=<str>            # target list name
-# kwargs: List=<array->str>     # list of interface name
+# kwargs: Name=<str>                target list name
+# kwargs: List=<array->str>         list of interface name
 :local addMembers do={
     #DEFINE global
     :global IsStr;
@@ -158,8 +158,8 @@
 
 
 # $ensureMembers
-# kwargs: Name=<str>            # target list name
-# kwargs: List=<array->str>     # list of interface name
+# kwargs: Name=<str>                target list name
+# kwargs: List=<array->str>         list of interface name
 :local ensureMembers do={
     #DEFINE global
     :global IsStr;
@@ -201,16 +201,16 @@
 
 # $setMembersAttrs
 # TODO: set all interfaces' attribute of certain list
-# kwargs: Name=<str>            # target list name
-# kwargs: Attrs=<array->str>    # array of attributes
+# kwargs: Name=<str>                target list name
+# kwargs: Attrs=<array->str>        array of attributes
 :local setMembersAttrs do={
 }
 
 
 # $findMembers
 # find all interface by list name
-# kwargs: Name=<str>            # target list name
-# opt kwargs: Enabled=<bool>    # false(default), find enabled interface only if true
+# kwargs: Name=<str>                target list name
+# opt kwargs: Enabled=<bool>        false(default), find enabled interface only if true
 :local findMembers do={
     #DEFINE global
     :global IsStr;

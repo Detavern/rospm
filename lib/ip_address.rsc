@@ -5,12 +5,12 @@
 };
 
 
-# $findAllAddress
+# $findAddresses
 # opt kwargs: Interface=<str>
 # opt kwargs: InterfaceList=<array->str>|<str>
 # opt kwargs: Output=<str>                          "cidr", "ip"
 # return: <array->str>                              list of address(cidr format)
-:global findAllAddress do={
+:global findAddresses do={
     #DEFINE global
     :global IsNil;
     :global IsNothing;
@@ -44,7 +44,7 @@
         }
     }
     :if ([$IsNothing $intfList]) do={
-        :error "findAllAddress: one of \$Interface, \$InterfaceList needed"
+        :error "findAddresses: one of \$Interface, \$InterfaceList needed"
     }
     # find address by interface name list
     :local addressList [$NewArray ];
@@ -70,6 +70,6 @@
 
 :local package {
     "metaInfo"=$metaInfo;
-    "findAllAddress"=$findAllAddress;
+    "findAddresses"=$findAddresses;
 }
 :return $package;

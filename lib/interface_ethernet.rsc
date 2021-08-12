@@ -6,9 +6,9 @@
 
 
 # $rename
-# kwargs: NewName=<str>                 # ethernet's new name
-# opt kwargs: DefaultName=<str>         # ethernet's original default-name   
-# opt kwargs: Name=<str>                # ethernet's original name
+# kwargs: NewName=<str>                 ethernet's new name
+# opt kwargs: DefaultName=<str>         ethernet's original default-name   
+# opt kwargs: Name=<str>                ethernet's original name
 :local rename do={
     #DEFINE global
     :global TypeofStr;
@@ -45,7 +45,7 @@
 
 
 # $renameAll
-# kwargs: Template=<array->str>         # original default-name pattern to new name pattern array
+# kwargs: Template=<array->str>         original default-name pattern to new name pattern array
 # Example Template
 # {
 #     "ether"="ETH-";
