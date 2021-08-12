@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="rspm.reset";
-    "version"="0.0.1";
+    "version"="0.1.0";
     "description"="rspm configuration reset tools";
 };
 

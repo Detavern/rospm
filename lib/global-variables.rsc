@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-variables";
-    "version"="0.0.1";
+    "version"="0.1.0";
     "description"="global variable package";
     "global"=true;
 };

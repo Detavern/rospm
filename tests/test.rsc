@@ -244,13 +244,13 @@
     :local config {
         "packageList"={
             "p1"={
-                "version"="0.0.1";
+                "version"="0.1.0";
             };
             "p2"={
-                "version"="0.0.1";
+                "version"="0.1.0";
             };
             "p3"={
-                "version"="0.0.1";
+                "version"="0.1.0";
             };
         };
         "description"="some description";

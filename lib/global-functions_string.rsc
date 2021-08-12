@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-functions.string";
-    "version"="0.0.1";
+    "version"="0.1.0";
     "description"="global functions for string related operation";
     "global"=true;
     "require"={"global-functions";""};

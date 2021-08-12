@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-functions.package";
-    "version"="0.0.1";
+    "version"="0.1.0";
     "description"="global functions for package operation";
     "global"=true;
 };
@@ -732,7 +732,7 @@
         :error "Global.Package.SetGlobalVar: \$2 should be neither nothing nor nil";
     };
     # FIXME: :local value [$TypeRecovery $2];
-    # [$TypeRecovery "0.0.1"] -> 0.0.0.1(ip)
+    # [$TypeRecovery "0.1.0"] -> 0.0.0.1(ip)
     :local value $2;
     :local timeout [$ReadOption $Timeout $TypeofTime 0:0:0]
     :if ($timeout < 0:0:0) do={

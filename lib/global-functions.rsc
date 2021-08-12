@@ -6,7 +6,7 @@
 
 :local metaInfo {
     "name"="global-functions";
-    "version"="0.0.1";
+    "version"="0.1.0";
     "description"="global function package";
     "global"=true;
 };

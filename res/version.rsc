@@ -1,2 +1,2 @@
-:local version "0.0.1";
+:local version "0.1.0";
 :return $version;

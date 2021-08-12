@@ -2,59 +2,59 @@
 :local packageList {
     {
         "name"="global-variables";
-        "version"="0.0.1";
+        "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions";
-        "version"="0.0.1";
+        "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.array";
-        "version"="0.0.1";
+        "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.string";
-        "version"="0.0.1";
+        "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.datetime";
-        "version"="0.0.1";
+        "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.package";
-        "version"="0.0.1";
+        "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.misc";
-        "version"="0.0.1";
+        "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-helpers";
-        "version"="0.0.1";
+        "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="tool.http";
-        "version"="0.0.1";
+        "version"="0.1.0";
     };
     {
         "name"="tool.remote";
-        "version"="0.0.1";
+        "version"="0.1.0";
     };
     {
         "name"="rspm.state";
-        "version"="0.0.1";
+        "version"="0.1.0";
     };
     {
         "name"="rspm";
-        "version"="0.0.1";
+        "version"="0.1.0";
     };
 };
 
