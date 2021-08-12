@@ -576,6 +576,7 @@ Value : false
 ```
 # $GetCurrentClock
 # get current info from system clock
+# same as [/system clock print as-value]
 # return: <str>                 clock info array
 
 [admin@MikroTik] > $Print [$GetCurrentClock ];
@@ -612,10 +613,11 @@ Key time: 20:00:00
 
 2021;8;11;20;00;00
 ```
+
 #### `$GetSDT`
 ```
 # $GetSDT
-# args: <var>                   <datetime>, <timestamp>
+# args: <var>                   <datetime>
 # return: <sdt>                 array of sdt
 
 [admin@MikroTik] > $Print [$GetSDT [$GetCurrentDatetime ]];
@@ -628,12 +630,43 @@ Key time: 20:00:00
 #### `$GetDatetime`
 ```
 # $GetDatetime
-# args: <var>                   <sdt>, <timestamp>
+# args: <var>                   <sdt>
 # return: <datetime>            datetime
 
 [admin@MikroTik] > :put [$GetDatetime [$GetCurrentSDT ]];
 
 2021;8;11;20;00;00
+```
+
+#### `$GetFullTimedelta`
+```
+# $GetFullTimedelta
+# return a full timedelta array from timedelta or time
+# args: <time>/<timedelta>      time or timedelta
+# return: <array>               timedelta array
+
+[admin@MikroTik] > {
+    :local v 3w100d10:10:10;
+    $Print [$GetFullTimedelta $v];
+    :local v {"days"=-100; "months"=12};
+    $Print [$GetFullTimedelta $v];
+}
+
+Type  : array
+Key days: 121
+Key hours: 10
+Key minutes: 10
+Key months: 0
+Key seconds: 10
+Key years: 0
+
+Type  : array
+Key days: -100
+Key hours: 0
+Key minutes: 0
+Key months: 12
+Key seconds: 0
+Key years: 0
 ```
 
 #### `$ShiftDatetime`
