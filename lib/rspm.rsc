@@ -523,17 +523,18 @@
     :foreach report in $upgradeList do={
         :local state ($report->"state");
         :if ($state = "GT") do={
+            :local pkgName (($report->"metaConfig")->"name");
             :if (($report->"configName") = $configPkgName) do={
                 :local versionR (($report->"metaConfig")->"version");
-                :put "Upgrading core package $Package, latest version is $versionR";
-                :local pkgUrl (($config->"baseURL") . "lib/$Package.rsc")
+                :put "Upgrading core package $pkgName, latest version is $versionR";
+                :local pkgUrl (($config->"baseURL") . "lib/$pkgName.rsc")
                 :put "Get: $pkgUrl";
                 :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
                 :put "Writing source into repository...";
-                /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
+                /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
             } else {
                 :local versionR (($report->"metaConfig")->"version");
-                :put "Upgrading extension package $Package, latest version is $versionR";
+                :put "Upgrading extension package $pkgName, latest version is $versionR";
                 :local pkgUrl (($report->"metaConfig")->"proxyUrl");
                 :if ([$IsNothing $pkgUrl]) do={
                     :set pkgUrl (($report->"metaConfig")->"url");
@@ -541,7 +542,7 @@
                 :put "Get: $pkgUrl";
                 :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
                 :put "Writing source into repository...";
-                /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
+                /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
             }
         }
     };

@@ -290,6 +290,7 @@
         :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName Suppress=true];
         :set ($reportList->[:len $reportList]) $report;
     }
+    :return $reportList;
 }
 
 
