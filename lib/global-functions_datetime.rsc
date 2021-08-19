@@ -173,11 +173,11 @@
 }
 
 
-# $GetFullTimedelta
+# $ToTimedelta
 # return a full timedelta array from timedelta or time
 # args: <time>/<timedelta>      time or timedelta
 # return: <array>               timedelta array
-:global GetFullTimedelta do={
+:global ToTimedelta do={
     # global declare
     :global NewArray;
     :global IsNil;
@@ -237,16 +237,16 @@
         :set flag true;
     };
     :if (!$flag) do={
-        :error "Global.Datetime.GetFullTimedelta: \$1 should be time or timedelta or nil";
+        :error "Global.Datetime.ToTimedelta: \$1 should be time or timedelta or nil";
     }
     :return $td;
 }
 
 
-# $GetDatetime
+# $ToDatetime
 # args: <var>                   <sdt>, <timestamp>
 # return: <datetime>            datetime
-:global GetDatetime do={
+:global ToDatetime do={
     # global declare
     :global IsSDT;
     :global IsNothing;
@@ -273,7 +273,7 @@
             }
         }
         :if ([$IsNothing $mm]) do={
-            :error "Global.Datetime.GetDatetime: Read mm error";
+            :error "Global.Datetime.ToDatetime: Read mm error";
         };
         # read HH MM SS
         :local HHMMSS [$Split [:tostr ($dt->"time")] ":"];
@@ -286,7 +286,7 @@
 
     # error
     :if (!$flag) do={
-        :error "Global.Datetime.GetDatetime: type not match";
+        :error "Global.Datetime.ToDatetime: type not match";
     };
 }
 
@@ -304,10 +304,10 @@
 }
 
 
-# $GetSDT
+# $ToSDT
 # args: <var>                   <datetime>, <timestamp>
 # return: <sdt>                 array of sdt
-:global GetSDT do={
+:global ToSDT do={
     # global declare
     :global IsDatetime;
     :global IsNothing;
@@ -341,7 +341,7 @@
 
     # error
     :if (!$flag) do={
-        :error "Global.Datetime.GetSDT: type not match";
+        :error "Global.Datetime.ToSDT: type not match";
     };
 }
 

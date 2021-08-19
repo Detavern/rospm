@@ -464,7 +464,7 @@ Have a look at `/system scheduler add`, you can notice that new schedule use `st
     :local timedelta {"days"=7};
     :local shifted [$ShiftDatetime $t $timedelta];
     # convert into SDT (Abbr. SDT, system datetime)
-    $Print [$GetSDT $shifted];
+    $Print [$ToSDT $shifted];
 }
 
 Type  : array
@@ -479,7 +479,7 @@ Key time: 19:29:35
     :local t [$GetCurrentDatetime ];
     :local timedelta {"days"=7};
     :local shifted [$ShiftDatetime $t $timedelta];
-    :local sdt [$GetSDT $shifted];
+    :local sdt [$ToSDT $shifted];
     # schedule
     /system scheduler add name="example" start-time=($sdt->"time") start-date=($sdt->"date") on-event=":put \"do sth\";"
 }
@@ -614,42 +614,42 @@ Key time: 20:00:00
 2021;8;11;20;00;00
 ```
 
-#### `$GetSDT`
+#### `$ToSDT`
 ```
-# $GetSDT
+# $ToSDT
 # args: <var>                   <datetime>
 # return: <sdt>                 array of sdt
 
-[admin@MikroTik] > $Print [$GetSDT [$GetCurrentDatetime ]];
+[admin@MikroTik] > $Print [$ToSDT [$GetCurrentDatetime ]];
 
 Type  : array
 Key date: aug/11/2021
 Key time: 20:00:00
 ```
 
-#### `$GetDatetime`
+#### `$ToDatetime`
 ```
-# $GetDatetime
+# $ToDatetime
 # args: <var>                   <sdt>
 # return: <datetime>            datetime
 
-[admin@MikroTik] > :put [$GetDatetime [$GetCurrentSDT ]];
+[admin@MikroTik] > :put [$ToDatetime [$GetCurrentSDT ]];
 
 2021;8;11;20;00;00
 ```
 
-#### `$GetFullTimedelta`
+#### `$ToTimedelta`
 ```
-# $GetFullTimedelta
+# $ToTimedelta
 # return a full timedelta array from timedelta or time
-# args: <time>/<timedelta>      time or timedelta
+# args: <time>/<timedelta>      time or partial timedelta
 # return: <array>               timedelta array
 
 [admin@MikroTik] > {
     :local v 3w100d10:10:10;
-    $Print [$GetFullTimedelta $v];
+    $Print [$ToTimedelta $v];
     :local v {"days"=-100; "months"=12};
-    $Print [$GetFullTimedelta $v];
+    $Print [$ToTimedelta $v];
 }
 
 Type  : array
