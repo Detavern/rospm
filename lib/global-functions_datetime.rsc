@@ -366,7 +366,7 @@
     :global IsDatetime;
     :global TypeofTime;
     :global TypeofArray;
-    :global GetFullTimedelta;
+    :global ToTimedelta;
     :global IsLeapYear;
     :global MonthsOfTheYear;
     :global Split;
@@ -375,7 +375,7 @@
         :error "Global.Datetime.ShiftDatetime: \$1 should be datetime";
     };
     :local dt $1;
-    :local td [$GetFullTimedelta $2];
+    :local td [$ToTimedelta $2];
     # SS MM HH + only
     # SS
     :local SS;
