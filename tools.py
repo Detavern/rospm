@@ -11,12 +11,12 @@ def cli():
     pass
 
 
-@cli.group()
+@cli.group(help="Resource related operations.")
 def resource():
     pass
 
 
-@resource.command()
+@resource.command(help="Generate all resources from script in library.")
 @click.option('--src', default='lib', help='source path of folder to parse')
 @click.option('--dst', default='res', help='destination path of parsed information folder')
 @click.option('--exclude', multiple=True, help='package name to exclude(can use multiple times)')
