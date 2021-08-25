@@ -1,0 +1,38 @@
+# core package meta list
+:local packageList {
+    {% for meta in package_mapping.values() %}
+    {
+        "name"="{{ meta.name }}";
+        {% if meta.author %}
+        "author"="{{ meta.author }}";
+        {% endif %}
+        "description"="{{ meta.description }}";
+        "version"="{{ meta.version }}";
+        {% if meta.global == "true" %}
+        "global"=true;
+        {% endif %}
+    };
+    {% endfor %}
+};
+
+# core package meta mapping, use with list.
+:local packageMapping {
+    {% for name in package_mapping %}
+    "{{ name }}"={{ loop.index0 }};
+    {% endfor %}
+}
+
+# the minimum requirement packages of rspm
+:local essentialPackageList {
+    {% for name in essential_package_list %}
+    "{{ name }}";
+    {% endfor %}
+}
+
+:local packageInfo {
+    "packageList"=$packageList;
+    "packageMapping"=$packageMapping;
+    "essentialPackageList"=$essentialPackageList;
+}
+
+:return $packageInfo;

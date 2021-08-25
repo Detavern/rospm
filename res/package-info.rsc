@@ -2,58 +2,105 @@
 :local packageList {
     {
         "name"="global-variables";
+        "description"="global variable package";
         "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions";
+        "description"="global function package";
         "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.array";
+        "description"="global functions for array related operation";
         "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.string";
+        "description"="global functions for string related operation";
         "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.datetime";
+        "description"="global functions for datetime operation";
         "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.package";
+        "description"="global functions for package operation";
         "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-functions.misc";
+        "description"="global functions for miscellaneous collection";
         "version"="0.1.0";
         "global"=true;
     };
     {
         "name"="global-helpers";
+        "description"="global helper package";
         "version"="0.1.0";
         "global"=true;
     };
     {
-        "name"="tool.http";
+        "name"="interface.ethernet";
+        "description"="";
         "version"="0.1.0";
     };
     {
-        "name"="tool.remote";
+        "name"="interface.list";
+        "description"="";
         "version"="0.1.0";
     };
     {
-        "name"="rspm.state";
+        "name"="ip.address";
+        "description"="";
+        "version"="0.1.0";
+    };
+    {
+        "name"="ip.firewall.address-list";
+        "description"="";
+        "version"="0.1.0";
+    };
+    {
+        "name"="ip.route";
+        "description"="";
+        "version"="0.1.0";
+    };
+    {
+        "name"="ip.route.rule";
+        "description"="";
         "version"="0.1.0";
     };
     {
         "name"="rspm";
+        "description"="rspm";
+        "version"="0.1.0";
+    };
+    {
+        "name"="rspm.reset";
+        "description"="rspm configuration reset tools";
+        "version"="0.1.0";
+    };
+    {
+        "name"="rspm.state";
+        "description"="rspm package state tools";
+        "version"="0.1.0";
+    };
+    {
+        "name"="tool.http";
+        "description"="http utility";
+        "version"="0.1.0";
+    };
+    {
+        "name"="tool.remote";
+        "description"="remote script load tools";
         "version"="0.1.0";
     };
 };
@@ -68,10 +115,17 @@
     "global-functions.package"=5;
     "global-functions.misc"=6;
     "global-helpers"=7;
-    "tool.http"=8;
-    "tool.remote"=9;
-    "rspm.state"=10;
-    "rspm"=11;
+    "interface.ethernet"=8;
+    "interface.list"=9;
+    "ip.address"=10;
+    "ip.firewall.address-list"=11;
+    "ip.route"=12;
+    "ip.route.rule"=13;
+    "rspm"=14;
+    "rspm.reset"=15;
+    "rspm.state"=16;
+    "tool.http"=17;
+    "tool.remote"=18;
 }
 
 # the minimum requirement packages of rspm
