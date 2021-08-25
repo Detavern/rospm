@@ -17,6 +17,7 @@
     :global DumpVar;
     :global CreateConfig;
     :global FindPackage;
+    :global InValues;
     :global InputV;
     # local
     :local context [$ReadOption $Context $TypeofArray];
@@ -79,8 +80,13 @@
             :local pn (($report->"metaConfig")->"name");
             [[$GetFunc "rspm.upgrade"] Package=$pn];
         };
+        # not exist in local repository, use config to install it
         :if ($state = "NES") do={
-            [[$GetFunc "rspm.install"] Package=$pn];
+            :local pn (($report->"metaConfig")->"name");
+            :local epkgList ($packageInfo->"essentialPackageList");
+            :if ([$InValues $pn $epkgList]) do={
+                [[$GetFunc "rspm.install"] Package=$pn];
+            }
         };
     }
     # register startup
