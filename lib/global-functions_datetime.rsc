@@ -297,10 +297,10 @@
 :global GetCurrentDatetime do={
     # global declare
     :global GetCurrentSDT;
-    :global GetDatetime;
+    :global ToDatetime;
     # local
     :local sdt [$GetCurrentSDT ];
-    :return [$GetDatetime $sdt];
+    :return [$ToDatetime $sdt];
 }
 
 
