@@ -56,6 +56,7 @@
 :set sidList ($sidList, [$installPackage "global-functions"]);
 :set sidList ($sidList, [$installPackage "global-functions_array"]);
 :set sidList ($sidList, [$installPackage "global-functions_string"]);
+:set sidList ($sidList, [$installPackage "global-functions_cache"]);
 :set sidList ($sidList, [$installPackage "global-functions_datetime"]);
 :set sidList ($sidList, [$installPackage "global-functions_package"]);
 :set sidList ($sidList, [$installPackage "global-functions_misc"]);
