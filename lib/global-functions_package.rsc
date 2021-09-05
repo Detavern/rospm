@@ -194,8 +194,7 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.GetConfig: script \"$fileName\" not found"
-        :return "";
+        :error "Global.Package.GetConfig: script \"$fileName\" not found";
     }
     # parse code and get result;
     :local pSource [:parse [/system script get ($idList->0) source]];
@@ -261,6 +260,8 @@
     :global IsEmpty;
     :global IsNil;
     :global IsNothing;
+    :global IsNum;
+    :global FindPackage;
     :global GetConfig;
     :global GlobalCacheFuncGet;
     :global GlobalCacheFuncPut;
@@ -295,10 +296,15 @@
     :if ([$IsNothing $func]) do={
         :error "Global.Package.GetFunc: function $funcName not found in package.";
     } else {
-        :local config [$GetConfig "config.rspm.package"];
-        :local cacheSize ($config->"globalCacheSizeFunc");
-        # put into global cache
-        [$GlobalCacheFuncPut $1 $func $cacheSize];
+        :local idList [$FindPackage "config.rspm.package"];
+        :if (![$IsEmpty $idList]) do={
+            :local config [$GetConfig "config.rspm.package"];
+            :local cacheSize ($config->"globalCacheSizeFunc");
+            :if ([$IsNum $cacheSize]) do={
+                # put into global cache
+                [$GlobalCacheFuncPut $1 $func $cacheSize];
+            }
+        }
     }
     :return $func;
 }
