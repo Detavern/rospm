@@ -11,12 +11,24 @@ def cli():
     pass
 
 
-@cli.group(help="Resource related operations.")
-def resource():
+@cli.group(help="Library related operations.")
+def lib():
     pass
 
 
-@resource.command(help="Generate all resources from script in library.")
+@cli.group(help="Resource related operations.")
+def res():
+    pass
+
+
+@lib.command(help="Change version number of all files in lib folder.")
+@click.option('--src', default='lib', help='path of lib folder')
+@click.option('--version', help='target version number(format: x.x.x)')
+def changeversion(src, version):
+    print(version)
+
+
+@res.command(help="Generate all resources from script in library.")
 @click.option('--src', default='lib', help='source path of folder to parse')
 @click.option('--dst', default='res', help='destination path of parsed information folder')
 @click.option('--exclude', multiple=True, help='package name to exclude(can use multiple times)')

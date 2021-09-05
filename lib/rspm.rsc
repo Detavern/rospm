@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="rspm";
-    "version"="0.1.0";
+    "version"="0.1.1";
     "description"="rspm";
 };
 
@@ -34,6 +34,8 @@
     :local resVersionURL (($context->"baseURL") . "res/version.rsc");
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
     :set ($context->"version") $resVersion;
+    # add cache size
+    :set ($context->"globalCacheSizeFunc") 20;
     # load remote package info
     :local packageInfoURL (($context->"baseURL") . "res/package-info.rsc");
     :put "Get: $packageInfoURL";

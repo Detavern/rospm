@@ -6,7 +6,7 @@
 
 :local metaInfo {
     "name"="global-functions";
-    "version"="0.1.0";
+    "version"="0.1.1";
     "description"="global function package";
     "global"=true;
 };
@@ -15,9 +15,9 @@
 # validate if the variable is nil.
 # Some example of nil situation:
 # {
-#    :local v;
-#    :set v [:find "" "" 1];
-#    :put ([$IsNil $1]);
+#     :local v;
+#     :set v [:find "" "" 1];
+#     :put ([$IsNil $1]);
 # }
 # TODO: ADD MORE HERE
 # args: <var>                   variable
@@ -35,8 +35,12 @@
 # validate if the variable is nothing.
 # Some example of nothing situation:
 # {
-#    :local v;
-#    :put [$IsNothing $1];
+#     :local v;
+#     :put [$IsNothing $1];
+# }
+# {
+#     :local a {"k"="v"};
+#     :put [$IsNothing ($a->"notexist")];
 # }
 # TODO: ADD MORE HERE
 # args: <var>                   variable
@@ -225,6 +229,38 @@
 }
 
 
+# $PrintK
+# print the keys of an array
+# args: <array>                 array
+:global PrintK do={
+    # global declare
+    :global IsArray;
+    # check
+    :if ([$IsArray $1]) do={
+        :put ("Length: " . [:len $1]);
+        :foreach k,v in $1 do={
+            :put ("Key $k: ");
+        }
+        :if ([$IsEmpty $1]) do={
+            :put "Empty Array"
+        }
+    } else {
+        :error ("Global.PrintK: need an array")
+    }
+}
+
+
+# $GetGlobal
+# get global variable's value by its name
+# args: <name>                  name
+:global GetGlobal do={
+    :local cmd ":global $1;:return \$$1";
+    :local cmdFunc [:parse $cmd];
+    :local gVar [$cmdFunc];
+    :return $gVar;
+}
+
+
 # $ReadOption
 # validate the type of input, could set default value
 # args: <var>                   <value>
@@ -359,6 +395,73 @@
         :set value $1;
     }
     :return $value;
+}
+
+
+# $ByteToChar
+# convert a single byte to character
+# args: <num>                   num, 0x00 to 0xFF
+# return: <str>                 character
+:global ByteToChar do={
+    :if ($1 > 255) do={
+        :error "Global.ByteToChar: \$1 should smaller than 256"
+    }
+    :local h1 [:pick "0123456789ABCDEF" (($1 >> 4) & 0xF)];
+    :local h2 [:pick "0123456789ABCDEF" ($1 & 0xF)];
+    :return [[:parse "(\"\\$h1$h2\")"]];
+}
+
+
+# $Encode
+# convert unicode code point into utf-8 character
+# unicode: U+0000 - U+10FFFF
+# start     end         byte count      byte 1
+# U+0000    U+007F      1 char          0xxx xxxx
+# U+0080    U+07FF      2 char          110x xxxx
+# U+0800    U+FFFF      3 char          1110 xxxx
+# U+10000   U+10FFFF    4 char          1111 0xxx
+# args: <num>                   num, U+0000 to U+10FFFF
+# return: <str>                 character
+:global Encode do={
+    # global
+    :global TypeRecovery;
+    :global ByteToChar;
+    # check
+    :local unicode [$TypeRecovery $1];
+    :if (($1 > 0x10FFFF) or ($1 < 0)) do={
+        :error "Global.Encode: not in range(0x0000 to 0x110000)";
+    }
+    :local byteNum;
+    :local result "";
+    # local
+    :if ($1 < 0x80) do={
+        :return [$ByteToChar $1];
+    } else {
+        :if ($1 < 0x800) do={
+            :set byteNum 2;
+        } else {
+            :if ($1 < 0x10000) do={
+                :set byteNum 3;
+            } else {
+                :set byteNum 4;
+            }
+        }
+    }
+    :for i from=2 to=$byteNum do={
+        # pick last 6 bit and prepend 10 ahead, that make a byte 10xxxxxx(continuation byte)
+        :set result ([$ByteToChar ($unicode & 0x3F | 0x80)] . $result)
+        :set unicode ($unicode >> 6)
+    }
+    # make first byte
+    :set result ([$ByteToChar (((0xFF00 >> $byteNum) & 0xFF) | $unicode)] . $result);
+    :return $result;
+}
+
+
+# $Decode
+# convert a utf-8 character back to unicode point
+:global Decode do={
+    # TODO: implement
 }
 
 

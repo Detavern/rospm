@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="ip.route.rule";
-    "version"="0.1.0";
+    "version"="0.1.1";
     "description"="";
 };
 

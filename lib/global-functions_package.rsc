@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-functions.package";
-    "version"="0.1.0";
+    "version"="0.1.1";
     "description"="global functions for package operation";
     "global"=true;
 };
@@ -180,41 +180,6 @@
 }
 
 
-# $GetFunc
-# args: <str>                   <package name>.<func name>
-# return: <code>                target function  
-:global GetFunc do={
-    # global declare
-    :global RSplit;
-    :global Replace;
-    :global IsEmpty;
-    :global IsNothing;
-    :global ValidatePackageContent;
-    # split package & function
-    :local splitted [$RSplit $1 "." 1];
-    :local pkgName ($splitted->0);
-    :local funcName ($splitted->1);
-    :local fileName [$Replace $pkgName "." "_"];
-    :local idList [/system script find name=$fileName];
-    :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.GetFunc: script \"$fileName\" not found";
-        :return "";
-    }
-    # parse code and get result;
-    :local pSource [:parse [/system script get ($idList->0) source]];
-    :local pkg [$pSource ];
-    :local va {"name"=$pkgName;"type"="code"};
-    if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.Package.GetFunc: could not validate target package";
-    }
-    :local func ($pkg->$funcName);
-    :if ([$IsNothing $func]) do={
-        :error "Global.Package.GetFunc: function $funcName not found in package.";
-    }
-    :return $func;
-}
-
-
 # $GetConfig
 # args: <str>                   <package name>
 # return: <array->var>          config named array      
@@ -283,6 +248,59 @@
         :put ("    " . $function);
     }
     :return "";
+}
+
+
+# $GetFunc
+# args: <str>                   <package name>.<func name>
+# return: <code>                target function
+:global GetFunc do={
+    # global declare
+    :global RSplit;
+    :global Replace;
+    :global IsEmpty;
+    :global IsNil;
+    :global IsNothing;
+    :global GetConfig;
+    :global GlobalCacheFuncGet;
+    :global GlobalCacheFuncPut;
+    :global ValidatePackageContent;
+    # local
+    :local pkg;
+    :local func;
+    # try global cache
+    :set func [$GlobalCacheFuncGet $1];
+    :if (![$IsNil $func]) do={
+        :return $func;
+    }
+    # split package & function
+    :local splitted [$RSplit $1 "." 1];
+    :local pkgName ($splitted->0);
+    :local funcName ($splitted->1);
+    :local fileName [$Replace $pkgName "." "_"];
+    :local idList [/system script find name=$fileName];
+    :if ([$IsEmpty $idList]) do={
+        :error "Global.Package.GetFunc: script \"$fileName\" not found";
+        :return "";
+    }
+    # parse code and get result
+    :local pSource [:parse [/system script get ($idList->0) source]];
+    :set pkg [$pSource ];
+    :local va {"name"=$pkgName;"type"="code"};
+    if (![$ValidatePackageContent $pkg $va]) do={
+        :error "Global.Package.GetFunc: could not validate target package";
+    }
+    # get func from package
+    :set func ($pkg->$funcName);
+    :if ([$IsNothing $func]) do={
+        :error "Global.Package.GetFunc: function $funcName not found in package.";
+    } else {
+        :local config [$GetConfig "config.rspm.package"];
+        :local cacheSize ($config->"globalCacheSizeFunc");
+        # put into global cache
+        [$GlobalCacheFuncPut $1 $func $cacheSize];
+    }
+    :return $func;
 }
 
 

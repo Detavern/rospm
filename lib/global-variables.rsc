@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-variables";
-    "version"="0.1.0";
+    "version"="0.1.1";
     "description"="global variable package";
     "global"=true;
 };
@@ -42,6 +42,7 @@
 
 # script limitation
 :global ScriptLengthLimit 30000;
+:global VariableLengthLimit 4096;
 
 # datetime
 :global MonthsOfTheYear {31;28;31;30;31;30;31;31;30;31;30;31};

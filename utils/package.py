@@ -18,6 +18,7 @@ LOAD_ORDER = [
     "global-functions",
     "global-functions.array",
     "global-functions.string",
+    "global-functions.cache",
     "global-functions.datetime",
     "global-functions.package",
     "global-functions.misc",
@@ -29,6 +30,7 @@ ESSENTIAL_PACKAGE_LIST = [
     "global-functions",
     "global-functions.array",
     "global-functions.string",
+    "global-functions.cache",
     "global-functions.datetime",
     "global-functions.package",
     "global-functions.misc",
@@ -85,7 +87,7 @@ class PackageInfoGenerator:
                 if res:
                     break
             else:
-                raise ValueError("package info not found")
+                raise ValueError(f"package info not found in file: {path}")
             var_name = res[0]
             # find file->package
             package_array = self.find_array(var_name, content)
@@ -147,7 +149,7 @@ class PackageInfoGenerator:
         exclude_list = [] if exclude_list is None else exclude_list
         # render template
         package_mapping = OrderedDict()
-        for k, v in self.meta_mapping.items():
+        for k, v in self.meta_ext_mapping.items():
             if k not in exclude_list:
                 package_mapping[k] = v
         tmpl = TMPL_ENV.get_template("package-info-ext.rsc.j2")

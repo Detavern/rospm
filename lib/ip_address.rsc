@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="ip.address";
-    "version"="0.1.0";
+    "version"="0.1.1";
     "description"="";
 };
 

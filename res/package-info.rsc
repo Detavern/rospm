@@ -3,13 +3,13 @@
     {
         "name"="global-variables";
         "description"="global variable package";
-        "version"="0.1.0";
+        "version"="0.1.1";
         "global"=true;
     };
     {
         "name"="global-functions";
         "description"="global function package";
-        "version"="0.1.0";
+        "version"="0.1.1";
         "global"=true;
     };
     {
@@ -25,6 +25,12 @@
         "global"=true;
     };
     {
+        "name"="global-functions.cache";
+        "description"="global functions for cache operation";
+        "version"="0.1.1";
+        "global"=true;
+    };
+    {
         "name"="global-functions.datetime";
         "description"="global functions for datetime operation";
         "version"="0.1.0";
@@ -33,7 +39,7 @@
     {
         "name"="global-functions.package";
         "description"="global functions for package operation";
-        "version"="0.1.0";
+        "version"="0.1.1";
         "global"=true;
     };
     {
@@ -99,6 +105,11 @@
         "version"="0.1.0";
     };
     {
+        "name"="tool.json";
+        "description"="json loads and dumps";
+        "version"="0.1.0";
+    };
+    {
         "name"="tool.remote";
         "description"="remote script load tools";
         "version"="0.1.0";
@@ -111,21 +122,23 @@
     "global-functions"=1;
     "global-functions.array"=2;
     "global-functions.string"=3;
-    "global-functions.datetime"=4;
-    "global-functions.package"=5;
-    "global-functions.misc"=6;
-    "global-helpers"=7;
-    "interface.ethernet"=8;
-    "interface.list"=9;
-    "ip.address"=10;
-    "ip.firewall.address-list"=11;
-    "ip.route"=12;
-    "ip.route.rule"=13;
-    "rspm"=14;
-    "rspm.reset"=15;
-    "rspm.state"=16;
-    "tool.http"=17;
-    "tool.remote"=18;
+    "global-functions.cache"=4;
+    "global-functions.datetime"=5;
+    "global-functions.package"=6;
+    "global-functions.misc"=7;
+    "global-helpers"=8;
+    "interface.ethernet"=9;
+    "interface.list"=10;
+    "ip.address"=11;
+    "ip.firewall.address-list"=12;
+    "ip.route"=13;
+    "ip.route.rule"=14;
+    "rspm"=15;
+    "rspm.reset"=16;
+    "rspm.state"=17;
+    "tool.http"=18;
+    "tool.json"=19;
+    "tool.remote"=20;
 }
 
 # the minimum requirement packages of rspm
@@ -134,6 +147,7 @@
     "global-functions";
     "global-functions.array";
     "global-functions.string";
+    "global-functions.cache";
     "global-functions.datetime";
     "global-functions.package";
     "global-functions.misc";

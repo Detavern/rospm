@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="ip.firewall.address-list";
-    "version"="0.1.0";
+    "version"="0.1.1";
     "description"="";
 };
 
