@@ -5,6 +5,7 @@
     "global-functions";
     "global-functions_array";
     "global-functions_string";
+    "global-functions_cache";
     "global-functions_datetime";
     "global-functions_package";
     "global-functions_misc";
