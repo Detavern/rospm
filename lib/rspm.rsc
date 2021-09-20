@@ -377,6 +377,7 @@
     :global FindPackage;
     :global GetFunc;
     :global GetConfig;
+    :global GlobalCacheFuncRemovePrefix;
     # local
     :local configPkgName "config.rspm.package";
     :put "Loading local configuration: $configPkgName...";
@@ -414,6 +415,9 @@
         :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         :put "Writing source into repository...";
         /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
+        :put "Clean function cache...";
+        :local pkgName (($report->"metaConfig")->"name");
+        [$GlobalCacheFuncRemovePrefix $pkgName];
     }
     :put "The package has been upgraded.";
 }
@@ -506,6 +510,7 @@
     :global InValues;
     :global NewArray;
     :global FindPackage;
+    :global GlobalCacheFuncFlush;
     # local
     :local configPkgName "config.rspm.package";
     :local configExtPkgName "config.rspm.package.ext";
@@ -555,6 +560,8 @@
             }
         }
     };
+    :put "Flush function cache...";
+    [$GlobalCacheFuncFlush ];
     :put "$lenUpradeList packages have been upgraded.";  
 }
 
