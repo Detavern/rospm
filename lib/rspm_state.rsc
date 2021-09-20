@@ -108,7 +108,7 @@
     :do {
         :set config [$GetConfig $configPkgName];
         :set configExt [$GetConfig $configExtPkgName];
-    } on-error {
+    } on-error={
         :set flagReadConfig false;
     };
     :if (!$flagReadConfig) do={
@@ -153,7 +153,7 @@
         :local flagReadScript true;
         :do {
             :set metaScript [$GetMeta $Package VA=$va];
-        } on-error {
+        } on-error={
             :set flagReadScript false;
         };
         :if (!$flagReadScript) do={
