@@ -23,9 +23,10 @@ def res():
 
 @lib.command(help="Change version number of all files in lib folder.")
 @click.option('--src', default='lib', help='path of lib folder')
-@click.option('--version', help='target version number(format: x.x.x)')
-def changeversion(src, version):
-    print(version)
+def changeversion(src):
+    abs_src = os.path.abspath(src)
+    pig = PackageInfoGenerator()
+    pig.change_version(abs_src)
 
 
 @res.command(help="Generate all resources from script in library.")

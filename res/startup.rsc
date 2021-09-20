@@ -8,6 +8,7 @@
     "global-functions_cache";
     "global-functions_datetime";
     "global-functions_package";
+    "global-functions_unicode";
     "global-functions_misc";
 }
 

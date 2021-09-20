@@ -2,43 +2,24 @@ import os
 import re
 from collections import OrderedDict
 
+import yaml
 import jinja2
 
-VERSION = "0.1.0"
+with open(os.path.join("utils", "config.yml")) as f:
+    config = yaml.safe_load(f)
 
 TMPL_ENV = jinja2.Environment(
-    loader=jinja2.FileSystemLoader("utils/templates"),
+    loader=jinja2.FileSystemLoader(os.path.join("utils", "templates")),
     autoescape=jinja2.select_autoescape(),
     trim_blocks=True,
     lstrip_blocks=True,
 )
 
-LOAD_ORDER = [
-    "global-variables",
-    "global-functions",
-    "global-functions.array",
-    "global-functions.string",
-    "global-functions.cache",
-    "global-functions.datetime",
-    "global-functions.package",
-    "global-functions.misc",
-    "global-helpers",
-]
+VERSION = config['version']
 
-ESSENTIAL_PACKAGE_LIST = [
-    "global-variables",
-    "global-functions",
-    "global-functions.array",
-    "global-functions.string",
-    "global-functions.cache",
-    "global-functions.datetime",
-    "global-functions.package",
-    "global-functions.misc",
-    "tool.http",
-    "tool.remote",
-    "rspm.state",
-    "rspm",
-]
+LOAD_ORDER = config['load_order']
+
+ESSENTIAL_PACKAGE_LIST = config['essential_package_list']
 
 
 class PackageInfoGenerator:
@@ -90,20 +71,22 @@ class PackageInfoGenerator:
                 raise ValueError(f"package info not found in file: {path}")
             var_name = res[0]
             # find file->package
-            package_array = self.find_array(var_name, content)
+            package_array, _ = self.find_array(var_name, content)
             # find file->package->metaInfo
             var_name = package_array['metaInfo'][1:]
-            metainfo_array = self.find_array(var_name, content)
+            metainfo_array, _ = self.find_array(var_name, content)
         return metainfo_array
 
     def find_array(self, name, content):
         array = {}
+        pos = {}
         for i, line in enumerate(content):
             res = re.findall(f"^:local {name} {{", line)
             if res:
                 break
         else:
             raise ValueError(f"array: {name} not found")
+        pos['start'] = i
         cursor = i + 1
         while True:
             line = content[cursor]
@@ -117,7 +100,8 @@ class PackageInfoGenerator:
                 kv = res[0]
                 array[kv[0]] = kv[1]
             cursor += 1
-        return array
+        pos['end'] = cursor + 1
+        return array, pos
 
     def generate_package_info(self, path, filename="package-info.rsc", exclude_list=None):
         if self.parsed is False:
@@ -203,3 +187,46 @@ class PackageInfoGenerator:
         self.generate_package_info_ext(path, exclude_list=exclude_list)
         self.generate_startup(path)
         self.generate_version(path)
+
+    def change_version(self, path):
+        print(f'Parsing library file from folder: {path}')
+        for p in os.listdir(path):
+            if p.endswith(".rsc"):
+                self.modify_version_info(os.path.abspath(os.path.join(path, p)))
+
+    def make_metainfo(self, metainfo):
+        result = [
+            ':local metaInfo {\n',
+        ]
+        for k, v in metainfo.items():
+            line = '    "{}"={};\n'
+            if v == 'true':
+                line = line.format(k, v)
+            else:
+                line = line.format(k, f'"{v}"')
+            result.append(line)
+        result.append("};\n")
+        return result
+
+    def modify_version_info(self, path):
+        with open(path) as f:
+            content = f.readlines()
+        # find return
+        for line in content:
+            res = re.findall("^:return \$([a-zA-Z0-9_]+?);$", line)
+            if res:
+                break
+        else:
+            raise ValueError(f"package info not found in file: {path}")
+        var_name = res[0]
+        # find file->package
+        package_array, _ = self.find_array(var_name, content)
+        # find file->package->metaInfo
+        var_name = package_array['metaInfo'][1:]
+        metainfo_array, pos = self.find_array(var_name, content)
+        # modify version
+        metainfo_array['version'] = VERSION
+        # dump
+        ct = content[:pos['start']] + self.make_metainfo(metainfo_array) + content[pos['end']:]
+        with open(path, 'w') as f:
+            f.write("".join(ct))

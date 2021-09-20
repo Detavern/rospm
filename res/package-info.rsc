@@ -43,6 +43,12 @@
         "global"=true;
     };
     {
+        "name"="global-functions.unicode";
+        "description"="Global Package for unicode related operation";
+        "version"="0.1.1";
+        "global"=true;
+    };
+    {
         "name"="global-functions.misc";
         "description"="global functions for miscellaneous collection";
         "version"="0.1.1";
@@ -125,20 +131,21 @@
     "global-functions.cache"=4;
     "global-functions.datetime"=5;
     "global-functions.package"=6;
-    "global-functions.misc"=7;
-    "global-helpers"=8;
-    "interface.ethernet"=9;
-    "interface.list"=10;
-    "ip.address"=11;
-    "ip.firewall.address-list"=12;
-    "ip.route"=13;
-    "ip.route.rule"=14;
-    "rspm"=15;
-    "rspm.reset"=16;
-    "rspm.state"=17;
-    "tool.http"=18;
-    "tool.json"=19;
-    "tool.remote"=20;
+    "global-functions.unicode"=7;
+    "global-functions.misc"=8;
+    "global-helpers"=9;
+    "interface.ethernet"=10;
+    "interface.list"=11;
+    "ip.address"=12;
+    "ip.firewall.address-list"=13;
+    "ip.route"=14;
+    "ip.route.rule"=15;
+    "rspm"=16;
+    "rspm.reset"=17;
+    "rspm.state"=18;
+    "tool.http"=19;
+    "tool.json"=20;
+    "tool.remote"=21;
 }
 
 # the minimum requirement packages of rspm
@@ -150,6 +157,7 @@
     "global-functions.cache";
     "global-functions.datetime";
     "global-functions.package";
+    "global-functions.unicode";
     "global-functions.misc";
     "tool.http";
     "tool.remote";

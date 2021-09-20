@@ -302,6 +302,22 @@ $Print [$LoadGlobalVar "Nothing"];
     $Print $a;
     :set ($a->"98") 321;
     $Print $a;
+    :foreach k,v in $a do={
+        :put ("key   " . $k . " is " . [:typeof $k]);
+        :put ("value " . $v . " is " . [:typeof $v]);
+    }
+}
+{
+    :local a {1;2;3;4;5;6};
+    $Print $a;
+    :local key 1.1.1.1;
+    $Print $key;
+    :set ($a->$key) 321;
+    $Print $a;
+    :foreach k,v in $a do={
+        :put ("key   " . $k . " is " . [:typeof $k]);
+        :put ("value " . $v . " is " . [:typeof $v]);
+    }
 }
 {
     :local a {
