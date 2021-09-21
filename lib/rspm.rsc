@@ -116,6 +116,7 @@
     :global GetFunc;
     :global InValues;
     :global TypeofStr;
+    :global LoadPackage;
     :global UpdateConfig;
     :global ValidatePackageContent;
     # local
@@ -254,10 +255,7 @@
     :put "The package has been installed.";
     # if global, run it
     :if ((($report->"metaConfig")->"global") = true) do={
-        :local fileName [$Replace $pkgName "." "_"];
-        :local cmdStr "/system script run [/system script find name=\"$fileName\"];";
-        :local cmdFunc [:parse $cmdStr];
-        [$cmdFunc ];
+        [$LoadPackage (($report->"metaConfig")->"name")];
     }
     :return "";
 }
@@ -375,6 +373,7 @@
     :global IsNothing;
     :global InValues;
     :global FindPackage;
+    :global LoadPackage;
     :global GetFunc;
     :global GetConfig;
     :global GlobalCacheFuncRemovePrefix;
@@ -418,6 +417,10 @@
         :put "Clean function cache...";
         :local pkgName (($report->"metaConfig")->"name");
         [$GlobalCacheFuncRemovePrefix $pkgName];
+        # is global
+        :if ((($report->"metaConfig")->"global") = true) do={
+            [$LoadPackage $pkgName];
+        }
     }
     :put "The package has been upgraded.";
 }
@@ -468,6 +471,7 @@
     :global GetFunc;
     :global GetConfig;
     :global InValues;
+    :global LoadPackage;
     :global UpdateConfig;
     # local
     :local configPkgName "config.rspm.package";
@@ -496,6 +500,10 @@
         :set ($ml->[:len $ml]) $meta;
         :put "Updating extension package list...";
         [$UpdateConfig $configExtPkgName $configExt];
+        # is global
+        :if (($meta->"global") = true) do={
+            [$LoadPackage $pkgName];
+        }
     };
     :put "The package has been registed.";
 }
@@ -510,6 +518,7 @@
     :global InValues;
     :global NewArray;
     :global FindPackage;
+    :global LoadPackage;
     :global GlobalCacheFuncFlush;
     # local
     :local configPkgName "config.rspm.package";
@@ -557,6 +566,10 @@
                 :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
                 :put "Writing source into repository...";
                 /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+            }
+            # is global
+            :if ((($report->"metaConfig")->"global") = true) do={
+                [$LoadPackage $pkgName];
             }
         }
     };

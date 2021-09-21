@@ -80,7 +80,7 @@
     :global NewArray;
     :global FindPackage;
     :global GetConfig;
-    :global GetMeta;
+    :global GetMetaSafe;
     :global ReadOption;
     :global TypeofBool;
     # check
@@ -152,7 +152,7 @@
         # suppress error when reading script meta
         :local flagReadScript true;
         :do {
-            :set metaScript [$GetMeta $Package VA=$va];
+            :set metaScript [$GetMetaSafe $Package VA=$va];
         } on-error={
             :set flagReadScript false;
         };
