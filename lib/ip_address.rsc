@@ -10,7 +10,7 @@
 # opt kwargs: InterfaceList=<array->str>|<str>      find addresses by interface list name or interface array
 # opt kwargs: Output=<str>                          "cidr"=<str>, "ip"=<ip>(default)
 # return: <array->str>                              list of addresses
-:global find do={
+:local find do={
     #DEFINE global
     :global IsStr;
     :global IsNothing;

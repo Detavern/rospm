@@ -10,6 +10,16 @@
     "version"="0.2.0";
     "description"="Global Package for unicode related operation";
     "global"=true;
+    "global-functions"={
+        "ToHex";
+        "ByteToChar";
+        "CharToByte";
+        "UnicodeToUtf8";
+        "Utf8ToUnicode";
+        "Utf8ToUnicodeEscaped";
+        "EncodeUtf8";
+        "DecodeUtf8";
+    };
 };
 
 

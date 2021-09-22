@@ -10,6 +10,13 @@
     "version"="0.2.0";
     "description"="global functions for cache operation";
     "global"=true;
+    "global-functions"={
+        "GlobalCacheFuncGet";
+        "GlobalCacheFuncPut";
+        "GlobalCacheFuncRemove";
+        "GlobalCacheFuncRemovePrefix";
+        "GlobalCacheFuncFlush";
+    };
 };
 
 

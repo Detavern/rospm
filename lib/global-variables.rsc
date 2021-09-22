@@ -10,6 +10,34 @@
     "version"="0.2.0";
     "description"="global variable package";
     "global"=true;
+    "global-variables"={
+        "Nothing";
+        "Nil";
+        "EmptyArray";
+        "TypeofNothing";
+        "TypeofNil";
+        "TypeofStr";
+        "TypeofNum";
+        "TypeofBool";
+        "TypeofID";
+        "TypeofTime";
+        "TypeofIP";
+        "TypeofIPPrefix";
+        "TypeofIPv6";
+        "TypeofIPv6Prefix";
+        "TypeofArray";
+        "SYSArchitectureName";
+        "SYSBoardName";
+        "SYSCPU";
+        "SYSCPUCount";
+        "SYSCPUFrequency";
+        "SYSVersion";
+        "ScriptLengthLimit";
+        "VariableLengthLimit";
+        "MonthsOfTheYear";
+        "MonthsName";
+        "CharToNum";
+    };
 };
 
 # for framework

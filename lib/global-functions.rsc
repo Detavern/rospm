@@ -9,6 +9,32 @@
     "version"="0.2.0";
     "description"="global function package";
     "global"=true;
+    "global-functions"={
+        "IsNil";
+        "IsNothing";
+        "IsNum";
+        "IsStr";
+        "IsBool";
+        "IsTime";
+        "IsArray";
+        "IsIP";
+        "IsIPv6";
+        "IsIPPrefix";
+        "IsIPv6Prefix";
+        "IsEmpty";
+        "IsDict";
+        "NewArray";
+        "Assert";
+        "Print";
+        "PrintK";
+        "GetGlobal";
+        "ReadOption";
+        "InKeys";
+        "InValues";
+        "TypeRecovery";
+        "Input";
+        "InputV";
+    };
 };
 
 # $IsNil

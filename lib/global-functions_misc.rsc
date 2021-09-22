@@ -10,6 +10,9 @@
     "version"="0.2.0";
     "description"="global functions for miscellaneous collection";
     "global"=true;
+    "global-functions"={
+        "UniqueArray";
+    };
 };
 
 

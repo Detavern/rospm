@@ -10,6 +10,23 @@
     "version"="0.2.0";
     "description"="global functions for package operation";
     "global"=true;
+    "global-functions"={
+        "FindPackage";
+        "ValidatePackageContent";
+        "ValidatePackage";
+        "GetSource";
+        "GetMeta";
+        "GetMetaSafe";
+        "GetEnv";
+        "PrintPackageInfo";
+        "LoadPackage";
+        "GetFunc";
+        "DumpVar";
+        "LoadVar";
+        "SetGlobalVar";
+        "LoadGlobalVar";
+        "UnsetGlobalVar";
+    };
 };
 
 

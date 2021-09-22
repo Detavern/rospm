@@ -3,122 +3,263 @@
     {
         "name"="global-variables";
         "description"="global variable package";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-variables"={
+            "Nothing";
+            "Nil";
+            "EmptyArray";
+            "TypeofNothing";
+            "TypeofNil";
+            "TypeofStr";
+            "TypeofNum";
+            "TypeofBool";
+            "TypeofID";
+            "TypeofTime";
+            "TypeofIP";
+            "TypeofIPPrefix";
+            "TypeofIPv6";
+            "TypeofIPv6Prefix";
+            "TypeofArray";
+            "SYSArchitectureName";
+            "SYSBoardName";
+            "SYSCPU";
+            "SYSCPUCount";
+            "SYSCPUFrequency";
+            "SYSVersion";
+            "ScriptLengthLimit";
+            "VariableLengthLimit";
+            "MonthsOfTheYear";
+            "MonthsName";
+            "CharToNum";
+        };
     };
     {
         "name"="global-functions";
         "description"="global function package";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "IsNil";
+            "IsNothing";
+            "IsNum";
+            "IsStr";
+            "IsBool";
+            "IsTime";
+            "IsArray";
+            "IsIP";
+            "IsIPv6";
+            "IsIPPrefix";
+            "IsIPv6Prefix";
+            "IsEmpty";
+            "IsDict";
+            "NewArray";
+            "Assert";
+            "Print";
+            "PrintK";
+            "GetGlobal";
+            "ReadOption";
+            "InKeys";
+            "InValues";
+            "TypeRecovery";
+            "Input";
+            "InputV";
+        };
     };
     {
         "name"="global-functions.array";
         "description"="global functions for array related operation";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "Append";
+            "Appends";
+            "Prepend";
+            "Insert";
+            "Extend";
+            "Reverse";
+        };
     };
     {
         "name"="global-functions.string";
         "description"="global functions for string related operation";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "Replace";
+            "Split";
+            "RSplit";
+            "StartsWith";
+            "EndsWith";
+            "Strip";
+            "Join";
+            "SimpleDump";
+            "SimpleLoad";
+        };
     };
     {
         "name"="global-functions.cache";
         "description"="global functions for cache operation";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "GlobalCacheFuncGet";
+            "GlobalCacheFuncPut";
+            "GlobalCacheFuncRemove";
+            "GlobalCacheFuncRemovePrefix";
+            "GlobalCacheFuncFlush";
+        };
     };
     {
         "name"="global-functions.datetime";
         "description"="global functions for datetime operation";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "IsSDT";
+            "IsDatetime";
+            "IsTimeDelta";
+            "GetCurrentClock";
+            "GetCurrentDate";
+            "GetCurrentTime";
+            "GetCurrentSDT";
+            "ToTimedelta";
+            "ToDatetime";
+            "GetCurrentDatetime";
+            "ToSDT";
+            "IsLeapYear";
+            "ShiftDatetime";
+        };
     };
     {
         "name"="global-functions.package";
         "description"="global functions for package operation";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "FindPackage";
+            "ValidatePackageContent";
+            "ValidatePackage";
+            "GetSource";
+            "GetMeta";
+            "GetMetaSafe";
+            "GetEnv";
+            "PrintPackageInfo";
+            "LoadPackage";
+            "GetFunc";
+            "DumpVar";
+            "LoadVar";
+            "SetGlobalVar";
+            "LoadGlobalVar";
+            "UnsetGlobalVar";
+        };
+    };
+    {
+        "name"="global-functions.config";
+        "description"="global functions for configuration management";
+        "version"="0.2.0";
+        "global-functions"={
+            "GetConfig";
+            "CreateConfig";
+            "UpdateConfig";
+        };
     };
     {
         "name"="global-functions.unicode";
         "description"="Global Package for unicode related operation";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "ToHex";
+            "ByteToChar";
+            "CharToByte";
+            "UnicodeToUtf8";
+            "Utf8ToUnicode";
+            "Utf8ToUnicodeEscaped";
+            "EncodeUtf8";
+            "DecodeUtf8";
+        };
     };
     {
         "name"="global-functions.misc";
         "description"="global functions for miscellaneous collection";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "UniqueArray";
+        };
     };
     {
         "name"="global-helpers";
         "description"="global helper package";
-        "version"="0.1.1";
-        "global"=true;
+        "version"="0.2.0";
+        "global-functions"={
+            "itemsFoundEnsureOneEnabled";
+            "addItemByTemplate";
+            "findOneActiveItem";
+            "findOneEnabledItem";
+            "findOneDisabledItem";
+            "findAllEnabledItems";
+            "getAttrsByIDList";
+            "findAllItemsByTemplate";
+            "setItemAttrByTemplate";
+        };
     };
     {
         "name"="interface.ethernet";
         "description"="";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="interface.list";
         "description"="";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="ip.address";
         "description"="";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="ip.firewall.address-list";
         "description"="";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="ip.route";
         "description"="";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="ip.route.rule";
         "description"="";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="rspm";
         "description"="rspm";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="rspm.reset";
         "description"="rspm configuration reset tools";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="rspm.state";
         "description"="rspm package state tools";
-        "version"="0.1.1";
+        "version"="0.2.0";
+    };
+    {
+        "name"="tool.file";
+        "description"="file utility";
+        "version"="0.2.0";
     };
     {
         "name"="tool.http";
         "description"="http utility";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="tool.json";
         "description"="json loads and dumps";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
     {
         "name"="tool.remote";
         "description"="remote script load tools";
-        "version"="0.1.1";
+        "version"="0.2.0";
     };
 };
 
@@ -131,21 +272,23 @@
     "global-functions.cache"=4;
     "global-functions.datetime"=5;
     "global-functions.package"=6;
-    "global-functions.unicode"=7;
-    "global-functions.misc"=8;
-    "global-helpers"=9;
-    "interface.ethernet"=10;
-    "interface.list"=11;
-    "ip.address"=12;
-    "ip.firewall.address-list"=13;
-    "ip.route"=14;
-    "ip.route.rule"=15;
-    "rspm"=16;
-    "rspm.reset"=17;
-    "rspm.state"=18;
-    "tool.http"=19;
-    "tool.json"=20;
-    "tool.remote"=21;
+    "global-functions.config"=7;
+    "global-functions.unicode"=8;
+    "global-functions.misc"=9;
+    "global-helpers"=10;
+    "interface.ethernet"=11;
+    "interface.list"=12;
+    "ip.address"=13;
+    "ip.firewall.address-list"=14;
+    "ip.route"=15;
+    "ip.route.rule"=16;
+    "rspm"=17;
+    "rspm.reset"=18;
+    "rspm.state"=19;
+    "tool.file"=20;
+    "tool.http"=21;
+    "tool.json"=22;
+    "tool.remote"=23;
 }
 
 # the minimum requirement packages of rspm
@@ -157,6 +300,7 @@
     "global-functions.cache";
     "global-functions.datetime";
     "global-functions.package";
+    "global-functions.config";
     "global-functions.unicode";
     "global-functions.misc";
     "tool.http";

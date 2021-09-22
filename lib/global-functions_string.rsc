@@ -10,7 +10,17 @@
     "version"="0.2.0";
     "description"="global functions for string related operation";
     "global"=true;
-    "require"="{"global-functions";""}";
+    "global-functions"={
+        "Replace";
+        "Split";
+        "RSplit";
+        "StartsWith";
+        "EndsWith";
+        "Strip";
+        "Join";
+        "SimpleDump";
+        "SimpleLoad";
+    };
 };
 
 

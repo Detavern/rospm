@@ -13,6 +13,17 @@
     "version"="0.2.0";
     "description"="global helper package";
     "global"=true;
+    "global-functions"={
+        "itemsFoundEnsureOneEnabled";
+        "addItemByTemplate";
+        "findOneActiveItem";
+        "findOneEnabledItem";
+        "findOneDisabledItem";
+        "findAllEnabledItems";
+        "getAttrsByIDList";
+        "findAllItemsByTemplate";
+        "setItemAttrByTemplate";
+    };
 };
 
 # ensure one of specific internal ID item is enabled

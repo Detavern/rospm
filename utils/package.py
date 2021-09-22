@@ -5,6 +5,8 @@ from collections import OrderedDict
 import yaml
 import jinja2
 
+from .parser import PackageParser
+
 with open(os.path.join("utils", "config.yml")) as f:
     config = yaml.safe_load(f)
 
@@ -22,8 +24,8 @@ LOAD_ORDER = config['load_order']
 ESSENTIAL_PACKAGE_LIST = config['essential_package_list']
 
 
-class PackageInfoGenerator:
-    """PackageInfoGenerator
+class PackageResourceGenerator:
+    """PackageResourceGenerator
     automatically generate `package-list.rsc` in `res` folder from metainfo of each package.
     """
     def __init__(self):
@@ -42,8 +44,9 @@ class PackageInfoGenerator:
         print(f'Parsing resource file from folder: {path}')
         meta_list = []
         for p in os.listdir(path):
-            metainfo = self.parse_file(os.path.abspath(os.path.join(path, p)))
-            meta_list.append(metainfo)
+            pp = PackageParser.from_file(os.path.abspath(os.path.join(path, p)))
+            node = pp.get_metainfo()
+            meta_list.append(node.value)
         # sort
         from pprint import pprint
         meta_mapping = {v['name']: v for v in meta_list}
@@ -58,50 +61,6 @@ class PackageInfoGenerator:
         # save
         self.parsed = True
         self.meta_mapping = meta_mapping_sorted
-
-    def parse_file(self, path):
-        with open(path) as f:
-            content = f.readlines()
-            # find return
-            for line in content:
-                res = re.findall("^:return \$([a-zA-Z0-9_]+?);$", line)
-                if res:
-                    break
-            else:
-                raise ValueError(f"package info not found in file: {path}")
-            var_name = res[0]
-            # find file->package
-            package_array, _ = self.find_array(var_name, content)
-            # find file->package->metaInfo
-            var_name = package_array['metaInfo'][1:]
-            metainfo_array, _ = self.find_array(var_name, content)
-        return metainfo_array
-
-    def find_array(self, name, content):
-        array = {}
-        pos = {}
-        for i, line in enumerate(content):
-            res = re.findall(f"^:local {name} {{", line)
-            if res:
-                break
-        else:
-            raise ValueError(f"array: {name} not found")
-        pos['start'] = i
-        cursor = i + 1
-        while True:
-            line = content[cursor]
-            if line == "}\n" or line == "};\n":
-                break
-            else:
-                res = re.findall('^\s*"([a-zA-Z0-9_]+?)"="?(.*?)"?;?\n$', line)
-                if not res:
-                    raise ValueError(f"array: {name} is not a key-value array")
-                # split
-                kv = res[0]
-                array[kv[0]] = kv[1]
-            cursor += 1
-        pos['end'] = cursor + 1
-        return array, pos
 
     def generate_package_info(self, path, filename="package-info.rsc", exclude_list=None):
         if self.parsed is False:
@@ -153,7 +112,7 @@ class PackageInfoGenerator:
         # - replace '.' with '_'
         framework_script_list = []
         for name in ESSENTIAL_PACKAGE_LIST:
-            is_global = self.meta_mapping[name].get("global") == 'true'
+            is_global = self.meta_mapping[name].get("global", False)
             if is_global:
                 framework_script_list.append(name.replace('.', '_'))
         # render template
@@ -188,45 +147,83 @@ class PackageInfoGenerator:
         self.generate_startup(path)
         self.generate_version(path)
 
-    def change_version(self, path):
+
+class PackageMetainfoModifier:
+    """PackageMetainfoModifier
+    Modify package's meta info
+    """
+    def __init__(self):
+        pass
+
+    def bump_version(self, path):
         print(f'Parsing library file from folder: {path}')
         for p in os.listdir(path):
             if p.endswith(".rsc"):
-                self.modify_version_info(os.path.abspath(os.path.join(path, p)))
+                fp = os.path.abspath(os.path.join(path, p))
+                pp = PackageParser.from_file(fp)
+                node = pp.get_metainfo()
+                metainfo = node.value
+                self.update_version(metainfo)
+                self.do_update(fp, node, metainfo)
+
+    def do_update(self, path, node, metainfo):
+        with open(path, 'rb') as f:
+            content = f.read()
+        ct = content[:node.start] + self.make_metainfo(metainfo).encode() + content[node.end:]
+        with open(path, 'wb') as f:
+            f.write(ct)
+
+    def update_version(self, metainfo):
+        metainfo['version'] = VERSION
+
+    def update_global_functions(self, metainfo, pp):
+        metainfo.pop('global-functions', None)
+        func_list = [i.name for i in pp.get_global_functions()]
+        if func_list:
+            metainfo['global-functions'] = func_list
+
+    def update_global_variables(self, metainfo, pp):
+        metainfo.pop('global-variables', None)
+        var_list = [i.name for i in pp.get_global_variables()]
+        if var_list:
+            metainfo['global-variables'] = var_list
+
+    def check_exec(self, metainfo, pp):
+        name = metainfo['name']
+        cmd_list = pp.get_global_commands()
+        if cmd_list:
+            cmd = cmd_list[0].value
+            raise ValueError(f"package: {name} contain executable command: {cmd}")
+
+    def update_metainfo(self, path, ignore_exec_check: list):
+        print(f'Parsing library file from folder: {path}')
+        for p in os.listdir(path):
+            if p.endswith(".rsc"):
+                fp = os.path.abspath(os.path.join(path, p))
+                pp = PackageParser.from_file(fp)
+                node = pp.get_metainfo()
+                metainfo = node.value
+                self.update_version(metainfo)
+                self.update_global_functions(metainfo, pp)
+                self.update_global_variables(metainfo, pp)
+                if metainfo['name'] not in ignore_exec_check:
+                    self.check_exec(metainfo, pp)
+                self.do_update(fp, node, metainfo)
 
     def make_metainfo(self, metainfo):
         result = [
-            ':local metaInfo {\n',
+            ':local metaInfo {',
         ]
         for k, v in metainfo.items():
-            line = '    "{}"={};\n'
-            if v == 'true':
-                line = line.format(k, v)
+            if type(v) is bool:
+                result.append(f'    "{k}"={"true" if v else "false"};')
+            elif type(v) is list:
+                result.append(f'    "{k}"={{')
+                for vv in v:
+                    result.append(f'        "{vv}";')
+                result.append('    };')
             else:
-                line = line.format(k, f'"{v}"')
-            result.append(line)
-        result.append("};\n")
-        return result
-
-    def modify_version_info(self, path):
-        with open(path) as f:
-            content = f.readlines()
-        # find return
-        for line in content:
-            res = re.findall("^:return \$([a-zA-Z0-9_]+?);$", line)
-            if res:
-                break
-        else:
-            raise ValueError(f"package info not found in file: {path}")
-        var_name = res[0]
-        # find file->package
-        package_array, _ = self.find_array(var_name, content)
-        # find file->package->metaInfo
-        var_name = package_array['metaInfo'][1:]
-        metainfo_array, pos = self.find_array(var_name, content)
-        # modify version
-        metainfo_array['version'] = VERSION
-        # dump
-        ct = content[:pos['start']] + self.make_metainfo(metainfo_array) + content[pos['end']:]
-        with open(path, 'w') as f:
-            f.write("".join(ct))
+                result.append(f'    "{k}"="{v}";')
+        result.append("};\r\n")
+        string = "\r\n".join(result)
+        return string

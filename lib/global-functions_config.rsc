@@ -10,6 +10,11 @@
     "version"="0.2.0";
     "description"="global functions for configuration management";
     "global"=true;
+    "global-functions"={
+        "GetConfig";
+        "CreateConfig";
+        "UpdateConfig";
+    };
 };
 
 
