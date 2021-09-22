@@ -27,4 +27,5 @@ essential_package_list:
     - "tool.http"
     - "tool.remote"
     - "rspm.state"
+    - "rspm.reset"
     - "rspm"

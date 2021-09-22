@@ -116,6 +116,8 @@
     :global GetFunc;
     :global InValues;
     :global TypeofStr;
+    :global NewArray;
+    :global ParseMetaSafe;
     :global LoadPackage;
     :global UpdateConfig;
     :global ValidatePackageContent;
@@ -138,13 +140,14 @@
     :if ($pURL != "") do={
         :put "Get: $pURL";
         :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pURL Normalize=true];
-        :local pkgFunc [:parse $pkgStr];
-        :local pkg [$pkgFunc ];
-        :local metaR ($pkg->"metaInfo");
+        # safe load
+        :local metaR [$ParseMetaSafe $pkgStr];
         :set pkgName ($metaR->"name");
         :local metaUrl ($metaR->"url");
         :local va {"type"="code";"url"=true};
         :put "Validating package $pkgName...";
+        :local pkg [$NewArray ];
+        :set ($pkg->"metaInfo") $metaR;
         :if (![$ValidatePackageContent $pkg $va]) do={
             :error "rspm.install: package validate failed, check log for detail";
         };
@@ -204,6 +207,11 @@
         :put "Writing source into repository...";
         :local fileName [$Replace $pkgName "." "_"];
         /system script add name=$fileName source=$pkgStr owner=($config->"owner");
+        # if global, load it
+        :if ((($report->"metaConfig")->"global") = true) do={
+            :put "Loading global package...";
+            [$LoadPackage $pkgName];
+        }
     }
     # downgrade
     # TODO: ask continue
@@ -228,6 +236,12 @@
         };
         :put "Writing source into repository...";
         /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+        # if global, load it
+        :if ((($report->"metaConfig")->"global") = true) do={
+            :put "Loading global package...";
+            [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
+            [$LoadPackage $pkgName];
+        }
     }
     # reinstall
     # TODO: ask continue
@@ -251,12 +265,13 @@
         };
         :put "Writing source into repository...";
         /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+        # if global, load it
+        :if ((($report->"metaConfig")->"global") = true) do={
+            :put "Loading global package...";
+            [$LoadPackage $pkgName];
+        }
     }
     :put "The package has been installed.";
-    # if global, run it
-    :if ((($report->"metaConfig")->"global") = true) do={
-        [$LoadPackage (($report->"metaConfig")->"name")];
-    }
     :return "";
 }
 
@@ -417,8 +432,10 @@
         :put "Clean function cache...";
         :local pkgName (($report->"metaConfig")->"name");
         [$GlobalCacheFuncRemovePrefix $pkgName];
-        # is global
+        # if global, load it
         :if ((($report->"metaConfig")->"global") = true) do={
+            :put "Loading global package...";
+            [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
             [$LoadPackage $pkgName];
         }
     }
@@ -458,6 +475,12 @@
     } else {
         :put "Removing the package $Package...";
         /system script remove [$FindPackage $Package];
+        # remove global
+        :local isGlobal (($report->"metaScript")->"global");
+        :if ($isGlobal = true) do={
+            :put "Removing global functions and variables from environment...";
+            [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
+        }
         :put "The package has been removed.";
     }
 }

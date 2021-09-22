@@ -197,8 +197,65 @@
 }
 
 
+# $ParseMetaSafe
+# cut off the code snippet of metaInfo, parse it and return
+# args: <str>                   code string
+# return: <array->str>          meta named array 
+:global ParseMetaSafe do={
+    # global declare
+    :global IsNil;
+    :global IsStr;
+    # local
+    :if (![$IsStr $1]) do={
+        :error "Global.Package.ParseMetaSafe: \$1 should be string";
+    }
+    :local source $1;
+    :local pt ":local metaInfo {";
+    :local start [:find $source $pt];
+    :if ([$IsNil $start]) do={
+        :error "Global.Package.ParseMetaSafe: could not find metaInfo";
+    }
+    :local cursor ($start + [:len $pt]);
+    :local count 1;
+    :local flagQuote false;
+    :local ch;
+    :while ($count != 0 and $cursor < [:len $source]) do={
+        :set ch [:pick $source $cursor];
+        :if ($flagQuote) do={
+            :if ($ch = "\\") do={
+                :set cursor ($cursor + 1);
+            }
+            :if ($ch = "\"") do={
+                :set flagQuote false;
+            }
+            :if ($ch ~ "[\$]") do={
+                :error "Global.Package.ParseMetaSafe: pos: $cursor, unsafe char: $ch."
+            }
+        } else {
+            :if ($ch = "\"") do={
+                :set flagQuote true;
+            }
+            :if ($ch ~ "[][\$:]") do={
+                :error "Global.Package.ParseMetaSafe: pos: $cursor, unsafe char: $ch."
+            }
+            :if ($ch = "{") do={
+                :set count ($count + 1);
+            }
+            :if ($ch = "}") do={
+                :set count ($count - 1);
+            }
+        }
+        :set cursor ($cursor + 1);
+    }
+    :local snippet ([:pick $source $start $cursor] . "\r\n:return \$metaInfo;");
+    :local cmd [:parse $snippet];
+    :local metaInfo [$cmd];
+    :return $metaInfo;
+}
+
+
 # $GetMetaSafe
-# get meta info by not parsing original script
+# get meta info by parsing the cutted code snippet of metaInfo
 # args: <str>                   find by <package name>
 # opt kwargs: ID=<id>           find by id
 # opt kwargs: VA=<array->str>   validate array
@@ -213,6 +270,7 @@
     :global TypeofID;
     :global TypeofStr;
     :global TypeofArray;
+    :global ParseMetaSafe;
     :global NewArray;
     :global ValidatePackageContent;
     # check
@@ -238,49 +296,8 @@
     }
     # manually parse code and get result;
     :local pkg [$NewArray ];
-    :local pSource [/system script get $tID source];
-    # find metaInfo
-    :local pt ":local metaInfo {";
-    :local start [:find $pSource $pt];
-    :if ([$IsNil $start]) do={
-        :error "Global.Package.GetMetaSafe: could not find metaInfo";
-    }
-    :local cursor ($start + [:len $pt]);
-    :local count 1;
-    :local flagQuote false;
-    :local ch;
-    :while ($count != 0 and $cursor < [:len $pSource]) do={
-        :set ch [:pick $pSource $cursor];
-        :if ($flagQuote) do={
-            :if ($ch = "\\") do={
-                :set cursor ($cursor + 1);
-            }
-            :if ($ch = "\"") do={
-                :set flagQuote false;
-            }
-            :if ($ch ~ "[\$]") do={
-                :error "Global.Package.GetMetaSafe: pos: $cursor, unsafe char: $ch."
-            }
-        } else {
-            :if ($ch = "\"") do={
-                :set flagQuote true;
-            }
-            :if ($ch ~ "[][\$:]") do={
-                :error "Global.Package.GetMetaSafe: pos: $cursor, unsafe char: $ch."
-            }
-            :if ($ch = "{") do={
-                :set count ($count + 1);
-            }
-            :if ($ch = "}") do={
-                :set count ($count - 1);
-            }
-        }
-        :set cursor ($cursor + 1);
-    }
-    :local snip ([:pick $pSource $start $cursor] . "\r\n:return \$metaInfo;");
-    :local cmd [:parse $snip];
-    :local metaInfo [$cmd];
-    :set ($pkg->"metaInfo") $metaInfo;
+    :local source [/system script get $tID source];
+    :set ($pkg->"metaInfo") [$ParseMetaSafe $source];
     # va
     :local va {"name"=$pkgName};
     :if (![$IsNil $pVA]) do={

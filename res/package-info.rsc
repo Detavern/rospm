@@ -306,6 +306,7 @@
     "tool.http";
     "tool.remote";
     "rspm.state";
+    "rspm.reset";
     "rspm";
 }
 
