@@ -220,7 +220,8 @@
         :local versionR (($report->"metaConfig")->"version");
         :if (($report->"configName") = $configPkgName) do={
             :put "Downgrading core package $Package, latest version is $versionR(current: $versionL)";
-            :local pkgUrl (($config->"baseURL") . "lib/$Package.rsc")
+            :local pn [$Replace $Package "." "_"];
+            :local pkgUrl (($config->"baseURL") . "lib/$pn.rsc")
             :put "Get: $pkgUrl";
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
@@ -249,7 +250,8 @@
         :local versionR (($report->"metaConfig")->"version");
         :if (($report->"configName") = $configPkgName) do={
             :put "Reinstalling core package $Package, latest version is $versionR";
-            :local pkgUrl (($config->"baseURL") . "lib/$Package.rsc")
+            :local pn [$Replace $Package "." "_"];
+            :local pkgUrl (($config->"baseURL") . "lib/$pn.rsc")
             :put "Get: $pkgUrl";
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
