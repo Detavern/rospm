@@ -379,6 +379,7 @@
     :put "The package list has been updated.";
 }
 
+
 # $upgrade
 # upgrade package according to local package list.
 # kwargs: Package=<str>         package name
@@ -452,6 +453,7 @@
     :global GetConfig;
     :global InValues;
     :global FindPackage;
+    :global GlobalCacheFuncRemovePrefix;
     # local
     :local configPkgName "config.rspm.package";
     :put "Loading local configuration: $configPkgName...";
@@ -475,6 +477,9 @@
     } else {
         :put "Removing the package $Package...";
         /system script remove [$FindPackage $Package];
+        :put "Clean function cache...";
+        :local pkgName (($report->"metaConfig")->"name");
+        [$GlobalCacheFuncRemovePrefix $pkgName];
         # remove global
         :local isGlobal (($report->"metaScript")->"global");
         :if ($isGlobal = true) do={
@@ -523,8 +528,9 @@
         :set ($ml->[:len $ml]) $meta;
         :put "Updating extension package list...";
         [$UpdateConfig $configExtPkgName $configExt];
-        # is global
+        # if global, load it
         :if (($meta->"global") = true) do={
+            :put "Loading global package...";
             [$LoadPackage $pkgName];
         }
     };
@@ -590,8 +596,10 @@
                 :put "Writing source into repository...";
                 /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
             }
-            # is global
+            # if global, load it
             :if ((($report->"metaConfig")->"global") = true) do={
+                :put "Loading global package...";
+                [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
                 [$LoadPackage $pkgName];
             }
         }
