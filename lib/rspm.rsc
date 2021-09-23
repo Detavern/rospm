@@ -121,6 +121,7 @@
     :global LoadPackage;
     :global UpdateConfig;
     :global ValidatePackageContent;
+    :global GlobalCacheFuncRemovePrefix;
     # local
     :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pkgName $Package;
@@ -237,6 +238,8 @@
         };
         :put "Writing source into repository...";
         /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+        :put "Clean function cache...";
+        [$GlobalCacheFuncRemovePrefix $pkgName];
         # if global, load it
         :if ((($report->"metaConfig")->"global") = true) do={
             :put "Loading global package...";
@@ -267,6 +270,8 @@
         };
         :put "Writing source into repository...";
         /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+        :put "Clean function cache...";
+        [$GlobalCacheFuncRemovePrefix $pkgName];
         # if global, load it
         :if ((($report->"metaConfig")->"global") = true) do={
             :put "Loading global package...";
