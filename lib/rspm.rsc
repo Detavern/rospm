@@ -188,13 +188,13 @@
     :if ($state = "NES") do={
         :local versionR (($report->"metaConfig")->"version");
         :if (($report->"configName") = $configPkgName) do={
-            :put "Installing core package $Package, latest version is $versionR";
-            :local pn [$Replace $Package "." "_"];
+            :put "Installing core package $pkgName, latest version is $versionR";
+            :local pn [$Replace $pkgName "." "_"];
             :local pkgUrl (($config->"baseURL") . "lib/$pn.rsc")
             :put "Get: $pkgUrl";
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
-            :put "Installing extension package $Package, latest version is $versionR";
+            :put "Installing extension package $pkgName, latest version is $versionR";
             :local pkgUrl (($report->"metaConfig")->"proxyUrl");
             :if ([$IsNothing $pkgUrl]) do={
                 :set pkgUrl (($report->"metaConfig")->"url");
@@ -219,13 +219,13 @@
         :local versionL (($report->"metaScript")->"version");
         :local versionR (($report->"metaConfig")->"version");
         :if (($report->"configName") = $configPkgName) do={
-            :put "Downgrading core package $Package, latest version is $versionR(current: $versionL)";
-            :local pn [$Replace $Package "." "_"];
+            :put "Downgrading core package $pkgName, latest version is $versionR(current: $versionL)";
+            :local pn [$Replace $pkgName "." "_"];
             :local pkgUrl (($config->"baseURL") . "lib/$pn.rsc")
             :put "Get: $pkgUrl";
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
-            :put "Downgrading extension package $Package, latest version is $versionR(current: $versionL)";
+            :put "Downgrading extension package $pkgName, latest version is $versionR(current: $versionL)";
             :local pkgUrl (($report->"metaConfig")->"proxyUrl");
             :if ([$IsNothing $pkgUrl]) do={
                 :set pkgUrl (($report->"metaConfig")->"url");
@@ -249,13 +249,13 @@
     :if ($state = "SAME") do={
         :local versionR (($report->"metaConfig")->"version");
         :if (($report->"configName") = $configPkgName) do={
-            :put "Reinstalling core package $Package, latest version is $versionR";
-            :local pn [$Replace $Package "." "_"];
+            :put "Reinstalling core package $pkgName, latest version is $versionR";
+            :local pn [$Replace $pkgName "." "_"];
             :local pkgUrl (($config->"baseURL") . "lib/$pn.rsc")
             :put "Get: $pkgUrl";
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
-            :put "Reinstalling extension package $Package, latest version is $versionR";
+            :put "Reinstalling extension package $pkgName, latest version is $versionR";
             :local pkgUrl (($report->"metaConfig")->"proxyUrl");
             :if ([$IsNothing $pkgUrl]) do={
                 :set pkgUrl (($report->"metaConfig")->"url");
