@@ -301,6 +301,7 @@
 
 # $loads
 # kwargs: Str=<str>                 string to parse
+# return: <obj>                     object
 :local loads do={
     #DEFINE global
     :global IsStr;

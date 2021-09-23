@@ -722,4 +722,59 @@ When you use `months` key in `timedelta`, do realize that it may cause the chang
 ```
 
 ### Array Operations
+### JSON Operations
 
+RSPM add the limited support of JSON serialization and deserialization(support utf-8).
+
+You need to install the JSON package first.
+```
+[[$GetFunc "rspm.install"] Package="tool.json"];
+```
+
+#### JSON Loads
+```
+# $loads
+# kwargs: Str=<str>                 string to parse
+# return: <obj>                     object
+
+[admin@MikroTik] > {
+    :local s "{\"text\": \"hello world!\"}";
+    :local array [[$GetFunc "tool.json.loads"] Str=$s];
+    $Print $array;
+}
+
+Type  : array
+Key text: hello world!
+
+```
+
+#### JSON Dumps
+```
+# $loads
+# kwargs: Str=<str>                 string to parse
+# return: <obj>                     object
+
+[admin@MikroTik] > {
+    :local a {
+        "a"={
+            "aa"=true;
+            "ab"=false;
+            "ac"=$Nil;
+            "b"={1;2;3;4;{"ccc"="dwafagcsad";}};
+        };
+        "s"="asdvasd";
+        "ip"=1.2.3.4;
+        "ip-range"=1.0.0.0/8;
+        "ipv6"=ffff::0000;
+        "time"=12:00:59;
+    }
+    # no indent
+    $Print [[$GetFunc "tool.json.dumps"] Obj=$a];
+    # use indent
+    $Print [[$GetFunc "tool.json.dumps"] Obj=$a Indent=4];
+}
+
+Type  : str
+Value : {"a": {"aa": true, "ab": false, "ac": null, "b": [1, 2, 3, 4, {"ccc": "dwafagcsad"}]}, "ip": "1.2.3.4", "ip-range": "1.0.0.0/8", "ipv6": "ffff::", "s": "asdvasd", "time": "12:00:59"}
+
+```
