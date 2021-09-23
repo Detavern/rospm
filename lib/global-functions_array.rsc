@@ -7,9 +7,17 @@
 
 :local metaInfo {
     "name"="global-functions.array";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="global functions for array related operation";
     "global"=true;
+    "global-functions"={
+        "Append";
+        "Appends";
+        "Prepend";
+        "Insert";
+        "Extend";
+        "Reverse";
+    };
 };
 
 

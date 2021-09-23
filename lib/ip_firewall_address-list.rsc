@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="ip.firewall.address-list";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="";
 };
 
@@ -9,7 +9,7 @@
 # kwargs: List=<str>                    address list name
 # kwargs: Address=<str>|<ip>            ip or cidr or FQDN
 # return: <id>
-:global ensureAddress do={
+:local ensureAddress do={
     #DEFINE global
     :global IsNil;
     :global IsIP;
@@ -57,7 +57,7 @@
 # kwargs: List=<str>                    address list name
 # kwargs: AddressList=<str>|<ip>        list of ip or cidr or FQDN
 # return: ID=<id>
-:global ensureAddressList do={
+:local ensureAddressList do={
     #DEFINE global
     :global Nil;
     :global IsNil;

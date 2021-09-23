@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="rspm.state";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="rspm package state tools";
 };
 
@@ -80,7 +80,7 @@
     :global NewArray;
     :global FindPackage;
     :global GetConfig;
-    :global GetMeta;
+    :global GetMetaSafe;
     :global ReadOption;
     :global TypeofBool;
     # check
@@ -108,7 +108,7 @@
     :do {
         :set config [$GetConfig $configPkgName];
         :set configExt [$GetConfig $configExtPkgName];
-    } on-error {
+    } on-error={
         :set flagReadConfig false;
     };
     :if (!$flagReadConfig) do={
@@ -152,8 +152,8 @@
         # suppress error when reading script meta
         :local flagReadScript true;
         :do {
-            :set metaScript [$GetMeta $Package VA=$va];
-        } on-error {
+            :set metaScript [$GetMetaSafe $Package VA=$va];
+        } on-error={
             :set flagReadScript false;
         };
         :if (!$flagReadScript) do={

@@ -7,9 +7,12 @@
 
 :local metaInfo {
     "name"="global-functions.misc";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="global functions for miscellaneous collection";
     "global"=true;
+    "global-functions"={
+        "UniqueArray";
+    };
 };
 
 

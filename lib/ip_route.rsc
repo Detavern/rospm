@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="ip.route";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="";
 };
 
@@ -9,7 +9,7 @@
 # kwargs: DstAddress=<str>
 # kwargs: RoutingMark=<str>
 # return: Gateway=<str>
-:global getGateway do={
+:local getGateway do={
     #DEFINE global
     :global IsNil;
     :global IsNothing;
@@ -57,7 +57,7 @@
 # kwargs: Gateway=<str>
 # opt kwargs: RoutingMark=<str>
 # opt kwargs: Distance=<num>
-:global ensureStaticRoute do={
+:local ensureStaticRoute do={
     #DEFINE global
     :global Nil;
     :global IsNil;
@@ -121,7 +121,17 @@
     }
 }
 
+
 # TODO: ensureBlackhole
+:local ensureBlackhole do={}
+
+
+# TODO: ensureProhibit
+:local ensureProhibit do={}
+
+
+# TODO: ensureUnreachable
+:local ensureUnreachable do={}
 
 
 :local package {

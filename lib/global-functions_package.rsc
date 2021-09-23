@@ -7,9 +7,26 @@
 
 :local metaInfo {
     "name"="global-functions.package";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="global functions for package operation";
     "global"=true;
+    "global-functions"={
+        "FindPackage";
+        "ValidatePackageContent";
+        "ValidatePackage";
+        "GetSource";
+        "GetMeta";
+        "GetMetaSafe";
+        "GetEnv";
+        "PrintPackageInfo";
+        "LoadPackage";
+        "GetFunc";
+        "DumpVar";
+        "LoadVar";
+        "SetGlobalVar";
+        "LoadGlobalVar";
+        "UnsetGlobalVar";
+    };
 };
 
 
@@ -180,30 +197,118 @@
 }
 
 
-# $GetConfig
-# args: <str>                   <package name>
-# return: <array->var>          config named array      
-:global GetConfig do={
+# $ParseMetaSafe
+# cut off the code snippet of metaInfo, parse it and return
+# args: <str>                   code string
+# return: <array->str>          meta named array 
+:global ParseMetaSafe do={
     # global declare
-    :global RSplit;
+    :global IsNil;
+    :global IsStr;
+    # local
+    :if (![$IsStr $1]) do={
+        :error "Global.Package.ParseMetaSafe: \$1 should be string";
+    }
+    :local source $1;
+    :local pt ":local metaInfo {";
+    :local start [:find $source $pt];
+    :if ([$IsNil $start]) do={
+        :error "Global.Package.ParseMetaSafe: could not find metaInfo";
+    }
+    :local cursor ($start + [:len $pt]);
+    :local count 1;
+    :local flagQuote false;
+    :local ch;
+    :while ($count != 0 and $cursor < [:len $source]) do={
+        :set ch [:pick $source $cursor];
+        :if ($flagQuote) do={
+            :if ($ch = "\\") do={
+                :set cursor ($cursor + 1);
+            }
+            :if ($ch = "\"") do={
+                :set flagQuote false;
+            }
+            :if ($ch ~ "[\$]") do={
+                :error "Global.Package.ParseMetaSafe: pos: $cursor, unsafe char: $ch."
+            }
+        } else {
+            :if ($ch = "\"") do={
+                :set flagQuote true;
+            }
+            :if ($ch ~ "[][\$:]") do={
+                :error "Global.Package.ParseMetaSafe: pos: $cursor, unsafe char: $ch."
+            }
+            :if ($ch = "{") do={
+                :set count ($count + 1);
+            }
+            :if ($ch = "}") do={
+                :set count ($count - 1);
+            }
+        }
+        :set cursor ($cursor + 1);
+    }
+    :local snippet ([:pick $source $start $cursor] . "\r\n:return \$metaInfo;");
+    :local cmd [:parse $snippet];
+    :local metaInfo [$cmd];
+    :return $metaInfo;
+}
+
+
+# $GetMetaSafe
+# get meta info by parsing the cutted code snippet of metaInfo
+# args: <str>                   find by <package name>
+# opt kwargs: ID=<id>           find by id
+# opt kwargs: VA=<array->str>   validate array
+# return: <array->str>          meta named array 
+:global GetMetaSafe do={
+    # global declare
+    :global IsNil;
+    :global IsNothing;
     :global Replace;
     :global IsEmpty;
+    :global ReadOption;
+    :global TypeofID;
+    :global TypeofStr;
+    :global TypeofArray;
+    :global ParseMetaSafe;
+    :global NewArray;
     :global ValidatePackageContent;
-    # replace
-    :local pkgName $1;
-    :local fileName [$Replace $pkgName "." "_"];
-    :local idList [/system script find name=$fileName];
-    :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.GetConfig: script \"$fileName\" not found";
+    # check
+    :local tID;
+    :local pkgName [$ReadOption $1 $TypeofStr ""];
+    :local pID [$ReadOption $ID $TypeofID ];
+    :local pVA [$ReadOption $VA $TypeofArray ];
+    :if ($pkgName != "") do={
+        :local fileName [$Replace $pkgName "." "_"];
+        :local idList [/system script find name=$fileName];
+        :if ([$IsEmpty $idList]) do={
+            :error "Global.Package.GetMetaSafe: script \"$fileName\" not found"
+        } else {
+            :set tID ($idList->0);
+        }
     }
-    # parse code and get result;
-    :local pSource [:parse [/system script get ($idList->0) source]];
-    :local pkg [$pSource ];
-    :local va {"name"=$pkgName;"type"="config"};
+    :if (![$IsNil $pID]) do={
+        :set tID $pID;
+        :set pkgName [$Replace [/system script get $pID name] "_" "."];
+    }
+    :if ([$IsNothing $tID]) do={
+        :error "Global.Package.GetMetaSafe: need either <name> or <id>";
+    }
+    # manually parse code and get result;
+    :local pkg [$NewArray ];
+    :local source [/system script get $tID source];
+    :set ($pkg->"metaInfo") [$ParseMetaSafe $source];
+    # va
+    :local va {"name"=$pkgName};
+    :if (![$IsNil $pVA]) do={
+        :foreach k,v in $pVA do={
+            :set ($va->$k) $v;
+        }
+    }
     if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.Package.GetConfig: could not validate target package";
+        :error "Global.Package.GetMetaSafe: could not validate target package";
     }
-    :return $pkg;
+    :return ($pkg->"metaInfo");
 }
 
 
@@ -247,6 +352,30 @@
         :put ("    " . $function);
     }
     :return "";
+}
+
+
+# $LoadPackage
+# args: <str>                   <package name>
+:global LoadPackage do={
+    # global declare
+    :global TypeofStr;
+    :global ReadOption;
+    :global Replace;
+    :global IsEmpty;
+    # load
+    :local pkgName [$ReadOption $1 $TypeofStr ""];
+    :if ($pkgName != "") do={
+        :local fileName [$Replace $pkgName "." "_"];
+        :local idList [/system script find name=$fileName];
+        :if ([$IsEmpty $idList]) do={
+            :error "Global.Package.LoadPackage: script \"$fileName\" not found"
+        } else {
+            /system script run $idList;
+        }
+    } else {
+        :error "Global.Package.LoadPackage: \$1 is empty";
+    }
 }
 
 
@@ -380,7 +509,7 @@
                     :foreach k,v in ($node->2) do={
                         # make indent
                         :local ind "";
-                        :for i from=0 to=$cursor do={
+                        :for i from=0 to=$cursor step=1 do={
                             :set ind ($ind . $indent);
                         }
                         # make key
@@ -459,270 +588,6 @@
     :local varFunc [:parse $1];
     :local var [$varFunc ];
     :return $var;
-}
-
-
-# $CreateConfig
-# create a new configuration package.
-# args: <str>                   <config package name>
-# args: <array->str>            config array
-# opt kwargs: Output=<str>      output format: file(default), str, array
-# opt kwargs: Owner=<str>       script owner
-# return: <str>                 string of config package
-:global CreateConfig do={
-    # global declare
-    :global IsStr;
-    :global IsArray;
-    :global IsEmpty;
-    :global Join;
-    :global DumpVar;
-    :global NewArray;
-    :global TypeofStr;
-    :global Replace;
-    :global ReadOption;
-    :global ScriptLengthLimit;
-    # check params
-    :if (![$IsStr $1]) do={
-        :error "Global.Package.CreateConfig: \$1 should be str";
-    }
-    :if (![$IsArray $2]) do={
-        :error "Global.Package.CreateConfig: \$2 should be a k,v array";
-    }
-    # local
-    :local pkgName $1;
-    :local config $2;
-    :local fileName [$Replace $pkgName "." "_"];
-    :local pOutput [$ReadOption $Output $TypeofStr "file"];
-    :local pOwner [$ReadOption $Owner $TypeofStr ""];
-    :local LSL [$NewArray ];
-    :local configArray {
-        "metaInfo"="noquote:\$metaInfo";
-    };
-    # TODO: better clock info
-    :local clock [/system clock print as-value];
-    :local date ($clock->"date");
-    :local time ($clock->"time");
-    # dump meta
-    :local meta {
-        "name"=$pkgName;
-        "type"="config";
-        "created_at"="$date $time";
-        "last_modify"="$date $time";
-    };
-    :set LSL ($LSL, [$DumpVar "metaInfo" $meta Output="array" Return=false]);
-    :set ($LSL->[:len $LSL]) "";
-    # dump additions
-    :foreach k,v in $config do={
-        :if ([$IsArray $v]) do={
-            :if ($k != "metaInfo") do={
-                :set ($configArray->$k) "noquote:\$$k";
-                :set LSL ($LSL, [$DumpVar $k $v Output="array" Return=false]);
-                :set ($LSL->[:len $LSL]) "";
-            }
-        } else {
-            :set ($configArray->$k) $v;
-        }
-    }
-    # dump config
-    :set LSL ($LSL, [$DumpVar "config" $configArray Output="array"]);
-    :set ($LSL->[:len $LSL]) "";
-    # output array
-    :if ($pOutput = "array") do={
-        :return $LSL;
-    }
-    # join
-    :local result [$Join ("\r\n") $LSL];
-    # check script length
-    :if ([:len $result] >= $ScriptLengthLimit) do={
-        :error "Global.Package.CreateConfig: configuration file length reachs 30,000 characters limit, try split it";
-    }
-    # output str
-    :if ($pOutput = "str") do={
-        :return $result;
-    }
-    # output file
-    :if ($pOutput = "file") do={
-        :if ([$IsEmpty [/system script find name=$fileName]]) do={
-            :if ($pOwner = "") do={
-                /system script add name=$fileName source=$result;
-            } else {
-                /system script add name=$fileName source=$result owner=$pOwner;
-            }
-        } else {
-            :error "Global.Package.CreateConfig: same configuration file already exist!";
-        }
-    }
-}
-
-
-# $UpdateConfig
-# update configure with target array.
-# args: <str>                   <config package name>
-# args: <array>                 config array
-# opt kwargs: Output=<str>      output format: file(default), str, array
-:global UpdateConfig do={
-    # global declare
-    :global GetConfig;
-    :global IsStr;
-    :global IsArray;
-    :global DumpVar;
-    :global Join;
-    :global FindPackage;
-    :global TypeofStr;
-    :global ReadOption;
-    :global ScriptLengthLimit;
-    :global NewArray;
-    :global Replace;
-    # check params
-    :if (![$IsStr $1]) do={
-        :error "Global.Package.UpdateConfig: \$1 should be str";
-    };
-    :if (![$IsArray $2]) do={
-        :error "Global.Package.UpdateConfig: \$2 should a k,v array";
-    };
-    # local
-    :local pkgName $1;
-    :local config [$GetConfig $pkgName];
-    :local fileName [$Replace $pkgName "." "_"];
-    :local pOutput [$ReadOption $Output $TypeofStr "file"];
-    :local pOwner [/system script get [/system script find name=$fileName] owner];
-    :local LSL [$NewArray ];
-    :local configArray {
-        "metaInfo"="noquote:\$metaInfo";
-    };
-    # TODO: better clock info
-    :local clock [/system clock print as-value];
-    :local date ($clock->"date");
-    :local time ($clock->"time");
-    # update meta and dump it
-    :local meta ($config->"metaInfo");
-    :set ($meta->"last_modify") "$date $time";
-    :set LSL ($LSL, [$DumpVar "metaInfo" $meta Output="array" Return=false]);
-    :set ($LSL->[:len $LSL]) "";
-    # update by input
-    :foreach k,v in $2 do={
-        :set ($config->$k) $v;
-    }
-    # dump addition array
-    :foreach k,v in $config do={
-        :if ([$IsArray $v]) do={
-            :if ($k != "metaInfo") do={
-                :set ($configArray->$k) "noquote:\$$k";
-                :set LSL ($LSL, [$DumpVar $k $v Output="array" Return=false]);
-                :set ($LSL->[:len $LSL]) "";
-            }
-        } else {
-            :set ($configArray->$k) $v;
-        }
-    }
-    # dump config array
-    :set LSL ($LSL, [$DumpVar "config" $configArray Output="array"]);
-    :set ($LSL->[:len $LSL]) "";
-    # output array
-    :if ($pOutput = "array") do={
-        :return $LSL;
-    }
-    # join
-    :local result [$Join ("\r\n") $LSL];
-    # check script length
-    :if ([:len $result] >= $ScriptLengthLimit) do={
-        :error "Global.Package.UpdateConfig: configuration file length reachs 30,000 characters limit, try split it";
-    }
-    # output str
-    :if ($pOutput = "str") do={
-        :return $result;
-    }
-    # output file
-    /system script set [$FindPackage $pkgName] source=$result owner=$pOwner;
-}
-
-
-# $UpdateConfigDep
-# update configure with target array.
-# args: <str>                   <package name>
-# args: <array>                 values need update
-:global UpdateConfigDep do={
-    # global declare
-    :global GetSource;
-    :global GetConfig;
-    :global IsEmpty;
-    :global IsNothing;
-    :global Split;
-    :global Join;
-    :global Strip;
-    :global Replace;
-    :global DumpVar;
-    :global NewArray;
-    :global TypeofStr;
-    :global TypeofArray;
-    :global ScriptLengthLimit;
-    :global Print;
-    # local
-    :local pkgName $1;
-    :local fileName [$Replace $pkgName "." "_"];
-    :local config [$GetConfig $pkgName];
-    :local pkgStr [$GetSource $pkgName];
-    :local flag true;
-    # target scope
-    :local findLineS ":local config {";
-    :local pLines [$Split $pkgStr ("\n")];
-    # find target scope start position
-    :local posMax [:len $pLines];
-    :local posLS 0;
-    :local pLine;
-    :set flag true;
-    :while ($flag) do={
-        :if ($posLS < $posMax) do={
-            :set pLine ($pLines->$posLS);
-            # strip
-            :if ([$Strip $pLine Mode="r"] = $findLineS) do={
-                :set flag false;
-            } else {
-                :set posLS ($posLS + 1);
-            }
-        } else {
-            :error "Global.Package.UpdateConfig: scope start position not found";
-        }
-    }
-    # find end position
-    # TODO: need a better way to find closing brace 
-    :local findLineE "}";
-    :local posLE $posLS;
-    :set flag true;
-    :while ($flag) do={
-        :if ($posLE < $posMax) do={
-            :set pLine ($pLines->$posLE);
-            # strip
-            :if ([$Strip $pLine Mode="r"] = $findLineE) do={
-                :set flag false;
-            } else {
-                :set posLE ($posLE + 1);
-            }
-        } else {
-            :error "Global.Package.UpdateConfig: scope end position not found";
-        }
-    }
-    # update config array
-    :foreach k,v in $2 do={
-        :set ($config->$k) $v;
-    }
-    # dump it
-    :local LSL [$DumpVar "config" $config Output="array" Return=false];
-    # replace exist scope
-    :local resultList ([:pick $pLines 0 $posLS], $LSL, [:pick $pLines ($posLE + 1) $posMax]);
-    :local result [$Join ("\r\n") $resultList];
-    # script length check
-    :if ([:len $result] >= $ScriptLengthLimit) do={
-        :error "Global.Package.UpdateConfig: configuration file length reachs 30,000 characters limit, try split it"
-    }
-    # set source
-    :local idList [/system script find name=$fileName];
-    :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.UpdateConfig: script \"$fileName\" not found"
-    }
-    # parse code and get result;
-    /system script set numbers=($idList->0) source=$result;
-    :return "";
 }
 
 

@@ -33,9 +33,24 @@
 
 :local metaInfo {
     "name"="global-functions.datetime";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="global functions for datetime operation";
     "global"=true;
+    "global-functions"={
+        "IsSDT";
+        "IsDatetime";
+        "IsTimeDelta";
+        "GetCurrentClock";
+        "GetCurrentDate";
+        "GetCurrentTime";
+        "GetCurrentSDT";
+        "ToTimedelta";
+        "ToDatetime";
+        "GetCurrentDatetime";
+        "ToSDT";
+        "IsLeapYear";
+        "ShiftDatetime";
+    };
 };
 
 

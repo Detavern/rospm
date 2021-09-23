@@ -80,3 +80,38 @@
     :put $st;
     :put $et;
 }
+
+
+# dumps
+
+## common
+
+{
+    :local a {
+        "a"={
+            "aa"=true;
+            "ab"=false;
+            "ac"=$Nil;
+            "b"={1;2;3;4;{"ccc"="dwafagcsad";}};
+        };
+        "s"="asdvasd";
+        "ip"=1.2.3.4;
+        "ip-range"=1.0.0.0/8;
+        "ipv6"=ffff::0000;
+        "time"=12:00:59;
+    }
+    $Print [[$GetFunc "tool.json.dumps"] Obj=$a];
+    :local text [[$GetFunc "tool.json.dumps"] Obj=$a Indent=4];
+    /file print file=dumps;
+    :delay 2000ms;
+    /file set "dumps.txt" content=$text;
+}
+
+## encode, unicode 4B: surrogate pair, U+1F600 😀
+{
+    :local s "{\"surrogate\": \"\\ud83d\\ude00\"}";
+    :local array [[$GetFunc "tool.json.loads"] Str=$s];
+    $Print $array;
+    :local t [[$GetFunc "tool.json.dumps"] Obj=$array];
+    $Print $t;
+}

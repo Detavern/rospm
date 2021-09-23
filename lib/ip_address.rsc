@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="ip.address";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="";
 };
 
@@ -10,7 +10,7 @@
 # opt kwargs: InterfaceList=<array->str>|<str>      find addresses by interface list name or interface array
 # opt kwargs: Output=<str>                          "cidr"=<str>, "ip"=<ip>(default)
 # return: <array->str>                              list of addresses
-:global find do={
+:local find do={
     #DEFINE global
     :global IsStr;
     :global IsNothing;

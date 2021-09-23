@@ -8,6 +8,8 @@
     "global-functions_cache";
     "global-functions_datetime";
     "global-functions_package";
+    "global-functions_config";
+    "global-functions_unicode";
     "global-functions_misc";
 }
 
@@ -43,7 +45,7 @@
             :do {
                 [$cmdFunc ];
                 :log info "RSPM Startup: global core package $pkgName loaded.";
-            } on-error {
+            } on-error={
                 :log error "RSPM Startup: error occurred when loading package $pkgName, skipped.";
             };
         }
@@ -62,7 +64,7 @@
             :do {
                 [$cmdFunc ];
                 :log info "RSPM Startup: global core package $pkgName loaded.";
-            } on-error {
+            } on-error={
                 :log error "RSPM Startup: error occurred when loading package $pkgName, skipped.";
             };
         }

@@ -8,8 +8,22 @@
         {% endif %}
         "description"="{{ meta.description }}";
         "version"="{{ meta.version }}";
-        {% if meta.global == "true" %}
+        {% if meta.global == True %}
         "global"=true;
+        {% endif %}
+        {% if meta["global-variables"] %}
+        "global-variables"={
+            {% for var in meta["global-variables"] %}
+            "{{ var }}";
+            {% endfor %}
+        };
+        {% endif %}
+        {% if meta["global-functions"] %}
+        "global-functions"={
+            {% for func in meta["global-functions"] %}
+            "{{ func }}";
+            {% endfor %}
+        };
         {% endif %}
     };
     {% endfor %}

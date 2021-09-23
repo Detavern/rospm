@@ -1,0 +1,31 @@
+version: 0.2.0
+
+load_order:
+    - "global-variables"
+    - "global-functions"
+    - "global-functions.array"
+    - "global-functions.string"
+    - "global-functions.cache"
+    - "global-functions.datetime"
+    - "global-functions.package"
+    - "global-functions.config"
+    - "global-functions.unicode"
+    - "global-functions.misc"
+    - "global-helpers"
+
+essential_package_list:
+    - "global-variables"
+    - "global-functions"
+    - "global-functions.array"
+    - "global-functions.string"
+    - "global-functions.cache"
+    - "global-functions.datetime"
+    - "global-functions.package"
+    - "global-functions.config"
+    - "global-functions.unicode"
+    - "global-functions.misc"
+    - "tool.http"
+    - "tool.remote"
+    - "rspm.state"
+    - "rspm.reset"
+    - "rspm"

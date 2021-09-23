@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="ip.firewall.address-list";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="";
 };
 
@@ -10,7 +10,7 @@
 # kwargs: Gateway=<str>
 # opt kwargs: RoutingMark=<str>
 # opt kwargs: Distance=<num>
-:global ensureRule do={
+:local ensureRule do={
     #DEFINE global
     :global Nil;
     :global IsNil;
@@ -37,6 +37,6 @@
 
 :local package {
     "metaInfo"=$metaInfo;
-    "getGateway"=$getGateway;
+    "ensureRule"=$ensureRule;
 }
 :return $package;

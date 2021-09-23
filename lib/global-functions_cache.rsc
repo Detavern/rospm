@@ -7,9 +7,16 @@
 
 :local metaInfo {
     "name"="global-functions.cache";
-    "version"="0.1.1";
+    "version"="0.2.0";
     "description"="global functions for cache operation";
     "global"=true;
+    "global-functions"={
+        "GlobalCacheFuncGet";
+        "GlobalCacheFuncPut";
+        "GlobalCacheFuncRemove";
+        "GlobalCacheFuncRemovePrefix";
+        "GlobalCacheFuncFlush";
+    };
 };
 
 
@@ -120,7 +127,7 @@
 
 # $GlobalCacheFuncRemove
 # remove var from cache
-# args: <name>                      name of var
+# args: <name>                      prefix
 :global GlobalCacheFuncRemove do={
     # global declare
     :global Nil;
@@ -148,6 +155,43 @@
         # remove
         :set (($GlobalCacheFunc->"data")->$1);
     }
+}
+
+
+# $GlobalCacheFuncRemovePrefix
+# remove var from cache by prefix
+# args: <name>                      name of var
+:global GlobalCacheFuncRemovePrefix do={
+    # global declare
+    :global NewArray;
+    :global StartsWith;
+    :global GlobalCacheFunc;
+    :global GlobalCacheFuncRemove;
+    # local
+    :local nameList [$NewArray ];
+    :foreach k,v in ($GlobalCacheFunc->"data") do={
+        :if ([$StartsWith $k $1]) do={
+            :set ($nameList->[:len $nameList]) $k;
+        }
+    }
+    :foreach v in $nameList do={
+        [$GlobalCacheFuncRemove $v];
+    }
+}
+
+
+# $GlobalCacheFuncFlush
+# flush all cache
+:global GlobalCacheFuncFlush do={
+    # global declare
+    :global Nil;
+    :global NewArray;
+    :global GlobalCacheFunc;
+    # flush
+    :set GlobalCacheFunc [$NewArray ];
+    :set ($GlobalCacheFunc->"data") [$NewArray ];
+    :set ($GlobalCacheFunc->"head") $Nil;
+    :set ($GlobalCacheFunc->"tail") $Nil;
 }
 
 

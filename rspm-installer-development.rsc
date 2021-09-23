@@ -1,5 +1,5 @@
 :global RSPMInstallerConfig {
-    "baseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
+    "baseURL"="https://raw.githubusercontent.com/Detavern/rspm/development/";
     "owner"="rspm";
 };
 :global RSPMInstallerInput do={
@@ -43,7 +43,7 @@
 :put "| RouterOS Script Package Manager |";
 :put "-----------------------------------";
 :put "Installer initializing ...";
-:local answer [$RSPMInstallerInput "WARNING: this is an APLHA version, FOR TEST ONLY (y/N)"];
+:local answer [$RSPMInstallerInput "WARNING: this is an DEVELOPMENT version, FOR DEVELOPER ONLY (y/N)"];
 :if ($answer != "y") do={
     :put "Installation abort, use";
     :put "/import rspm-installer.rsc";
