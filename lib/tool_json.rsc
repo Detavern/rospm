@@ -332,7 +332,7 @@
         # new line
         :set result ($result . ("\n"));
         # make indent
-        :for i from=1 to=($JSF->"indent") do={
+        :for i from=1 to=($JSF->"indent") step=1 do={
             :set indent ($indent . " ");
         }
         :for i from=1 to=($JSF->"indentCount") step=1 do={
@@ -423,12 +423,12 @@
 # kwargs: JSF=<array>                json format array
 :local formatString do={
     #DEFINE global
-    :global Utf8ToUnicodeEscaped;
+    :global DecodeUtf8;
     :global GetFunc;
     # local
     :local jsf $JSF;
     :local obj ($jsf->"obj");
-    :local decoded [$Utf8ToUnicodeEscaped $obj];
+    :local decoded [$DecodeUtf8 $obj];
     :return "\"$decoded\"";
 }
 
@@ -443,6 +443,7 @@
     :global IsNil;
     :global IsArray;
     :global IsDict;
+    :global IsEmpty;
     :global IsStr;
     :global GetFunc;
     # local
@@ -463,6 +464,9 @@
         :return "null";
     }
     :if ([$IsArray $obj]) do={
+        :if ([$IsEmpty $obj]) do={
+            :return [[$GetFunc "tool.json.formatArray"] JSF=$jsf];
+        }
         :if ([$IsDict $obj]) do={
             :return [[$GetFunc "tool.json.formatObject"] JSF=$jsf];
         } else {

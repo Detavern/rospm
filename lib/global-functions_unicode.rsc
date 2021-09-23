@@ -114,7 +114,7 @@
             }
         }
     }
-    :for i from=2 to=$byteNum do={
+    :for i from=2 to=$byteNum step=1 do={
         # pick last 6 bit and prepend 10 ahead, that make a byte 10xx xxxx(continuation byte)
         :set result ([$ByteToChar ($unicode & 0x3F | 0x80)] . $result)
         :set unicode ($unicode >> 6)
@@ -127,7 +127,7 @@
 
 # $Utf8ToUnicode
 # convert an utf-8 character into unicode code point
-# args: <str>                   utf8 encoded string
+# args: <str>                   utf8 encoded character
 # return: <num>                 unicode code point
 :global Utf8ToUnicode do={
     # global
@@ -139,7 +139,7 @@
     :local unicode 0;
     # ascii
     :if ($strLen = 1) do={
-        :return $1;
+        :return [$CharToByte $1];
     }
     # handle first byte
     :if ($strLen = 2) do={
@@ -148,7 +148,7 @@
         :set unicode ($fb & 0xF);
     }
     # handle continuation byte
-    :for i from=2 to=$strLen do={
+    :for i from=2 to=$strLen step=1 do={
         :set unicode ($unicode << 6);
         :set ch [$CharToByte [:pick $1 ($i - 1)]];
         # check start 10xx xxxx
@@ -169,13 +169,23 @@
 :global Utf8ToUnicodeEscaped do={
     # global
     :global Utf8ToUnicode;
+    :global ByteToChar;
     :global ToHex;
     # local
     :local result "\\u";
     :local unicode [$Utf8ToUnicode $1];
+    # printable ascii
+    :if (($unicode <= 0x7E) and ($unicode >= 0x20)) do={
+        :return [$ByteToChar $unicode];
+    }
     :if ($unicode <= 0xFFFF) do={
         :local hex [$ToHex $unicode];
-        :set result ($result . [:pick $hex 2 [:len $hex]]);
+        :local hexT [:pick $hex 2 [:len $hex]];
+        :local hexLen [:len $hexT];
+        :for i from=$hexLen to 3 step=1 do={
+            :set result ($result . "0");
+        }
+        :set result ($result . "$hexT");
     } else {
         :local ch ($unicode & 0xFFFF);
         :local high (($ch >> 10) + 0xD800);
@@ -252,9 +262,9 @@
 
 
 # $DecodeUtf8
-# decode a string which contains escaped unicode string from Utf8
+# decode a utf8 encoded string into escaped unicode string.
 # args: <str>                   utf8 encoded string
-# return: <str>                 decoded with escaped unicode
+# return: <str>                 string with escaped unicode
 :global DecodeUtf8 do={
     #DEFINE global
     :global Utf8ToUnicodeEscaped;

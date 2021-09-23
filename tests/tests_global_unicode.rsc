@@ -1,7 +1,11 @@
-## encode
+## encode & decode
 {
     :local s "\\u4f60\\u597d dsomebody\\nnew line";
     :local encoded [$EncodeUtf8 $s];
+    $Print $encoded;
+    :local decoded [$DecodeUtf8 $encoded];
+    $Print $decoded;
+    :set encoded [$EncodeUtf8 $decoded];
     $Print $encoded;
 }
 

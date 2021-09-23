@@ -509,7 +509,7 @@
                     :foreach k,v in ($node->2) do={
                         # make indent
                         :local ind "";
-                        :for i from=0 to=$cursor do={
+                        :for i from=0 to=$cursor step=1 do={
                             :set ind ($ind . $indent);
                         }
                         # make key
