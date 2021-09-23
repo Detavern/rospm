@@ -359,6 +359,7 @@
 # args: <str>                   <package name>
 :global LoadPackage do={
     # global declare
+    :global TypeofStr;
     :global ReadOption;
     :global Replace;
     :global IsEmpty;
