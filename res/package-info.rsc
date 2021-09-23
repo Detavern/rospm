@@ -4,6 +4,7 @@
         "name"="global-variables";
         "description"="global variable package";
         "version"="0.2.0";
+        "global"=true;
         "global-variables"={
             "Nothing";
             "Nil";
@@ -37,6 +38,7 @@
         "name"="global-functions";
         "description"="global function package";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "IsNil";
             "IsNothing";
@@ -68,6 +70,7 @@
         "name"="global-functions.array";
         "description"="global functions for array related operation";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "Append";
             "Appends";
@@ -81,6 +84,7 @@
         "name"="global-functions.string";
         "description"="global functions for string related operation";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "Replace";
             "Split";
@@ -97,6 +101,7 @@
         "name"="global-functions.cache";
         "description"="global functions for cache operation";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "GlobalCacheFuncGet";
             "GlobalCacheFuncPut";
@@ -109,6 +114,7 @@
         "name"="global-functions.datetime";
         "description"="global functions for datetime operation";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "IsSDT";
             "IsDatetime";
@@ -129,6 +135,7 @@
         "name"="global-functions.package";
         "description"="global functions for package operation";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "FindPackage";
             "ValidatePackageContent";
@@ -151,6 +158,7 @@
         "name"="global-functions.config";
         "description"="global functions for configuration management";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "GetConfig";
             "CreateConfig";
@@ -161,6 +169,7 @@
         "name"="global-functions.unicode";
         "description"="Global Package for unicode related operation";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "ToHex";
             "ByteToChar";
@@ -176,6 +185,7 @@
         "name"="global-functions.misc";
         "description"="global functions for miscellaneous collection";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "UniqueArray";
         };
@@ -184,6 +194,7 @@
         "name"="global-helpers";
         "description"="global helper package";
         "version"="0.2.0";
+        "global"=true;
         "global-functions"={
             "itemsFoundEnsureOneEnabled";
             "addItemByTemplate";

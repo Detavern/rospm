@@ -8,7 +8,7 @@
         {% endif %}
         "description"="{{ meta.description }}";
         "version"="{{ meta.version }}";
-        {% if meta.global == "true" %}
+        {% if meta.global == True %}
         "global"=true;
         {% endif %}
         {% if meta["global-variables"] %}

@@ -270,6 +270,7 @@
         # if global, load it
         :if ((($report->"metaConfig")->"global") = true) do={
             :put "Loading global package...";
+            [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
             [$LoadPackage $pkgName];
         }
     }
