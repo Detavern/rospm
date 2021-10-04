@@ -22,7 +22,8 @@
         "IsIPPrefix";
         "IsIPv6Prefix";
         "IsEmpty";
-        "IsEmptyStr";
+        "IsStrN";
+        "IsArrayN";
         "IsDict";
         "NewArray";
         "Assert";
