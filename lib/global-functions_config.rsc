@@ -64,7 +64,7 @@
     :global ReadOption;
     :global ScriptLengthLimit;
     # check
-    :if (![$IsStr $1]) do={:error "Global.Package.CreateConfig: \$1 should be a string"}
+    :if (![$IsStrN $1]) do={:error "Global.Package.CreateConfig: \$1 should be a string"}
     :if (![$IsArrayN $2]) do={:error "Global.Package.CreateConfig: \$2 should be an array"}
     # local
     :local pkgName $1;
