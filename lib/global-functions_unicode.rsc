@@ -7,11 +7,10 @@
 
 :local metaInfo {
     "name"="global-functions.unicode";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="Global Package for unicode related operation";
     "global"=true;
     "global-functions"={
-        "ToHex";
         "ByteToChar";
         "CharToByte";
         "UnicodeToUtf8";
@@ -21,31 +20,6 @@
         "DecodeUtf8";
     };
 };
-
-
-
-# $ToHex
-# convert number to hex string
-# args: <num>                   num
-# return: <str>                 hex string
-:global ToHex do={
-    # global
-    :global Strip;
-    # local
-    :local v $1;
-    :local hex "";
-    :local ch;
-    :while ($v > 0) do={
-        :set ch ($v & 0xFF);
-        :set v ($v >> 8);
-        :local h1 [:pick "0123456789abcdef" (($ch >> 4) & 0xF)];
-        :local h2 [:pick "0123456789abcdef" ($ch & 0xF)];
-        :set hex ("$h1$h2" . $hex);
-    }
-    # strip 0
-    :set hex ("0x" . [$Strip $hex "0" Mode="l"]);
-    :return $hex;
-}
 
 
 # $ByteToChar
@@ -170,7 +144,7 @@
     # global
     :global Utf8ToUnicode;
     :global ByteToChar;
-    :global ToHex;
+    :global NumToHex;
     # local
     :local result "\\u";
     :local unicode [$Utf8ToUnicode $1];
@@ -179,7 +153,7 @@
         :return [$ByteToChar $unicode];
     }
     :if ($unicode <= 0xFFFF) do={
-        :local hex [$ToHex $unicode];
+        :local hex [$NumToHex $unicode];
         :local hexT [:pick $hex 2 [:len $hex]];
         :local hexLen [:len $hexT];
         :for i from=$hexLen to 3 step=1 do={
@@ -190,8 +164,8 @@
         :local ch ($unicode & 0xFFFF);
         :local high (($ch >> 10) + 0xD800);
         :local low (($ch & 0x3FF) + 0xDC00);
-        :local hexH [$ToHex $high];
-        :local hexL [$ToHex $low];
+        :local hexH [$NumToHex $high];
+        :local hexL [$NumToHex $low];
         :set result ($result . [:pick $hexH 2 [:len $hexH]] . "\\u" . [:pick $hexL 2 [:len $hexL]]);
     }
     :return $result;

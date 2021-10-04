@@ -21,7 +21,7 @@
     :local s "\F0\90\8D\88";
     :local n [$Utf8ToUnicode $s];
     $Print $n;
-    :local hex [$ToHex $n];
+    :local hex [$NumToHex $n];
     $Print $hex;
     :local es [$Utf8ToUnicodeEscaped $s];
     $Print $es;

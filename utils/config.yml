@@ -1,10 +1,11 @@
-version: 0.2.0
+version: 0.3.0
 
 load_order:
     - "global-variables"
     - "global-functions"
     - "global-functions.array"
     - "global-functions.string"
+    - "global-functions.random"
     - "global-functions.cache"
     - "global-functions.datetime"
     - "global-functions.package"

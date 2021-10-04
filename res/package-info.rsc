@@ -52,6 +52,7 @@
             "IsIPPrefix";
             "IsIPv6Prefix";
             "IsEmpty";
+            "IsEmptyStr";
             "IsDict";
             "NewArray";
             "Assert";
@@ -95,6 +96,19 @@
             "Join";
             "SimpleDump";
             "SimpleLoad";
+            "NumToHex";
+            "HexToNum";
+        };
+    };
+    {
+        "name"="global-functions.random";
+        "description"="global functions for random related operation";
+        "version"="0.2.0";
+        "global"=true;
+        "global-functions"={
+            "Random20CharHex";
+            "RandomNumber";
+            "RandomChoice";
         };
     };
     {
@@ -142,6 +156,7 @@
             "ValidatePackage";
             "GetSource";
             "GetMeta";
+            "ParseMetaSafe";
             "GetMetaSafe";
             "GetEnv";
             "PrintPackageInfo";
@@ -171,7 +186,6 @@
         "version"="0.2.0";
         "global"=true;
         "global-functions"={
-            "ToHex";
             "ByteToChar";
             "CharToByte";
             "UnicodeToUtf8";
@@ -206,6 +220,16 @@
             "findAllItemsByTemplate";
             "setItemAttrByTemplate";
         };
+    };
+    {
+        "name"="ddns.getter";
+        "description"="ddns ip getter";
+        "version"="0.2.0";
+    };
+    {
+        "name"="ddns.provider.cloudflare";
+        "description"="ddns cloudflare utils";
+        "version"="0.2.0";
     };
     {
         "name"="interface.ethernet";
@@ -253,6 +277,11 @@
         "version"="0.2.0";
     };
     {
+        "name"="tool.ddns";
+        "description"="ddns schedule framework";
+        "version"="0.2.0";
+    };
+    {
         "name"="tool.file";
         "description"="file utility";
         "version"="0.2.0";
@@ -280,26 +309,30 @@
     "global-functions"=1;
     "global-functions.array"=2;
     "global-functions.string"=3;
-    "global-functions.cache"=4;
-    "global-functions.datetime"=5;
-    "global-functions.package"=6;
-    "global-functions.config"=7;
-    "global-functions.unicode"=8;
-    "global-functions.misc"=9;
-    "global-helpers"=10;
-    "interface.ethernet"=11;
-    "interface.list"=12;
-    "ip.address"=13;
-    "ip.firewall.address-list"=14;
-    "ip.route"=15;
-    "ip.route.rule"=16;
-    "rspm"=17;
-    "rspm.reset"=18;
-    "rspm.state"=19;
-    "tool.file"=20;
-    "tool.http"=21;
-    "tool.json"=22;
-    "tool.remote"=23;
+    "global-functions.random"=4;
+    "global-functions.cache"=5;
+    "global-functions.datetime"=6;
+    "global-functions.package"=7;
+    "global-functions.config"=8;
+    "global-functions.unicode"=9;
+    "global-functions.misc"=10;
+    "global-helpers"=11;
+    "ddns.getter"=12;
+    "ddns.provider.cloudflare"=13;
+    "interface.ethernet"=14;
+    "interface.list"=15;
+    "ip.address"=16;
+    "ip.firewall.address-list"=17;
+    "ip.route"=18;
+    "ip.route.rule"=19;
+    "rspm"=20;
+    "rspm.reset"=21;
+    "rspm.state"=22;
+    "tool.ddns"=23;
+    "tool.file"=24;
+    "tool.http"=25;
+    "tool.json"=26;
+    "tool.remote"=27;
 }
 
 # the minimum requirement packages of rspm

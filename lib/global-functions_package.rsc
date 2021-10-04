@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-functions.package";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="global functions for package operation";
     "global"=true;
     "global-functions"={
@@ -16,6 +16,7 @@
         "ValidatePackage";
         "GetSource";
         "GetMeta";
+        "ParseMetaSafe";
         "GetMetaSafe";
         "GetEnv";
         "PrintPackageInfo";

@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-functions.cache";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="global functions for cache operation";
     "global"=true;
     "global-functions"={

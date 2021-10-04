@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-functions.string";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="global functions for string related operation";
     "global"=true;
     "global-functions"={
@@ -20,6 +20,8 @@
         "Join";
         "SimpleDump";
         "SimpleLoad";
+        "NumToHex";
+        "HexToNum";
     };
 };
 
@@ -363,6 +365,49 @@
     }
     # unknown type
     :error "Global.SimpleLoad: unknown type $typeName";
+}
+
+
+# $NumToHex
+# convert number to hex string
+# args: <num>                   num
+# return: <str>                 hex string (0x12abdc)
+:global NumToHex do={
+    # global
+    :global Strip;
+    # local
+    :local v [:tonum $1];
+    :local hex "";
+    :local ch;
+    :while ($v > 0) do={
+        :set ch ($v & 0xFF);
+        :set v ($v >> 8);
+        :local h1 [:pick "0123456789abcdef" (($ch >> 4) & 0xF)];
+        :local h2 [:pick "0123456789abcdef" ($ch & 0xF)];
+        :set hex ("$h1$h2" . $hex);
+    }
+    # strip 0
+    :set hex ("0x" . [$Strip $hex "0" Mode="l"]);
+    :return $hex;
+}
+
+
+# $HexToNum
+# convert hex string to number
+# args: <str>                   hex string (0x12abdc)
+# return: <num>                 number
+:global HexToNum do={
+    # local
+    :local s [:tostr $1];
+    :set s [:pick $s 2 [:len $s]];
+    :local h "0123456789abcdef0123456789ABCDEF";
+    :local c 1;
+    :local v 0;
+    :for i from=([:len $s] - 1) to=0 step=-1 do={
+        :set v ($v + (([:find $h [:pick $s $i]] % 16) * $c));
+        :set c ($c * 16);
+    }
+    :return $v;
 }
 
 
