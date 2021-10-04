@@ -32,6 +32,7 @@
     # const
     :local tmplName "schedule_ddns.rsc";
     :local rspmConfigName "config.rspm.package";
+    :local configOwner "ddns";
     :local skdComment "managed by ddns";
     :local skdName "ddns_updater_$Name";
     # create config
@@ -44,7 +45,7 @@
         "serviceProvider"=$ServiceProvider;
         "serviceProviderParams"=$ServiceProviderParams;
     }
-    [$CreateConfig $configName $config];
+    [$CreateConfig $configName $config Owner=$configOwner Force=true];
     # load remote template
     :local rspm [$GetConfig "config.rspm.package"];
     :local tmplUrl (($rspm->"baseURL") . "templates/$tmplName");
