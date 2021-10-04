@@ -15,16 +15,16 @@
 # }
 :local getIPByInterface do={
     #DEFINE global
-    :global IsEmptyStr;
-    :global IsEmpty;
+    :global IsStrN;
+    :global IsArrayN;
     :global GetFunc;
     # local
-    :if ([$IsEmpty $Params]) do={
-        :error "ddns.getter.getIPByInterface: \$Params is a empty array";
+    :if (![$IsArrayN $Params]) do={
+        :error "ddns.getter.getIPByInterface: \$Params should be an array";
     }
     :local intfName ($Params->"interface");
-    :if ([$IsEmptyStr $intfName]) do={
-        :error "ddns.getter.getIPByInterface: \$interface is a empty str";
+    :if (![$IsStrN $intfName]) do={
+        :error "ddns.getter.getIPByInterface: \$interface should be a string";
     }
     :local ipList [[$GetFunc "ip.address.find"] Interface=$intfName];
     :return ($ipList->0);

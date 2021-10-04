@@ -199,6 +199,7 @@
 
 
 # $IsEmpty
+# TODO: migrate it!
 # validate if $1 is an array and is empty.
 # if $1 is not an array, then raise error.
 # if $1 is empty, return false.
@@ -215,20 +216,33 @@
 }
 
 
-# $IsEmptyStr
-# validate if $1 is a str and is empty.
-# if $1 is not a str, then raise error.
-# if $1 is empty, return false.
+# $IsStrN
+# validate if $1 is a str and not empty.
+# else, return false.
 # args: <var>                   variable
-:global IsEmptyStr do={
+:global IsStrN do={
     :global IsStr;
     :if ([$IsStr $1]) do={
-        :if ([:len $1]=0) do={
-            return true;
+        :if ([:len $1] > 0) do={
+            :return true;
         }
-        return false;
     }
-    :error "Global.IsEmptyStr: \$1 shoud be a string";
+    :return false;
+}
+
+
+# $IsArrayN
+# validate if $1 is an array and not empty.
+# else, return false.
+# args: <var>                   variable
+:global IsArrayN do={
+    :global IsArray;
+    :if ([$IsArray $1]) do={
+        :if ([:len $1] > 0) do={
+            :return true;
+        }
+    }
+    :return false;
 }
 
 
