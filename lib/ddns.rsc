@@ -54,7 +54,7 @@
     # add schedule
     /system scheduler add name=$skdName comment=$skdComment \
         start-time=startup interval=$pInterval on-event=$content \
-        policy=read,write
+        policy=read,write,policy,test
 }
 
 

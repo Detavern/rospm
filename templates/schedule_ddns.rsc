@@ -4,7 +4,7 @@
 :global GetConfig;
 
 # local
-:local configName {{ configName }};
+:local configName "{{ configName }}";
 :local config;
 # load config
 :do {
