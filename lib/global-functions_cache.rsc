@@ -16,6 +16,7 @@
         "GlobalCacheFuncRemove";
         "GlobalCacheFuncRemovePrefix";
         "GlobalCacheFuncFlush";
+        "GlobalCacheFuncStatus";
     };
 };
 
@@ -29,17 +30,18 @@
     :global IsNil;
     :global IsNothing;
     :global GlobalCacheFunc;
+    :global GlobalCacheFuncStatus;
     # local
     :local funcCache;
     # check existance
     :if (![$IsNothing $GlobalCacheFunc]) do={
         :set funcCache (($GlobalCacheFunc->"data")->$1);
         :if (![$IsNothing $funcCache]) do={
-            # head
+            # if wanted a head node, return it
             :if (($GlobalCacheFunc->"head") = $1) do={
                 :return ($funcCache->"var");
             }
-            # tail
+            # if wanted a tail node, change its previous one as new tail
             :if (($GlobalCacheFunc->"tail") = $1) do={
                 :set ($GlobalCacheFunc->"tail") ($funcCache->"prev");
             }
@@ -52,6 +54,7 @@
             }
             :set ($funcCache->"prev") $Nil;
             :set ($funcCache->"next") ($GlobalCacheFunc->"head");
+            :set ((($GlobalCacheFunc->"data")->($GlobalCacheFunc->"head"))->"prev") $1;
             :set ($GlobalCacheFunc->"head") $1;
             # return
             :return ($funcCache->"var");
@@ -96,8 +99,8 @@
         # set head & tail
         :local head ($GlobalCacheFunc->"head");
         :local tail ($GlobalCacheFunc->"tail");
-        # if cache no empty, remove the tail one
-        :if ([:len $GlobalCacheFunc] >= $cacheSize) do={
+        # if cache out of size, remove the tail one
+        :if ([:len ($GlobalCacheFunc->"data")] >= $cacheSize) do={
             :local tailPrev ((($GlobalCacheFunc->"data")->$tail)->"prev");
             :set ((($GlobalCacheFunc->"data")->$tailPrev)->"next") $Nil;
             # set new tail
@@ -192,6 +195,55 @@
     :set ($GlobalCacheFunc->"data") [$NewArray ];
     :set ($GlobalCacheFunc->"head") $Nil;
     :set ($GlobalCacheFunc->"tail") $Nil;
+}
+
+
+# $GlobalCacheFuncStatus
+# print status
+:global GlobalCacheFuncStatus do={
+    # global declare
+    :global Nil;
+    :global IsNil;
+    :global IsNothing;
+    :global GlobalCacheFunc;
+    # check
+    :if ([$IsNothing $GlobalCacheFunc]) do={
+        :put "Global.cache.GlobalCacheFuncStatus: not initialized."
+        :return $Nil;
+    }
+    :put "==================== GlobalCacheFuncStatus ====================";
+    :local length [:len ($GlobalCacheFunc->"data")];
+    :local head ($GlobalCacheFunc->"head");
+    :local tail ($GlobalCacheFunc->"tail");
+    :put "Linkedlist Size: $length";
+    :put "Linkedlist Head: $head";
+    :put "Linkedlist Tail: $tail";
+    :local prev;
+    :local next;
+    :local code;
+    :put "------------------ Linkedtable Content Trace ------------------";
+    :put "Linkedlist Content Trace:";
+    :local max 30;
+    :local cursor $head;
+    :local cc 0;
+    :local flag true;
+    :local node;
+    :while ($flag and ($cc < $max)) do={
+        :set node (($GlobalCacheFunc->"data")->$cursor);
+        :set code [:len (($node->"var")->1)];
+        :set prev ($node->"prev");
+        :set next ($node->"next");
+        :put "    $cursor";
+        :put "        code: $code";
+        :put "        prev: $prev";
+        :put "        next: $next";
+        :if ([$IsNil $next]) do={
+            :set flag false;
+        } else {
+            :set cursor $next;
+        }
+        :set cc ($cc + 1);
+    }
 }
 
 

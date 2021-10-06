@@ -5,6 +5,23 @@
 };
 
 
+# $verifyURL
+# verify url is legal or not.
+# kwargs: URL=<str>                     target url
+# return: <bool>                        legal or not
+:local verifyURL do={
+    #DEFINE global
+    :global IsStrN;
+    # local
+    :if ([$IsStrN $URL]) do={
+        :if ($URL ~ "^http(s)?://") do={
+            :return true;
+        }
+    }
+    :return false;
+}
+
+
 # $makeHeaders
 # make http header
 # kwargs: Headers=<array->str>          http header array or Nil
@@ -142,18 +159,22 @@
     #DEFINE global
     :global Nil;
     :global IsNil;
+    :global IsStrN;
     :global TypeofStr;
     :global TypeofBool;
     :global TypeofArray;
     :global ReadOption;
     :global GetFunc;
     # local
+    :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pHeaders [$ReadOption $Headers $TypeofArray];
     :local pParams [$ReadOption $Params $TypeofArray];
     :local pRetry [$ReadOption $Retry $TypeofStr 0];
     :local pSuppress [$ReadOption $Suppress $TypeofBool false];
     :local pOutput [$ReadOption $Output $TypeofStr "text"];
     :local rawResult;
+    # check
+    :if (![[$GetFunc "tool.http.verifyURL"] URL=$pURL]) do={:error "tool.http.httpGet: \$URL illegal"};
     # headers
     :if ([$IsNil $pHeaders]) do={
         :set pHeaders {
@@ -170,7 +191,7 @@
     :if (![$IsNil $pParams]) do={
         :set qps [[$GetFunc "tool.http.makeQueryParams"] Params=$pParams];
     }
-    :local urlStr "$URL";
+    :local urlStr "$pURL";
     :if ($qps != "") do={
         :set urlStr ($urlStr . "\?$qps");
     }
@@ -181,7 +202,7 @@
         :if ($pSuppress) do={
             :return $Nil;
         }
-        :put "Got error when requesting $URL";
+        :put "Got error when requesting $pURL";
         :put "Currently, vanilla fetch tool only support http response with a 200 status code, even 30x is not supported!";
         :error "tool.http.httpGet: http status code not 200";
     }
@@ -211,6 +232,7 @@
     :global ReadOption;
     :global GetFunc;
     # local
+    :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pHeaders [$ReadOption $Headers $TypeofArray];
     :local pParams [$ReadOption $Params $TypeofArray];
     :local pData [$ReadOption $Data $TypeofArray];
@@ -219,6 +241,8 @@
     :local pSuppress [$ReadOption $Suppress $TypeofBool false];
     :local pOutput [$ReadOption $Output $TypeofStr "text"];
     :local rawResult;
+    # check
+    :if (![[$GetFunc "tool.http.verifyURL"] URL=$pURL]) do={:error "tool.http.httpPost: \$URL illegal"};
     # headers
     :if ([$IsNil $pHeaders]) do={
         :set pHeaders {
@@ -236,7 +260,7 @@
     :if (![$IsNil $pParams]) do={
         :set qps [[$GetFunc "tool.http.makeQueryParams"] Params=$pParams];
     }
-    :local urlStr "$URL";
+    :local urlStr "$pURL";
     :if ($qps != "") do={
         :set urlStr ($urlStr . "\?$qps");
     }
@@ -249,7 +273,7 @@
         :if ($pSuppress) do={
             :return $Nil;
         }
-        :put "Got error when requesting $URL";
+        :put "Got error when requesting $pURL";
         :put "Currently, vanilla fetch tool only support http response with a 200 status code, even 30x is not supported!";
         :error "tool.http.httpPost: http status code not 200";
     }
@@ -279,6 +303,7 @@
     :global ReadOption;
     :global GetFunc;
     # local
+    :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pHeaders [$ReadOption $Headers $TypeofArray];
     :local pParams [$ReadOption $Params $TypeofArray];
     :local pData [$ReadOption $Data $TypeofArray];
@@ -287,6 +312,8 @@
     :local pSuppress [$ReadOption $Suppress $TypeofBool false];
     :local pOutput [$ReadOption $Output $TypeofStr "text"];
     :local rawResult;
+    # check
+    :if (![[$GetFunc "tool.http.verifyURL"] URL=$pURL]) do={:error "tool.http.httpPut: \$URL illegal"};
     # headers
     :if ([$IsNil $pHeaders]) do={
         :set pHeaders {
@@ -304,7 +331,7 @@
     :if (![$IsNil $pParams]) do={
         :set qps [[$GetFunc "tool.http.makeQueryParams"] Params=$pParams];
     }
-    :local urlStr "$URL";
+    :local urlStr "$pURL";
     :if ($qps != "") do={
         :set urlStr ($urlStr . "\?$qps");
     }
@@ -317,7 +344,7 @@
         :if ($pSuppress) do={
             :return $Nil;
         }
-        :put "Got error when requesting $URL";
+        :put "Got error when requesting $pURL";
         :put "Currently, vanilla fetch tool only support http response with a 200 status code, even 30x is not supported!";
         :error "tool.http.httpPut: http status code not 200";
     }
@@ -341,6 +368,7 @@
 
 :local package {
     "metaInfo"=$metaInfo;
+    "verifyURL"=$verifyURL;
     "makeHeaders"=$makeHeaders;
     "makeQueryParams"=$makeQueryParams;
     "makeHttpBody"=$makeHttpBody;

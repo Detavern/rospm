@@ -35,7 +35,7 @@
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
     :set ($context->"version") $resVersion;
     # add cache size
-    :set ($context->"globalCacheSizeFunc") 20;
+    :set ($context->"globalCacheSizeFunc") 10;
     # load remote package info
     :local packageInfoURL (($context->"baseURL") . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
