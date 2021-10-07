@@ -145,6 +145,7 @@
             "ToSDT";
             "IsLeapYear";
             "ShiftDatetime";
+            "GetTimedelta";
         };
     };
     {
@@ -177,9 +178,14 @@
         "version"="0.3.0";
         "global"=true;
         "global-functions"={
+            "LoadGlobalEnv";
+            "RebuildGlobalEnv";
+            "PrintGlobalEnv";
             "GetConfig";
-            "CreateConfig";
             "UpdateConfig";
+            "RegisterConfig";
+            "CreateConfig";
+            "RemoveConfig";
         };
     };
     {
@@ -274,6 +280,11 @@
         "version"="0.3.0";
     };
     {
+        "name"="rspm.config";
+        "description"="rspm configuration tools";
+        "version"="0.3.0";
+    };
+    {
         "name"="rspm.reset";
         "description"="rspm configuration reset tools";
         "version"="0.3.0";
@@ -329,12 +340,13 @@
     "ip.route"=19;
     "ip.route.rule"=20;
     "rspm"=21;
-    "rspm.reset"=22;
-    "rspm.state"=23;
-    "tool.file"=24;
-    "tool.http"=25;
-    "tool.json"=26;
-    "tool.remote"=27;
+    "rspm.config"=22;
+    "rspm.reset"=23;
+    "rspm.state"=24;
+    "tool.file"=25;
+    "tool.http"=26;
+    "tool.json"=27;
+    "tool.remote"=28;
 }
 
 # the minimum requirement packages of rspm

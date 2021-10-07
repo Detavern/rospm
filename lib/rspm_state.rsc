@@ -11,26 +11,42 @@
 # return: <bool>                        latest or not
 :local checkVersion do={
     #DEFINE global
-    :global IsNil;
-    :global GetConfig;
-    :global GetFunc;
-    :global ReadOption;
+    :global IsNothing;
     :global TypeofBool;
-    :global SetGlobalVar;
-    :global LoadGlobalVar;
+    :global ReadOption;
+    :global GetFunc;
+    :global GetConfig;
+    :global UpdateConfig;
+    :global GlobalEnvInfo;
+    :global GetCurrentDatetime;
+    :global GetTimedelta;
+    # env
+    :global EnvRSPMVersion;
+    :global EnvRSPMBaseUrl;
+    # check
+    :if ([$IsNothing $GlobalEnvInfo]) do={:error "rspm.state.checkVersion: \$GlobalEnvInfo is nothing!"};
+    :if ([$IsNothing $EnvRSPMVersion]) do={:error "rspm.state.checkVersion: \$EnvRSPMVersion is nothing!"};
     # local
     :local forceUpdate [$ReadOption $ForceUpdate $TypeofBool false];
     :local configPkgName "config.rspm.package";
+    :local td 00:30:00;
+    :local flagUpdate false;
+    # check DT
+    :if (!$forceUpdate)) do={
+        :local sdt ((($GlobalEnvInfo->"data")->"EnvRSPMVersion")->"updateTime");
+        :local cdt [$GetCurrentDatetime];
+        :local ctd [$GetTimedelta $sdt $cdt];
+        # return true if in expire time
+        :if ($ctd < $td) do={:return true};
+        :set flagUpdate true;
+    }
+    # do update
+    :local versionURL ($EnvRSPMBaseUrl . "res/version.rsc");
+    :local versionR [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
     :local config [$GetConfig $configPkgName];
-    :local versionL ($config->"version");
-    # remote version
-    :local versionRName "RSPMRemoteVersion";
-    :local versionR [$LoadGlobalVar $versionRName];
-    :if ([$IsNil $versionR] or $forceUpdate) do={
-        :local versionURL (($config->"baseURL") . "res/version.rsc");
-        :set versionR [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
-        [$SetGlobalVar $versionRName $versionR Timeout=00:30:00];
-    };
+    :set (($config->"environment")->"RSPMVersion") $versionR;
+    :local versionL $EnvRSPMVersion;
+    [$UpdateConfig $configPkgName $config];
     :return ($versionL >= $versionR);
 }
 

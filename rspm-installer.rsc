@@ -1,6 +1,6 @@
 :global RSPMInstallerConfig {
-    "baseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
-    "owner"="rspm";
+    "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
+    "RSPMOwner"="rspm";
 };
 :global RSPMInstallerInput do={
     :terminal style escaped;
@@ -13,8 +13,8 @@
     :global RSPMInstallerConfig;
     :global RSPMInstallerInput;
     :local pkgName $1;
-    :local URL (($RSPMInstallerConfig->"baseURL") . "lib/" . $pkgName . ".rsc");
-    :local Owner ($RSPMInstallerConfig->"owner");
+    :local URL (($RSPMInstallerConfig->"RSPMBaseURL") . "lib/" . $pkgName . ".rsc");
+    :local Owner ($RSPMInstallerConfig->"RSPMOwner");
     :put "Downloading file $pkgName...";
     :local result [/tool fetch url=$URL output="user" as-value];
     :local scriptStr ($result->"data");
@@ -22,7 +22,7 @@
     :local idList [/system script find name=$pkgName];
     :if ([:len $idList] != 0) do={
         :local scriptOwner [/system script get ($idList->0) owner];
-        :if ($scriptOwner != ($RSPMInstallerConfig->"owner")) do={
+        :if ($scriptOwner != $Owner) do={
             :put "Same script name \"$pkgName\" with owner \"$scriptOwner\" found in repository.";
             :local answer [$RSPMInstallerInput "Press y to replace it (y/N)"];
             :if ($answer != "y") do={
@@ -73,6 +73,7 @@
 # install rspm
 [$installPackage "tool_http"];
 [$installPackage "tool_remote"];
+[$installPackage "rspm_config"];
 [$installPackage "rspm_state"];
 [$installPackage "rspm_reset"];
 [$installPackage "rspm"];

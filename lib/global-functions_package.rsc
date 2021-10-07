@@ -37,8 +37,6 @@
 :global FindPackage do={
     # global declare
     :global Replace;
-    :global IsEmpty;
-    :global Nil;
     # replace
     :local pkgName $1;
     :local fileName [$Replace $pkgName "." "_"];
@@ -387,12 +385,11 @@
     # global declare
     :global RSplit;
     :global Replace;
-    :global IsEmpty;
+    :global IsArrayN;
     :global IsNil;
     :global IsNothing;
     :global IsNum;
     :global FindPackage;
-    :global GetConfig;
     :global GlobalCacheFuncGet;
     :global GlobalCacheFuncPut;
     :global ValidatePackageContent;
@@ -410,10 +407,7 @@
     :local funcName ($splitted->1);
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
-    :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.GetFunc: script \"$fileName\" not found";
-        :return "";
-    }
+    :if (![$IsArrayN $idList]) do={:error "Global.Package.GetFunc: script \"$fileName\" not found"};
     # parse code and get result
     :local pSource [:parse [/system script get ($idList->0) source]];
     :set pkg [$pSource ];
@@ -426,14 +420,10 @@
     :if ([$IsNothing $func]) do={
         :error "Global.Package.GetFunc: function $funcName not found in package.";
     } else {
-        :local idList [$FindPackage "config.rspm.package"];
-        :if (![$IsEmpty $idList]) do={
-            :local config [$GetConfig "config.rspm.package"];
-            :local cacheSize ($config->"globalCacheSizeFunc");
-            :if ([$IsNum $cacheSize]) do={
-                # put into global cache
-                [$GlobalCacheFuncPut $1 $func $cacheSize];
-            }
+        :local idList [$FindPackage "config.rspm"];
+        :if ([$IsArrayN $idList]) do={
+            # put into global cache
+            [$GlobalCacheFuncPut $1 $func];
         }
     }
     :return $func;
@@ -447,6 +437,7 @@
 # opt kwargs: Indent=<str>          indent string
 # opt kwargs: StartIndent=<num>     start indent string count
 # opt kwargs: Output=<str>          output format: str, array
+# opt kwargs: Global=<bool>         default false, use global declaration if true
 # opt kwargs: Return=<bool>         default true
 :global DumpVar do={
     # global declare
@@ -466,23 +457,27 @@
     :local indent [$ReadOption $Indent $TypeofStr "    "];
     :local cursor [$ReadOption $StartIndent $TypeofNum 0];
     :local pOutput [$ReadOption $Output $TypeofStr "str"];
+    :local pGlobal [$ReadOption $Global $TypeofBool false];
     :local pReturn [$ReadOption $Return $TypeofBool true];
     # set start indent
     :local si "";
     :for i from=1 to=$cursor step=1 do={
         :set si ($si . $indent);
     }
+    # set declaration
+    :local declare "local";
+    :if ($pGlobal) do={:set declare "global"}
     # init LSL
     :local LSL [$NewArray ];
     :local flagType false;
     # str
     :if ([$IsStr $2]) do={
-        :set ($LSL->0) "$si:local $1 \"$2\";";
+        :set ($LSL->0) "$si:$declare $1 \"$2\";";
         :set flagType true;
     }
     # array
     :if ([$IsArray $2]) do={
-        :set ($LSL->0) "$si:local $1 {";
+        :set ($LSL->0) "$si:$declare $1 {";
         # queue structure
         # {
         #     [<father's line number>, <line number>, array];
@@ -567,7 +562,7 @@
     }
     # the rest type
     :if ($flagType = false) do={
-        :set ($LSL->0) "$si:local $1 $2;";
+        :set ($LSL->0) "$si:$declare $1 $2;";
     }
     # handle return
     :if ($pReturn = true) do={
@@ -702,12 +697,10 @@
 # args: <str>                       variable's name
 :global UnsetGlobalVar do={
     # global declare
-    :global IsStr;
+    :global IsStrN;
     :global IsEmpty;
     # check
-    :if (![$IsStr $1]) do={
-        :error "Global.Package.UnsetGlobalVar: \$1 should be str";
-    };
+    :if (![$IsStrN $1]) do={:error "Global.Package.UnsetGlobalVar: \$1 should be a string"};
     :local varName $1;
     # from environment
     /system script environment remove [/system script environment find name=$varName];

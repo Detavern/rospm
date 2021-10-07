@@ -50,6 +50,7 @@
         "ToSDT";
         "IsLeapYear";
         "ShiftDatetime";
+        "GetTimedelta";
     };
 };
 
@@ -385,10 +386,9 @@
     :global IsLeapYear;
     :global MonthsOfTheYear;
     :global Split;
+    # check
+    :if (![$IsDatetime $1]) do={:error "Global.Datetime.ShiftDatetime: \$1 should be datetime"};
     # local
-    :if (![$IsDatetime $1]) do={
-        :error "Global.Datetime.ShiftDatetime: \$1 should be datetime";
-    };
     :local dt $1;
     :local td [$ToTimedelta $2];
     # SS MM HH + only
@@ -493,6 +493,31 @@
     }
     # return
     :local result {$yy; $mm; $dd; $HH; $MM; $SS};
+    :return $result;
+}
+
+
+# $GetTimedelta
+# datetime shift
+# args: <datetime>              datetime of start point
+# args: <datetime>              datetime of end point
+# return: <array>               shifted timedelta, positive when $1 earlier than $2
+:global GetTimedelta do={
+    # global declare
+    :global IsNothing;
+    :global IsDatetime;
+    :global TypeofTime;
+    :global TypeofArray;
+    :global ToTimedelta;
+    :global IsLeapYear;
+    :global MonthsOfTheYear;
+    :global Split;
+    # check
+    :if (![$IsDatetime $1]) do={:error "Global.Datetime.GetTimedelta: \$1 should be datetime"};
+    :if (![$IsDatetime $2]) do={:error "Global.Datetime.GetTimedelta: \$2 should be datetime"};
+    # local
+    # TODO: need this
+    :local result 00:31:00
     :return $result;
 }
 

@@ -68,7 +68,6 @@
 # put(update) var into cache
 # args: <name>                      name of var
 # args: <var>                       value of var
-# args: <size>                      size of cache
 :global GlobalCacheFuncPut do={
     # global declare
     :global Nil;
@@ -77,9 +76,14 @@
     :global NewArray;
     :global GlobalCacheFunc;
     :global GlobalCacheFuncGet;
+    # env
+    :global EnvGlobalCacheFuncSize;
+    :global EnvGlobalCacheFuncEnabled;
+    # TODO: remove if check
+    :if ([$IsNothing $EnvGlobalCacheFuncSize]) do={:error "cache size is nothing"}
     # local
     :local funcCache;
-    :local cacheSize $3;
+    :local cacheSize $EnvGlobalCacheFuncSize;
     # check cache
     :if ([$IsNothing $GlobalCacheFunc]) do={
         :set GlobalCacheFunc [$NewArray ];
