@@ -10,7 +10,7 @@
 
 :local metaInfo {
     "name"="global-helpers";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="global helper package";
     "global"=true;
     "global-functions"={

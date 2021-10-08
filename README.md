@@ -544,13 +544,13 @@ Type  : bool
 Value : false
 ```
 
-#### `$IsTimeDelta`
+#### `$IsTimedelta`
 ```
 [admin@MikroTik] > {
     :local v {"days"=-100};
-    $Print [$IsTimeDelta $v];
+    $Print [$IsTimedelta $v];
     :local v {"dayss"=-1};
-    $Print [$IsTimeDelta $v];
+    $Print [$IsTimedelta $v];
 }
 
 Type  : bool
@@ -778,3 +778,19 @@ Type  : str
 Value : {"a": {"aa": true, "ab": false, "ac": null, "b": [1, 2, 3, 4, {"ccc": "dwafagcsad"}]}, "ip": "1.2.3.4", "ip-range": "1.0.0.0/8", "ipv6": "ffff::", "s": "asdvasd", "time": "12:00:59"}
 
 ```
+
+
+## License
+
+This program(RSPM) is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.

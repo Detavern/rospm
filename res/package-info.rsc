@@ -3,7 +3,7 @@
     {
         "name"="global-variables";
         "description"="global variable package";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-variables"={
             "Nothing";
@@ -37,7 +37,7 @@
     {
         "name"="global-functions";
         "description"="global function package";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
             "IsNil";
@@ -52,6 +52,8 @@
             "IsIPPrefix";
             "IsIPv6Prefix";
             "IsEmpty";
+            "IsStrN";
+            "IsArrayN";
             "IsDict";
             "NewArray";
             "Assert";
@@ -69,7 +71,7 @@
     {
         "name"="global-functions.array";
         "description"="global functions for array related operation";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
             "Append";
@@ -83,7 +85,7 @@
     {
         "name"="global-functions.string";
         "description"="global functions for string related operation";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
             "Replace";
@@ -95,12 +97,25 @@
             "Join";
             "SimpleDump";
             "SimpleLoad";
+            "NumToHex";
+            "HexToNum";
+        };
+    };
+    {
+        "name"="global-functions.random";
+        "description"="global functions for random related operation";
+        "version"="0.3.0";
+        "global"=true;
+        "global-functions"={
+            "Random20CharHex";
+            "RandomNumber";
+            "RandomChoice";
         };
     };
     {
         "name"="global-functions.cache";
         "description"="global functions for cache operation";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
             "GlobalCacheFuncGet";
@@ -108,17 +123,18 @@
             "GlobalCacheFuncRemove";
             "GlobalCacheFuncRemovePrefix";
             "GlobalCacheFuncFlush";
+            "GlobalCacheFuncStatus";
         };
     };
     {
         "name"="global-functions.datetime";
         "description"="global functions for datetime operation";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
             "IsSDT";
             "IsDatetime";
-            "IsTimeDelta";
+            "IsTimedelta";
             "GetCurrentClock";
             "GetCurrentDate";
             "GetCurrentTime";
@@ -129,12 +145,14 @@
             "ToSDT";
             "IsLeapYear";
             "ShiftDatetime";
+            "CompareDatetime";
+            "GetTimedelta";
         };
     };
     {
         "name"="global-functions.package";
         "description"="global functions for package operation";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
             "FindPackage";
@@ -142,6 +160,7 @@
             "ValidatePackage";
             "GetSource";
             "GetMeta";
+            "ParseMetaSafe";
             "GetMetaSafe";
             "GetEnv";
             "PrintPackageInfo";
@@ -157,21 +176,25 @@
     {
         "name"="global-functions.config";
         "description"="global functions for configuration management";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
+            "LoadGlobalEnv";
+            "RebuildGlobalEnv";
+            "PrintGlobalEnv";
             "GetConfig";
-            "CreateConfig";
             "UpdateConfig";
+            "RegisterConfig";
+            "CreateConfig";
+            "RemoveConfig";
         };
     };
     {
         "name"="global-functions.unicode";
         "description"="Global Package for unicode related operation";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
-            "ToHex";
             "ByteToChar";
             "CharToByte";
             "UnicodeToUtf8";
@@ -184,7 +207,7 @@
     {
         "name"="global-functions.misc";
         "description"="global functions for miscellaneous collection";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
             "UniqueArray";
@@ -193,7 +216,7 @@
     {
         "name"="global-helpers";
         "description"="global helper package";
-        "version"="0.2.0";
+        "version"="0.3.0";
         "global"=true;
         "global-functions"={
             "itemsFoundEnsureOneEnabled";
@@ -208,69 +231,89 @@
         };
     };
     {
+        "name"="ddns";
+        "description"="ddns schedule framework";
+        "version"="0.3.0";
+    };
+    {
+        "name"="ddns.getter";
+        "description"="ddns ip getter";
+        "version"="0.3.0";
+    };
+    {
+        "name"="ddns.provider.cloudflare";
+        "description"="ddns cloudflare utils";
+        "version"="0.3.0";
+    };
+    {
         "name"="interface.ethernet";
         "description"="";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="interface.list";
         "description"="";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="ip.address";
         "description"="";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="ip.firewall.address-list";
         "description"="";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="ip.route";
         "description"="";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="ip.route.rule";
         "description"="";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="rspm";
         "description"="rspm";
-        "version"="0.2.0";
+        "version"="0.3.0";
+    };
+    {
+        "name"="rspm.config";
+        "description"="rspm configuration tools";
+        "version"="0.3.0";
     };
     {
         "name"="rspm.reset";
         "description"="rspm configuration reset tools";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="rspm.state";
         "description"="rspm package state tools";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="tool.file";
         "description"="file utility";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="tool.http";
         "description"="http utility";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="tool.json";
         "description"="json loads and dumps";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
     {
         "name"="tool.remote";
         "description"="remote script load tools";
-        "version"="0.2.0";
+        "version"="0.3.0";
     };
 };
 
@@ -280,26 +323,31 @@
     "global-functions"=1;
     "global-functions.array"=2;
     "global-functions.string"=3;
-    "global-functions.cache"=4;
-    "global-functions.datetime"=5;
-    "global-functions.package"=6;
-    "global-functions.config"=7;
-    "global-functions.unicode"=8;
-    "global-functions.misc"=9;
-    "global-helpers"=10;
-    "interface.ethernet"=11;
-    "interface.list"=12;
-    "ip.address"=13;
-    "ip.firewall.address-list"=14;
-    "ip.route"=15;
-    "ip.route.rule"=16;
-    "rspm"=17;
-    "rspm.reset"=18;
-    "rspm.state"=19;
-    "tool.file"=20;
-    "tool.http"=21;
-    "tool.json"=22;
-    "tool.remote"=23;
+    "global-functions.random"=4;
+    "global-functions.cache"=5;
+    "global-functions.datetime"=6;
+    "global-functions.package"=7;
+    "global-functions.config"=8;
+    "global-functions.unicode"=9;
+    "global-functions.misc"=10;
+    "global-helpers"=11;
+    "ddns"=12;
+    "ddns.getter"=13;
+    "ddns.provider.cloudflare"=14;
+    "interface.ethernet"=15;
+    "interface.list"=16;
+    "ip.address"=17;
+    "ip.firewall.address-list"=18;
+    "ip.route"=19;
+    "ip.route.rule"=20;
+    "rspm"=21;
+    "rspm.config"=22;
+    "rspm.reset"=23;
+    "rspm.state"=24;
+    "tool.file"=25;
+    "tool.http"=26;
+    "tool.json"=27;
+    "tool.remote"=28;
 }
 
 # the minimum requirement packages of rspm

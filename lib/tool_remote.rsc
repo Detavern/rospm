@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="tool.remote";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="remote script load tools";
 };
 

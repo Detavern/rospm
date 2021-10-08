@@ -1,6 +1,6 @@
 :global RSPMInstallerConfig {
-    "baseURL"="https://raw.githubusercontent.com/Detavern/rspm/development/";
-    "owner"="rspm";
+    "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/development/";
+    "RSPMOwner"="rspm";
 };
 :global RSPMInstallerInput do={
     :terminal style escaped;
@@ -13,8 +13,8 @@
     :global RSPMInstallerConfig;
     :global RSPMInstallerInput;
     :local pkgName $1;
-    :local URL (($RSPMInstallerConfig->"baseURL") . "lib/" . $pkgName . ".rsc");
-    :local Owner ($RSPMInstallerConfig->"owner");
+    :local URL (($RSPMInstallerConfig->"RSPMBaseURL") . "lib/" . $pkgName . ".rsc");
+    :local Owner ($RSPMInstallerConfig->"RSPMOwner");
     :put "Downloading file $pkgName...";
     :local result [/tool fetch url=$URL output="user" as-value];
     :local scriptStr ($result->"data");
@@ -22,7 +22,7 @@
     :local idList [/system script find name=$pkgName];
     :if ([:len $idList] != 0) do={
         :local scriptOwner [/system script get ($idList->0) owner];
-        :if ($scriptOwner != ($RSPMInstallerConfig->"owner")) do={
+        :if ($scriptOwner != $Owner) do={
             :put "Same script name \"$pkgName\" with owner \"$scriptOwner\" found in repository.";
             :local answer [$RSPMInstallerInput "Press y to replace it (y/N)"];
             :if ($answer != "y") do={
@@ -43,7 +43,7 @@
 :put "| RouterOS Script Package Manager |";
 :put "-----------------------------------";
 :put "Installer initializing ...";
-:local answer [$RSPMInstallerInput "WARNING: this is an DEVELOPMENT version, FOR DEVELOPER ONLY (y/N)"];
+:local answer [$RSPMInstallerInput "WARNING: this is a DEVELOPMENT version, FOR DEVELOPER ONLY (y/N)"];
 :if ($answer != "y") do={
     :put "Installation abort, use";
     :put "/import rspm-installer.rsc";
@@ -73,6 +73,7 @@
 # install rspm
 [$installPackage "tool_http"];
 [$installPackage "tool_remote"];
+[$installPackage "rspm_config"];
 [$installPackage "rspm_state"];
 [$installPackage "rspm_reset"];
 [$installPackage "rspm"];

@@ -6,7 +6,7 @@
 
 :local metaInfo {
     "name"="global-functions";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="global function package";
     "global"=true;
     "global-functions"={
@@ -22,6 +22,8 @@
         "IsIPPrefix";
         "IsIPv6Prefix";
         "IsEmpty";
+        "IsStrN";
+        "IsArrayN";
         "IsDict";
         "NewArray";
         "Assert";
@@ -198,12 +200,46 @@
 
 
 # $IsEmpty
-# validate if an array is empty.
+# TODO: migrate it!
+# validate if $1 is an array and is empty.
+# if $1 is not an array, then raise error.
+# if $1 is empty, return false.
 # args: <array>                 array
 :global IsEmpty do={
     :global IsArray;
     :if ([$IsArray $1]) do={
         :if ([:len $1]=0) do={
+            :return true;
+        }
+        :return false;
+    }
+    :error "Global.IsEmpty: \$1 shoud be an array";
+}
+
+
+# $IsStrN
+# validate if $1 is a str and not empty.
+# else, return false.
+# args: <var>                   variable
+:global IsStrN do={
+    :global IsStr;
+    :if ([$IsStr $1]) do={
+        :if ([:len $1] > 0) do={
+            :return true;
+        }
+    }
+    :return false;
+}
+
+
+# $IsArrayN
+# validate if $1 is an array and not empty.
+# else, return false.
+# args: <var>                   variable
+:global IsArrayN do={
+    :global IsArray;
+    :if ([$IsArray $1]) do={
+        :if ([:len $1] > 0) do={
             :return true;
         }
     }

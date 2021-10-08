@@ -7,7 +7,7 @@
 
 :local metaInfo {
     "name"="global-functions.package";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="global functions for package operation";
     "global"=true;
     "global-functions"={
@@ -16,6 +16,7 @@
         "ValidatePackage";
         "GetSource";
         "GetMeta";
+        "ParseMetaSafe";
         "GetMetaSafe";
         "GetEnv";
         "PrintPackageInfo";
@@ -36,8 +37,6 @@
 :global FindPackage do={
     # global declare
     :global Replace;
-    :global IsEmpty;
-    :global Nil;
     # replace
     :local pkgName $1;
     :local fileName [$Replace $pkgName "." "_"];
@@ -386,12 +385,11 @@
     # global declare
     :global RSplit;
     :global Replace;
-    :global IsEmpty;
+    :global IsArrayN;
     :global IsNil;
     :global IsNothing;
     :global IsNum;
     :global FindPackage;
-    :global GetConfig;
     :global GlobalCacheFuncGet;
     :global GlobalCacheFuncPut;
     :global ValidatePackageContent;
@@ -409,10 +407,7 @@
     :local funcName ($splitted->1);
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system script find name=$fileName];
-    :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.GetFunc: script \"$fileName\" not found";
-        :return "";
-    }
+    :if (![$IsArrayN $idList]) do={:error "Global.Package.GetFunc: script \"$fileName\" not found"};
     # parse code and get result
     :local pSource [:parse [/system script get ($idList->0) source]];
     :set pkg [$pSource ];
@@ -425,14 +420,10 @@
     :if ([$IsNothing $func]) do={
         :error "Global.Package.GetFunc: function $funcName not found in package.";
     } else {
-        :local idList [$FindPackage "config.rspm.package"];
-        :if (![$IsEmpty $idList]) do={
-            :local config [$GetConfig "config.rspm.package"];
-            :local cacheSize ($config->"globalCacheSizeFunc");
-            :if ([$IsNum $cacheSize]) do={
-                # put into global cache
-                [$GlobalCacheFuncPut $1 $func $cacheSize];
-            }
+        :local idList [$FindPackage "config.rspm"];
+        :if ([$IsArrayN $idList]) do={
+            # put into global cache
+            [$GlobalCacheFuncPut $1 $func];
         }
     }
     :return $func;
@@ -446,6 +437,7 @@
 # opt kwargs: Indent=<str>          indent string
 # opt kwargs: StartIndent=<num>     start indent string count
 # opt kwargs: Output=<str>          output format: str, array
+# opt kwargs: Global=<bool>         default false, use global declaration if true
 # opt kwargs: Return=<bool>         default true
 :global DumpVar do={
     # global declare
@@ -453,9 +445,9 @@
     :global ReadOption;
     :global Extend;
     :global Join;
-    :global IsEmpty;
     :global IsStr;
     :global IsArray;
+    :global IsArrayN;
     :global StartsWith;
     :global TypeofArray;
     :global TypeofStr;
@@ -465,23 +457,33 @@
     :local indent [$ReadOption $Indent $TypeofStr "    "];
     :local cursor [$ReadOption $StartIndent $TypeofNum 0];
     :local pOutput [$ReadOption $Output $TypeofStr "str"];
+    :local pGlobal [$ReadOption $Global $TypeofBool false];
     :local pReturn [$ReadOption $Return $TypeofBool true];
     # set start indent
     :local si "";
     :for i from=1 to=$cursor step=1 do={
         :set si ($si . $indent);
     }
+    # set declaration
+    :local declare "local";
+    :if ($pGlobal) do={:set declare "global"}
     # init LSL
     :local LSL [$NewArray ];
-    :local flagType false;
+    :local flagType true;
     # str
-    :if ([$IsStr $2]) do={
-        :set ($LSL->0) "$si:local $1 \"$2\";";
-        :set flagType true;
+    :if ($flagType and [$IsStr $2]) do={
+        :set flagType false;
+        :set ($LSL->0) "$si:$declare $1 \"$2\";";
+    }
+    # array empty
+    :if ($flagType and [$IsArray $2] and ([:len $2] = 0)) do={
+        :set flagType false;
+        :set ($LSL->0) "$si:$declare $1 ({});";
     }
     # array
-    :if ([$IsArray $2]) do={
-        :set ($LSL->0) "$si:local $1 {";
+    :if ($flagType and [$IsArrayN $2]) do={
+        :set flagType false;
+        :set ($LSL->0) "$si:$declare $1 {";
         # queue structure
         # {
         #     [<father's line number>, <line number>, array];
@@ -496,7 +498,7 @@
         :set ($queueNext->0) $sq;
         :local deltaLN 0;
         :while ($flag) do={
-            :if ([$IsEmpty $queueNext]) do={
+            :if (![$IsArrayN $queueNext]) do={
                 :set flag false;
             } else {
                 :set queue $queueNext;
@@ -520,22 +522,28 @@
                             :set ks "\"$k\"="
                         }
                         # type specific
-                        :local fT false;
+                        :local fT true;
                         :if ([:typeof $v] = $TypeofArray) do={
-                            # add starting brace
-                            :local lineStr "$ind$ks{";
-                            :set ($subLSL->[:len $subLSL]) $lineStr;
-                            :local a [$NewArray ];
-                            :set ($a->0) ($fatherLN + $selfLN + $deltaLN);
-                            :set ($a->1) [:len $subLSL];
-                            :set ($a->2) $v;
-                            :set ($queueNext->[:len $queueNext]) $a;
-                            # add closing brace
-                            :local lineStr "$ind};";
-                            :set ($subLSL->[:len $subLSL]) $lineStr;
-                            :set fT true;
+                            :set fT false;
+                            :if ([:len $v] = 0) do={
+                                :local lineStr "$ind$ks({})";
+                                :set ($subLSL->[:len $subLSL]) $lineStr;
+                            } else {
+                                # add starting brace
+                                :local lineStr "$ind$ks{";
+                                :set ($subLSL->[:len $subLSL]) $lineStr;
+                                :local a [$NewArray ];
+                                :set ($a->0) ($fatherLN + $selfLN + $deltaLN);
+                                :set ($a->1) [:len $subLSL];
+                                :set ($a->2) $v;
+                                :set ($queueNext->[:len $queueNext]) $a;
+                                # add closing brace
+                                :local lineStr "$ind};";
+                                :set ($subLSL->[:len $subLSL]) $lineStr;
+                            }
                         };
                         :if ([:typeof $v] = $TypeofStr) do={
+                            :set fT false;
                             :local lineStr;
                             :local noquote "noquote:";
                             :if ([$StartsWith $v $noquote]) do={
@@ -545,10 +553,9 @@
                                 :set lineStr "$ind$ks\"$v\";";
                             }
                             :set ($subLSL->[:len $subLSL]) $lineStr;
-                            :set fT true;
                         }
                         # rest of type
-                        :if ($fT = false) do={
+                        :if ($fT) do={
                             :local lineStr "$ind$ks$v;";
                             :set ($subLSL->[:len $subLSL]) $lineStr;
                         }
@@ -562,11 +569,10 @@
             }
         }
         :set ($LSL->[:len $LSL]) "$si}";
-        :set flagType true;
     }
     # the rest type
-    :if ($flagType = false) do={
-        :set ($LSL->0) "$si:local $1 $2;";
+    :if ($flagType) do={
+        :set ($LSL->0) "$si:$declare $1 $2;";
     }
     # handle return
     :if ($pReturn = true) do={
@@ -701,12 +707,10 @@
 # args: <str>                       variable's name
 :global UnsetGlobalVar do={
     # global declare
-    :global IsStr;
+    :global IsStrN;
     :global IsEmpty;
     # check
-    :if (![$IsStr $1]) do={
-        :error "Global.Package.UnsetGlobalVar: \$1 should be str";
-    };
+    :if (![$IsStrN $1]) do={:error "Global.Package.UnsetGlobalVar: \$1 should be a string"};
     :local varName $1;
     # from environment
     /system script environment remove [/system script environment find name=$varName];

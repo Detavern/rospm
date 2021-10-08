@@ -1,6 +1,6 @@
 :local metaInfo {
     "name"="rspm";
-    "version"="0.2.0";
+    "version"="0.3.0";
     "description"="rspm";
 };
 
@@ -9,47 +9,22 @@
 # kwargs: Context=<array>       context comes from installer
 :local firstRun do={
     #DEFINE global
-    :global IsStr;
+    :global Nil;
     :global TypeofArray;
     :global ReadOption;
     :global GetFunc;
-    :global NewArray;
-    :global DumpVar;
-    :global CreateConfig;
-    :global FindPackage;
     :global InValues;
     :global InputV;
     # local
     :local context [$ReadOption $Context $TypeofArray];
-    :local configPkgName "config.rspm.package";
-    :local configPkgExtName "config.rspm.package.ext";
-    # check context
-    :if (![$IsStr ($context->"baseURL")]) do={
-        :error "rspm.firstRun: baseURL not found";
-    }
-    # clean local config.rspm.package
-    /system script remove [$FindPackage $configPkgName];
-    /system script remove [$FindPackage $configPkgExtName];
-    # add resource version
-    :local resVersionURL (($context->"baseURL") . "res/version.rsc");
-    :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
-    :set ($context->"version") $resVersion;
-    # add cache size
-    :set ($context->"globalCacheSizeFunc") 20;
-    # load remote package info
-    :local packageInfoURL (($context->"baseURL") . "res/package-info.rsc");
-    :put "Get: $packageInfoURL";
-    :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
-    # update config
-    :foreach k,v in $context do={
-        :set ($packageInfo->$k) $v;
-    }
-    # make new config.rspm.package
-    [$CreateConfig $configPkgName $packageInfo Owner=($context->"owner")];
-    # make new config.rspm.package.ext
-    :local packageInfoExtURL (($context->"baseURL") . "res/package-info-ext.rsc");
-    :local packageInfoExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoExtURL];
-    [$CreateConfig $configPkgExtName $packageInfoExt Owner=($context->"owner")];
+    # get remote version
+    :local versionURL (($context->"RSPMBaseURL") . "res/version.rsc");
+    :local version [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
+    :set ($context->"RSPMVersion") $version;
+    # init config
+    [[$GetFunc "rspm.config.initConfig"]];
+    [[$GetFunc "rspm.config.initPackageConfig"] Context=$context];
+    [[$GetFunc "rspm.config.initPackageExtConfig"]];
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
     :local reportList [[$GetFunc "rspm.state.checkAllState"] CheckExt=false CheckVersion=false];
@@ -92,13 +67,15 @@
         };
     }
     # register startup
-    :local startupResURL (($context->"baseURL") . "res/startup.rsc");
+    :local startupName "RSPM_STARTUP";
+    :local startupResURL (($context->"RSPMBaseURL") . "res/startup.rsc");
     :put "Get: $startupResURL";
     :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
-    /system scheduler remove [/system scheduler find name="rspm-startup"];
-    :put "Adding rspm-startup schedule...";
-    /system scheduler add name="rspm-startup" start-time=startup on-event=$scriptStr;
-    :return "";
+    /system scheduler remove [/system scheduler find name=$startupName];
+    :put "Adding $startupName schedule...";
+    # add scheduler use default policy
+    /system scheduler add name=$startupName start-time=startup on-event=$scriptStr;
+    :return $Nil;
 }
 
 
@@ -107,6 +84,7 @@
 # kwargs: URL=<str>             package url, use for install ext package
 :local install do={
     #DEFINE global
+    :global Nil;
     :global IsNum;
     :global IsNothing;
     :global ReadOption;
@@ -122,6 +100,9 @@
     :global UpdateConfig;
     :global ValidatePackageContent;
     :global GlobalCacheFuncRemovePrefix;
+    # env
+    :global EnvRSPMBaseURL;
+    :global EnvRSPMOwner;
     # local
     :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pkgName $Package;
@@ -191,7 +172,7 @@
         :if (($report->"configName") = $configPkgName) do={
             :put "Installing core package $pkgName, latest version is $versionR";
             :local pn [$Replace $pkgName "." "_"];
-            :local pkgUrl (($config->"baseURL") . "lib/$pn.rsc")
+            :local pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
             :put "Get: $pkgUrl";
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
@@ -207,7 +188,7 @@
         };
         :put "Writing source into repository...";
         :local fileName [$Replace $pkgName "." "_"];
-        /system script add name=$fileName source=$pkgStr owner=($config->"owner");
+        /system script add name=$fileName source=$pkgStr owner=$EnvRSPMOwner;
         # if global, load it
         :if ((($report->"metaConfig")->"global") = true) do={
             :put "Loading global package...";
@@ -222,7 +203,7 @@
         :if (($report->"configName") = $configPkgName) do={
             :put "Downgrading core package $pkgName, latest version is $versionR(current: $versionL)";
             :local pn [$Replace $pkgName "." "_"];
-            :local pkgUrl (($config->"baseURL") . "lib/$pn.rsc")
+            :local pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
             :put "Get: $pkgUrl";
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
@@ -237,7 +218,7 @@
             }
         };
         :put "Writing source into repository...";
-        /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+        /system script set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
         :put "Clean function cache...";
         [$GlobalCacheFuncRemovePrefix $pkgName];
         # if global, load it
@@ -254,7 +235,7 @@
         :if (($report->"configName") = $configPkgName) do={
             :put "Reinstalling core package $pkgName, latest version is $versionR";
             :local pn [$Replace $pkgName "." "_"];
-            :local pkgUrl (($config->"baseURL") . "lib/$pn.rsc")
+            :local pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
             :put "Get: $pkgUrl";
             :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         } else {
@@ -269,7 +250,7 @@
             }
         };
         :put "Writing source into repository...";
-        /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+        /system script set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
         :put "Clean function cache...";
         [$GlobalCacheFuncRemovePrefix $pkgName];
         # if global, load it
@@ -280,7 +261,7 @@
         }
     }
     :put "The package has been installed.";
-    :return "";
+    :return $Nil;
 }
 
 
@@ -289,14 +270,17 @@
 # kwargs: Package=<str>         package name
 :local update do={
     #DEFINE global
+    :global Nil;
     :global IsNothing;
-    :global GetConfig;
-    :global GetFunc;
-    :global UpdateConfig;
     :global NewArray;
+    :global GetFunc;
+    :global GetConfig;
+    :global UpdateConfig;
     :global InKeys;
-    :global SetGlobalVar;
     :global ValidatePackageContent;
+    # env
+    :global EnvRSPMBaseURL;
+    :global EnvRSPMVersion;
     # local
     :local configPkgName "config.rspm.package";
     :local configExtPkgName "config.rspm.package.ext";
@@ -304,13 +288,12 @@
     :local config [$GetConfig $configPkgName];
     :put "Loading local configuration: $configExtPkgName...";
     :local configExt [$GetConfig $configExtPkgName];
-    :local version ($config->"version");
+    :local version $EnvRSPMVersion;
     :local newConfigExt;
     # add resource version
-    :local resVersionURL (($config->"baseURL") . "res/version.rsc");
+    :local resVersionURL ($EnvRSPMBaseURL . "res/version.rsc");
     :put "Get: $resVersionURL";
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
-    [$SetGlobalVar "RSPMRemoteVersion" $resVersion Timeout=00:30:00];
     # check core
     :put "Checking core packages...";
     :if ($version >= $resVersion) do={
@@ -319,17 +302,17 @@
     } else {
         :put "Latest version is $resVersion, your current version is $version";
         # update package-info
-        :local packageInfoURL (($config->"baseURL") . "res/package-info.rsc");
+        :local packageInfoURL ($EnvRSPMBaseURL . "res/package-info.rsc");
         :put "Get: $packageInfoURL";
         :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
         :put "Updating local configuration: $configPkgName...";
         :foreach k,v in $packageInfo do={
             :set ($config->$k) $v;
         }
-        :set ($config->"version") $resVersion;
+        :set (($config->"environment")->"RSPMVersion") $resVersion;
         [$UpdateConfig $configPkgName $config];
         # update package-info-ext
-        :local packageInfoExtURL (($config->"baseURL") . "res/package-info-ext.rsc");
+        :local packageInfoExtURL ($EnvRSPMBaseURL . "res/package-info-ext.rsc");
         :put "Get: $packageInfoExtURL";
         :local packageInfoExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoExtURL];
         :set newConfigExt $packageInfoExt;
@@ -344,12 +327,14 @@
             }
         }
         # update startup scheduler
-        :local startupResURL (($config->"baseURL") . "res/startup.rsc");
+        :local startupName "RSPM_STARTUP";
+        :local startupResURL ($EnvRSPMBaseURL . "res/startup.rsc");
         :put "Get: $startupResURL";
         :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
-        /system scheduler remove [/system scheduler find name="rspm-startup"];
+        /system scheduler remove [/system scheduler find name=$startupName];
         :put "Adding rspm-startup schedule...";
-        /system scheduler add name="rspm-startup" start-time=startup on-event=$scriptStr;
+        # add scheduler use default policy
+        /system scheduler add name=$startupName start-time=startup on-event=$scriptStr;
     }
     # check ext
     :local counter 0;
@@ -385,6 +370,7 @@
     :put "Updating local configuration: $configExtPkgName...";
     [$UpdateConfig $configExtPkgName $newConfigExt];
     :put "The package list has been updated.";
+    :return $Nil;
 }
 
 
@@ -393,6 +379,7 @@
 # kwargs: Package=<str>         package name
 :local upgrade do={
     #DEFINE global
+    :global Nil;
     :global IsStr;
     :global IsNothing;
     :global InValues;
@@ -401,6 +388,9 @@
     :global GetFunc;
     :global GetConfig;
     :global GlobalCacheFuncRemovePrefix;
+    # env
+    :global EnvRSPMBaseURL;
+    :global EnvRSPMOwner;
     # local
     :local configPkgName "config.rspm.package";
     :put "Loading local configuration: $configPkgName...";
@@ -426,7 +416,7 @@
             :if (!$isLatest) do={
                 :error "rspm.upgrade: local package list is out of date, please update first.";
             }
-            :set pkgUrl (($config->"baseURL") . "lib/$Package.rsc")
+            :set pkgUrl ($EnvRSPMBaseURL . "lib/$Package.rsc")
         } else {
             :put "Upgrading extension package $Package, latest version is $versionR(current: $versionL)";
             :set pkgUrl (($report->"metaConfig")->"proxyUrl");
@@ -437,7 +427,7 @@
         :put "Get: $pkgUrl";
         :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         :put "Writing source into repository...";
-        /system script set [$FindPackage $Package] source=$pkgStr owner=($config->"owner");
+        /system script set [$FindPackage $Package] source=$pkgStr owner=$EnvRSPMOwner;
         :put "Clean function cache...";
         :local pkgName (($report->"metaConfig")->"name");
         [$GlobalCacheFuncRemovePrefix $pkgName];
@@ -449,6 +439,7 @@
         }
     }
     :put "The package has been upgraded.";
+    :return $Nil;
 }
 
 
@@ -457,6 +448,7 @@
 # kwargs: Package=<str>         package name
 :local remove do={
     #DEFINE global
+    :global Nil;
     :global GetFunc;
     :global GetConfig;
     :global InValues;
@@ -496,6 +488,7 @@
         }
         :put "The package has been removed.";
     }
+    :return $Nil;
 }
 
 
@@ -504,6 +497,7 @@
 # kwargs: Package=<str>         package name
 :local register do={
     #DEFINE global
+    :global Nil;
     :global GetFunc;
     :global GetConfig;
     :global InValues;
@@ -543,12 +537,14 @@
         }
     };
     :put "The package has been registed.";
+    :return $Nil;
 }
 
 
 # $upgradeAll
 :local upgradeAll do={
     #DEFINE global
+    :global Nil;
     :global IsNothing;
     :global GetFunc;
     :global GetConfig;
@@ -557,6 +553,9 @@
     :global FindPackage;
     :global LoadPackage;
     :global GlobalCacheFuncFlush;
+    # env
+    :global EnvRSPMBaseURL;
+    :global EnvRSPMOwner;
     # local
     :local configPkgName "config.rspm.package";
     :local configExtPkgName "config.rspm.package.ext";
@@ -587,11 +586,11 @@
             :if (($report->"configName") = $configPkgName) do={
                 :local versionR (($report->"metaConfig")->"version");
                 :put "Upgrading core package $pkgName, latest version is $versionR";
-                :local pkgUrl (($config->"baseURL") . "lib/$pkgName.rsc")
+                :local pkgUrl ($EnvRSPMBaseURL . "lib/$pkgName.rsc")
                 :put "Get: $pkgUrl";
                 :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
                 :put "Writing source into repository...";
-                /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+                /system script set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
             } else {
                 :local versionR (($report->"metaConfig")->"version");
                 :put "Upgrading extension package $pkgName, latest version is $versionR";
@@ -602,7 +601,7 @@
                 :put "Get: $pkgUrl";
                 :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
                 :put "Writing source into repository...";
-                /system script set [$FindPackage $pkgName] source=$pkgStr owner=($config->"owner");
+                /system script set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
             }
             # if global, load it
             :if ((($report->"metaConfig")->"global") = true) do={
@@ -615,6 +614,7 @@
     :put "Flush function cache...";
     [$GlobalCacheFuncFlush ];
     :put "$lenUpradeList packages have been upgraded.";  
+    :return $Nil;
 }
 
 

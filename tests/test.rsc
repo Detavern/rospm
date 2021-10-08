@@ -195,68 +195,7 @@
 :put [$ItemsFoundEnsureOneEnabled "/interface ethernet " ];
 
 
-# global datetime
-
-## getfulltimedelta
-{
-    :local t1 240:0:0;
-    :local t2 0:30:0;
-    :put ($t1 - $t2);
-    :put [$GetFullTimedelta ($t1 - $t2)];
-    :put ($t2 - $t1);
-    :put [$GetFullTimedelta ($t2 - $t1)];
-}
-
-## datetimeshift
-{
-    :local cdt [$GetCurrentDatetime ];
-    :put $cdt;
-    :local td -240:0:0;
-    :put [$ShiftDatetime $cdt $td ];
-}
-{
-    :local cdt [$GetCurrentDatetime ];
-    :put $cdt;
-    :local td {"days"=10000};
-    :put [$ShiftDatetime $cdt $td ];
-}
-
-
-## get sdt
-{
-    :local dt {2020;10;9;8;7;6};
-    $Print [$GetSDT $dt];
-}
-### error example
-{
-    :local dt {2020;10;9;8;7;60};
-    $Print [$GetSDT $dt];
-}
-
-
 # global package
-
-## GetConfig
-:put [$GetConfig "config.rspm"];
-
-## create config
-{
-    :local config {
-        "packageList"={
-            "p1"={
-                "version"="0.1.0";
-            };
-            "p2"={
-                "version"="0.1.0";
-            };
-            "p3"={
-                "version"="0.1.0";
-            };
-        };
-        "description"="some description";
-    };
-    :put [$CreateConfig "config.rspm" $config];
-}
 
 ## setglobalvar with timeout
 [$SetGlobalVar "VAR" "hello world" Timeout=10w];
