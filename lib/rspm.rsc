@@ -73,8 +73,8 @@
     :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
     /system scheduler remove [/system scheduler find name=$startupName];
     :put "Adding $startupName schedule...";
-    /system scheduler add name=$startupName start-time=startup \
-        on-event=$scriptStr policy=read,write,policy,test;
+    # add scheduler use default policy
+    /system scheduler add name=$startupName start-time=startup on-event=$scriptStr;
     :return $Nil;
 }
 
@@ -333,8 +333,8 @@
         :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
         /system scheduler remove [/system scheduler find name=$startupName];
         :put "Adding rspm-startup schedule...";
-        /system scheduler add name=$startupName start-time=startup \
-            on-event=$scriptStr policy=read,write,policy,test;
+        # add scheduler use default policy
+        /system scheduler add name=$startupName start-time=startup on-event=$scriptStr;
     }
     # check ext
     :local counter 0;
