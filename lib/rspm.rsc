@@ -327,12 +327,13 @@
             }
         }
         # update startup scheduler
+        :local startupName "RSPM_STARTUP";
         :local startupResURL ($EnvRSPMBaseURL . "res/startup.rsc");
         :put "Get: $startupResURL";
         :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
-        /system scheduler remove [/system scheduler find name="rspm-startup"];
+        /system scheduler remove [/system scheduler find name=$startupName];
         :put "Adding rspm-startup schedule...";
-        /system scheduler add name="rspm-startup" start-time=startup
+        /system scheduler add name=$startupName start-time=startup \
             on-event=$scriptStr policy=read,write,policy,test;
     }
     # check ext
