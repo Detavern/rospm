@@ -544,13 +544,13 @@ Type  : bool
 Value : false
 ```
 
-#### `$IsTimeDelta`
+#### `$IsTimedelta`
 ```
 [admin@MikroTik] > {
     :local v {"days"=-100};
-    $Print [$IsTimeDelta $v];
+    $Print [$IsTimedelta $v];
     :local v {"dayss"=-1};
-    $Print [$IsTimeDelta $v];
+    $Print [$IsTimedelta $v];
 }
 
 Type  : bool

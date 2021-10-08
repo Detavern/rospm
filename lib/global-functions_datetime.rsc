@@ -39,7 +39,7 @@
     "global-functions"={
         "IsSDT";
         "IsDatetime";
-        "IsTimeDelta";
+        "IsTimedelta";
         "GetCurrentClock";
         "GetCurrentDate";
         "GetCurrentTime";
@@ -50,6 +50,7 @@
         "ToSDT";
         "IsLeapYear";
         "ShiftDatetime";
+        "CompareDatetime";
         "GetTimedelta";
     };
 };
@@ -124,10 +125,10 @@
 }
 
 
-# $IsTimeDelta
+# $IsTimedelta
 # args: <var>                   var
 # return: <bool>                flag
-:global IsTimeDelta do={
+:global IsTimedelta do={
     # global declare
     :global InValues;
     :global IsNum;
@@ -199,7 +200,7 @@
     :global IsNil;
     :global IsNothing;
     :global IsTime;
-    :global IsTimeDelta;
+    :global IsTimedelta;
     :global Split;
     # local
     :local td [$NewArray ];
@@ -243,7 +244,7 @@
             :set ($td->"days") ($days * $f);
         }
     };
-    :if ([$IsTimeDelta $1]) do={
+    :if ([$IsTimedelta $1]) do={
         :set flag true;
         :foreach k,v in $1 do={
             :set ($td->$k) $v;
@@ -497,27 +498,129 @@
 }
 
 
+# $CompareDatetime
+# args: <datetime>              datetime
+# args: <datetime>              datetime
+# return: <num>                 1: $1 > $2, -1: $1 < $2, 0: same
+:global CompareDatetime do={
+    # global declare
+    :global IsNothing;
+    :global IsDatetime;
+    # check
+    :if (![$IsDatetime $1]) do={:error "Global.Datetime.CompareDatetime: \$1 should be datetime"};
+    :if (![$IsDatetime $2]) do={:error "Global.Datetime.CompareDatetime: \$2 should be datetime"};
+    # local
+    :local cursor 0;
+    :local a;
+    :local b;
+    :while ($cursor < [:len $1]) do={
+        :set a ($1->$cursor);
+        :set b ($2->$cursor);
+        :if ($a > $b) do={:return 1};
+        :if ($a < $b) do={:return -1};
+        :set cursor ($cursor + 1);
+    }
+    :return 0;
+}
+
+
 # $GetTimedelta
 # datetime shift
 # args: <datetime>              datetime of start point
 # args: <datetime>              datetime of end point
-# return: <array>               shifted timedelta, positive when $1 earlier than $2
+# return: <time>                shifted timedelta, positive when $1 earlier than $2
 :global GetTimedelta do={
     # global declare
-    :global IsNothing;
+    :global NewArray;
     :global IsDatetime;
-    :global TypeofTime;
-    :global TypeofArray;
+    :global CompareDatetime;
     :global ToTimedelta;
     :global IsLeapYear;
     :global MonthsOfTheYear;
-    :global Split;
     # check
     :if (![$IsDatetime $1]) do={:error "Global.Datetime.GetTimedelta: \$1 should be datetime"};
     :if (![$IsDatetime $2]) do={:error "Global.Datetime.GetTimedelta: \$2 should be datetime"};
-    # local
-    # TODO: need this
-    :local result 00:31:00
+    # ensure adt earlier than bdt
+    :local adt $1;
+    :local bdt $2;
+    :local sign "";
+    :local cmp [$CompareDatetime $1 $2]
+    :if ($cmp = 0) do={:return 00:00:00};
+    :if ($cmp > 0) do={
+        :set adt $2;
+        :set bdt $1;
+        :set sign "-";
+    }
+    # A: 2020, 2, 2, 6, 14, 17
+    # B: 2022, 8, 31, 6, 14, 17
+    # HH MM SS
+    :local dd 0;
+    :local HH (($bdt->3) - ($adt->3));
+    :local MM (($bdt->4) - ($adt->4));
+    :local SS (($bdt->5) - ($adt->5));
+    :if ($SS < 0) do={
+        :set SS ($SS + 60);
+        :set MM ($MM - 1);
+    }
+    :if ($MM < 0) do={
+        :set MM ($MM + 60);
+        :set HH ($HH - 1);
+    }
+    :if ($HH < 0) do={
+        :set HH ($HH + 24);
+        :set dd ($dd - 1);
+    }
+    # yyyy mm dd
+    :local ayy ($adt->0);
+    :local amm ($adt->1);
+    :local add ($adt->2);
+    :local byy ($bdt->0);
+    :local bmm ($bdt->1);
+    :local bdd ($bdt->2);
+    :local flag true;
+    :local fyy;
+    :local fmm;
+    :local fdd;
+    :while ($flag) do={
+        :set fyy ($ayy = $byy);
+        :set fmm ($amm = $bmm);
+        :set fdd ($add = $bdd);
+        :if ($fdd) do={
+            :if ($fmm) do={
+                :if ($fyy) do={
+                    :set flag false;
+                } else {
+                    # same date, skip year
+                    :set dd ($dd + 365);
+                    :if ([$IsLeapYear $ayy] and ($amm <= 2)) do=[
+                        :set dd ($dd + 1);
+                    ]
+                    :set ayy ($ayy + 1);
+                    :if ([$IsLeapYear $ayy] and ($amm > 2)) do=[
+                        :set dd ($dd + 1);
+                    ]
+                }
+            } else {
+                # same day, skip month
+                :set dd ($dd + ($MonthsOfTheYear->($amm - 1)));
+                :if (($amm = 2) and [$IsLeapYear $ayy]) do={:set dd ($dd + 1)};
+                :set amm ($amm + 1);
+                :if ($amm > 12) do={
+                    :set amm 1;
+                }
+            }
+        } else {
+            # all different
+            :if ($bdd > 28) do={
+                :set bdd ($bdd - 1);
+            } else {
+                :set add ($add + 1);
+            }
+            :set dd ($dd + 1);
+        }
+    }
+    # make result
+    :local result [:totime ("$sign$dd" . "d$HH:$MM:$SS")]
     :return $result;
 }
 

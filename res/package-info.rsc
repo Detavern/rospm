@@ -134,7 +134,7 @@
         "global-functions"={
             "IsSDT";
             "IsDatetime";
-            "IsTimeDelta";
+            "IsTimedelta";
             "GetCurrentClock";
             "GetCurrentDate";
             "GetCurrentTime";
@@ -145,6 +145,7 @@
             "ToSDT";
             "IsLeapYear";
             "ShiftDatetime";
+            "CompareDatetime";
             "GetTimedelta";
         };
     };

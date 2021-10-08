@@ -79,7 +79,7 @@
     # env
     :global EnvGlobalCacheFuncSize;
     :global EnvGlobalCacheFuncEnabled;
-    # TODO: remove if check
+    # should not happened
     :if ([$IsNothing $EnvGlobalCacheFuncSize]) do={:error "cache size is nothing"}
     # local
     :local funcCache;

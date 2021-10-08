@@ -92,8 +92,6 @@
         :local funcStr [$DumpVar $vName $v Global=true];
         :local func [:parse $funcStr];
         :local result [$func ];
-        # TODO: remove if no problem
-        :if ($v != $result) do={:error "Global.Config.LoadGlobalEnv: dump var not match: $v, please report issue!"}
         # make config mapping
         :set ($mp->$vName) true;
     }

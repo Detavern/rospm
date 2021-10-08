@@ -30,7 +30,6 @@
     :local forceUpdate [$ReadOption $ForceUpdate $TypeofBool false];
     :local configPkgName "config.rspm.package";
     :local td 00:30:00;
-    :local flagUpdate false;
     # check DT
     :if (!$forceUpdate) do={
         :local sdt ((($GlobalEnvInfo->"data")->"EnvRSPMVersion")->"updateDT");
@@ -38,7 +37,6 @@
         :local ctd [$GetTimedelta $sdt $cdt];
         # return true if in expire time
         :if ($ctd < $td) do={:return true};
-        :set flagUpdate true;
     }
     # do update
     :local versionURL ($EnvRSPMBaseURL . "res/version.rsc");
