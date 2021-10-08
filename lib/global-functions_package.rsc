@@ -445,9 +445,9 @@
     :global ReadOption;
     :global Extend;
     :global Join;
-    :global IsEmpty;
     :global IsStr;
     :global IsArray;
+    :global IsArrayN;
     :global StartsWith;
     :global TypeofArray;
     :global TypeofStr;
@@ -469,14 +469,20 @@
     :if ($pGlobal) do={:set declare "global"}
     # init LSL
     :local LSL [$NewArray ];
-    :local flagType false;
+    :local flagType true;
     # str
-    :if ([$IsStr $2]) do={
+    :if ($flagType and [$IsStr $2]) do={
+        :set flagType false;
         :set ($LSL->0) "$si:$declare $1 \"$2\";";
-        :set flagType true;
+    }
+    # array empty
+    :if ($flagType and [$IsArray $2] and ([:len $2] = 0)) do={
+        :set flagType false;
+        :set ($LSL->0) "$si:$declare $1 ({});";
     }
     # array
-    :if ([$IsArray $2]) do={
+    :if ($flagType and [$IsArrayN $2]) do={
+        :set flagType false;
         :set ($LSL->0) "$si:$declare $1 {";
         # queue structure
         # {
@@ -492,7 +498,7 @@
         :set ($queueNext->0) $sq;
         :local deltaLN 0;
         :while ($flag) do={
-            :if ([$IsEmpty $queueNext]) do={
+            :if (![$IsArrayN $queueNext]) do={
                 :set flag false;
             } else {
                 :set queue $queueNext;
@@ -516,22 +522,28 @@
                             :set ks "\"$k\"="
                         }
                         # type specific
-                        :local fT false;
+                        :local fT true;
                         :if ([:typeof $v] = $TypeofArray) do={
-                            # add starting brace
-                            :local lineStr "$ind$ks{";
-                            :set ($subLSL->[:len $subLSL]) $lineStr;
-                            :local a [$NewArray ];
-                            :set ($a->0) ($fatherLN + $selfLN + $deltaLN);
-                            :set ($a->1) [:len $subLSL];
-                            :set ($a->2) $v;
-                            :set ($queueNext->[:len $queueNext]) $a;
-                            # add closing brace
-                            :local lineStr "$ind};";
-                            :set ($subLSL->[:len $subLSL]) $lineStr;
-                            :set fT true;
+                            :set fT false;
+                            :if ([:len $v] = 0) do={
+                                :local lineStr "$ind$ks({})";
+                                :set ($subLSL->[:len $subLSL]) $lineStr;
+                            } else {
+                                # add starting brace
+                                :local lineStr "$ind$ks{";
+                                :set ($subLSL->[:len $subLSL]) $lineStr;
+                                :local a [$NewArray ];
+                                :set ($a->0) ($fatherLN + $selfLN + $deltaLN);
+                                :set ($a->1) [:len $subLSL];
+                                :set ($a->2) $v;
+                                :set ($queueNext->[:len $queueNext]) $a;
+                                # add closing brace
+                                :local lineStr "$ind};";
+                                :set ($subLSL->[:len $subLSL]) $lineStr;
+                            }
                         };
                         :if ([:typeof $v] = $TypeofStr) do={
+                            :set fT false;
                             :local lineStr;
                             :local noquote "noquote:";
                             :if ([$StartsWith $v $noquote]) do={
@@ -541,10 +553,9 @@
                                 :set lineStr "$ind$ks\"$v\";";
                             }
                             :set ($subLSL->[:len $subLSL]) $lineStr;
-                            :set fT true;
                         }
                         # rest of type
-                        :if ($fT = false) do={
+                        :if ($fT) do={
                             :local lineStr "$ind$ks$v;";
                             :set ($subLSL->[:len $subLSL]) $lineStr;
                         }
@@ -558,10 +569,9 @@
             }
         }
         :set ($LSL->[:len $LSL]) "$si}";
-        :set flagType true;
     }
     # the rest type
-    :if ($flagType = false) do={
+    :if ($flagType) do={
         :set ($LSL->0) "$si:$declare $1 $2;";
     }
     # handle return

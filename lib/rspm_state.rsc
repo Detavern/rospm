@@ -32,8 +32,8 @@
     :local td 00:30:00;
     :local flagUpdate false;
     # check DT
-    :if (!$forceUpdate)) do={
-        :local sdt ((($GlobalEnvInfo->"data")->"EnvRSPMVersion")->"updateTime");
+    :if (!$forceUpdate) do={
+        :local sdt ((($GlobalEnvInfo->"data")->"EnvRSPMVersion")->"updateDT");
         :local cdt [$GetCurrentDatetime];
         :local ctd [$GetTimedelta $sdt $cdt];
         # return true if in expire time
