@@ -18,7 +18,7 @@
     # local
     :local context [$ReadOption $Context $TypeofArray];
     # get remote version
-    :local versionURL (($context->"RSPMBaseUrl") . "res/version.rsc");
+    :local versionURL (($context->"RSPMBaseURL") . "res/version.rsc");
     :local version [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
     :set ($context->"RSPMVersion") $version;
     # init config

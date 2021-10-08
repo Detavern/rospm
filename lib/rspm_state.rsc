@@ -22,7 +22,7 @@
     :global GetTimedelta;
     # env
     :global EnvRSPMVersion;
-    :global EnvRSPMBaseUrl;
+    :global EnvRSPMBaseURL;
     # check
     :if ([$IsNothing $GlobalEnvInfo]) do={:error "rspm.state.checkVersion: \$GlobalEnvInfo is nothing!"};
     :if ([$IsNothing $EnvRSPMVersion]) do={:error "rspm.state.checkVersion: \$EnvRSPMVersion is nothing!"};
@@ -41,7 +41,7 @@
         :set flagUpdate true;
     }
     # do update
-    :local versionURL ($EnvRSPMBaseUrl . "res/version.rsc");
+    :local versionURL ($EnvRSPMBaseURL . "res/version.rsc");
     :local versionR [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
     :local config [$GetConfig $configPkgName];
     :set (($config->"environment")->"RSPMVersion") $versionR;
