@@ -299,8 +299,7 @@
         :local SS [:tonum ($HHMMSS->2)];
         :return {$yy; $mm; $dd; $HH; $MM; $SS};
     };
-    # TODO: other type
-
+    # NOTE: add other type here
     # error
     :if (!$flag) do={
         :error "Global.Datetime.ToDatetime: type not match";
@@ -354,8 +353,7 @@
         };
         :return $result;
     };
-    # TODO: other type
-
+    # NOTE: add other type here
     # error
     :if (!$flag) do={
         :error "Global.Datetime.ToSDT: type not match";
@@ -428,45 +426,55 @@
     }
     # dd mm yy +/-
     # dd
-    :local rmm ($dt->1);
     :local ryy ($dt->0);
+    :local rmm ($dt->1);
     :local rdd (($dt->2) + ($td->"days") + $add);
     :local ddMax;
     :local ddYMax;
     :local flagdd true;
     :while ($flagdd) do={
-        # TODO: skip year
-        # skip month
+        :set ddYMax 365;
         :if ($rdd > 0) do={
-            :set ddMax ($MonthsOfTheYear->($rmm - 1));
-            :if ([$IsLeapYear $ryy]) do={
-                :if ($rmm = 2) do={
-                    :set ddMax ($ddMax + 1);
-                }
-            }
-            :if ($rdd > $ddMax) do={
-                :set rdd ($rdd - $ddMax);
-                :set rmm ($rmm + 1);
-                :if ($rmm > 12) do={
-                    :set rmm 1;
-                    :set ryy ($ryy + 1);
-                };
+            # calc days of year
+            :if (($rmm <= 2) and [$IsLeapYear $ryy]) do={:set ddYMax 366};
+            :if (($rmm > 2) and [$IsLeapYear ($ryy + 1)]) do={:set ddYMax 366};
+            # try skip by year
+            :if ($rdd > $ddYMax) do={
+                :set rdd ($rdd - $ddYMax);
+                :set ryy ($ryy + 1);
             } else {
-                :set flagdd false;
+                # calc days of month
+                :set ddMax ($MonthsOfTheYear->($rmm - 1));
+                :if (($rmm = 2) and [$IsLeapYear $ryy]) do={:set ddMax 29};
+                # try skip by month
+                :if ($rdd > $ddMax) do={
+                    :set rdd ($rdd - $ddMax);
+                    :set rmm ($rmm + 1);
+                    :if ($rmm > 12) do={
+                        :set rmm 1;
+                        :set ryy ($ryy + 1);
+                    };
+                } else {
+                    # skip finish
+                    :set flagdd false;
+                }
             }
         } else {
-            :set rmm ($rmm - 1);
-            :if ($rmm < 0) do={
-                :set rmm 12;
+            # calc days of year
+            :if (($rmm <= 2) and [$IsLeapYear ($ryy - 1)]) do={:set ddYMax 366};
+            :if (($rmm > 2) and [$IsLeapYear $ryy]) do={:set ddYMax 366};
+            # try skip by year
+            :if (($rdd + $ddYMax) < 0) do={
+                :set rdd ($rdd + $ddYMax);
                 :set ryy ($ryy - 1);
-            };
-            :set ddMax ($MonthsOfTheYear->($rmm - 1));
-            :if ([$IsLeapYear $ryy]) do={
-                :if ($rmm = 2) do={
-                    :set ddMax ($ddMax + 1);
-                }
+            } else {
+                # skip month
+                :set rmm ($rmm - 1);
+                :if ($rmm < 1) do={:set rmm 12;}
+                :set ddMax ($MonthsOfTheYear->($rmm - 1));
+                :if (($rmm = 2) and [$IsLeapYear $ryy]) do={:set ddMax 29};
+                :set rdd ($rdd + $ddMax);
             }
-            :set rdd ($rdd + $ddMax);
         }
     };
     :local dd $rdd;
@@ -613,10 +621,16 @@
             # all different
             :if ($bdd > 28) do={
                 :set bdd ($bdd - 1);
+                :set dd ($dd + 1);
             } else {
-                :set add ($add + 1);
+                :if ($add < $bdd) do={
+                    :set add ($add + 1);
+                    :set dd ($dd + 1);
+                } else {
+                    :set add ($add - 1);
+                    :set dd ($dd - 1);
+                }
             }
-            :set dd ($dd + 1);
         }
     }
     # make result
