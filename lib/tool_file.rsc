@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="tool.file";
-    "version"="0.3.0";
+    "version"="0.3.1";
     "description"="file utility";
 };
 

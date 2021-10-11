@@ -3,7 +3,7 @@
     {
         "name"="global-variables";
         "description"="global variable package";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-variables"={
             "Nothing";
@@ -37,7 +37,7 @@
     {
         "name"="global-functions";
         "description"="global function package";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "IsNil";
@@ -71,7 +71,7 @@
     {
         "name"="global-functions.array";
         "description"="global functions for array related operation";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "Append";
@@ -85,7 +85,7 @@
     {
         "name"="global-functions.string";
         "description"="global functions for string related operation";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "Replace";
@@ -104,7 +104,7 @@
     {
         "name"="global-functions.random";
         "description"="global functions for random related operation";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "Random20CharHex";
@@ -115,7 +115,7 @@
     {
         "name"="global-functions.cache";
         "description"="global functions for cache operation";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "GlobalCacheFuncGet";
@@ -129,7 +129,7 @@
     {
         "name"="global-functions.datetime";
         "description"="global functions for datetime operation";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "IsSDT";
@@ -152,7 +152,7 @@
     {
         "name"="global-functions.package";
         "description"="global functions for package operation";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "FindPackage";
@@ -176,7 +176,7 @@
     {
         "name"="global-functions.config";
         "description"="global functions for configuration management";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "LoadGlobalEnv";
@@ -192,7 +192,7 @@
     {
         "name"="global-functions.unicode";
         "description"="Global Package for unicode related operation";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "ByteToChar";
@@ -207,7 +207,7 @@
     {
         "name"="global-functions.misc";
         "description"="global functions for miscellaneous collection";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "UniqueArray";
@@ -216,7 +216,7 @@
     {
         "name"="global-helpers";
         "description"="global helper package";
-        "version"="0.3.0";
+        "version"="0.3.1";
         "global"=true;
         "global-functions"={
             "itemsFoundEnsureOneEnabled";
@@ -233,87 +233,92 @@
     {
         "name"="ddns";
         "description"="ddns schedule framework";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="ddns.getter";
         "description"="ddns ip getter";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="ddns.provider.cloudflare";
         "description"="ddns cloudflare utils";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="interface.ethernet";
         "description"="";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="interface.list";
         "description"="";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="ip.address";
         "description"="";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="ip.firewall.address-list";
         "description"="";
-        "version"="0.3.0";
+        "version"="0.3.1";
+    };
+    {
+        "name"="ip.firewall.raw";
+        "description"="";
+        "version"="0.3.1";
     };
     {
         "name"="ip.route";
         "description"="";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="ip.route.rule";
         "description"="";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="rspm";
         "description"="rspm";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="rspm.config";
         "description"="rspm configuration tools";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="rspm.reset";
         "description"="rspm configuration reset tools";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="rspm.state";
         "description"="rspm package state tools";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="tool.file";
         "description"="file utility";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="tool.http";
         "description"="http utility";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="tool.json";
         "description"="json loads and dumps";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
     {
         "name"="tool.remote";
         "description"="remote script load tools";
-        "version"="0.3.0";
+        "version"="0.3.1";
     };
 };
 
@@ -338,16 +343,17 @@
     "interface.list"=16;
     "ip.address"=17;
     "ip.firewall.address-list"=18;
-    "ip.route"=19;
-    "ip.route.rule"=20;
-    "rspm"=21;
-    "rspm.config"=22;
-    "rspm.reset"=23;
-    "rspm.state"=24;
-    "tool.file"=25;
-    "tool.http"=26;
-    "tool.json"=27;
-    "tool.remote"=28;
+    "ip.firewall.raw"=19;
+    "ip.route"=20;
+    "ip.route.rule"=21;
+    "rspm"=22;
+    "rspm.config"=23;
+    "rspm.reset"=24;
+    "rspm.state"=25;
+    "tool.file"=26;
+    "tool.http"=27;
+    "tool.json"=28;
+    "tool.remote"=29;
 }
 
 # the minimum requirement packages of rspm

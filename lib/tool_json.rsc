@@ -20,7 +20,7 @@
 #
 :local metaInfo {
     "name"="tool.json";
-    "version"="0.3.0";
+    "version"="0.3.1";
     "description"="json loads and dumps";
 };
 

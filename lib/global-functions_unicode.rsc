@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="global-functions.unicode";
-    "version"="0.3.0";
+    "version"="0.3.1";
     "description"="Global Package for unicode related operation";
     "global"=true;
     "global-functions"={

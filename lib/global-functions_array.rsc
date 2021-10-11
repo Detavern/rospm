@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="global-functions.array";
-    "version"="0.3.0";
+    "version"="0.3.1";
     "description"="global functions for array related operation";
     "global"=true;
     "global-functions"={

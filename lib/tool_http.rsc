@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="tool.http";
-    "version"="0.3.0";
+    "version"="0.3.1";
     "description"="http utility";
 };
 

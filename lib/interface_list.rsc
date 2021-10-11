@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="interface.list";
-    "version"="0.3.0";
+    "version"="0.3.1";
     "description"="";
 };
 

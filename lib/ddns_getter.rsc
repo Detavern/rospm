@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="ddns.getter";
-    "version"="0.3.0";
+    "version"="0.3.1";
     "description"="ddns ip getter";
 };
 

@@ -164,7 +164,9 @@ class PackageMetainfoModifier:
                 node = pp.get_metainfo()
                 metainfo = node.value
                 self.update_version(metainfo)
-                self.do_update(fp, node, metainfo)
+                metainfo_str = self.make_metainfo(metainfo)
+                self.mark_for_update(node, metainfo_str)
+                self.do_update(fp)
 
     def mark_for_update(self, node, text):
         self._updates.append((node, text.encode()))

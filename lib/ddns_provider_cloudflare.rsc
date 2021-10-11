@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="ddns.provider.cloudflare";
-    "version"="0.3.0";
+    "version"="0.3.1";
     "description"="ddns cloudflare utils";
 };
 
