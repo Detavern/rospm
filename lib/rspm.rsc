@@ -1,3 +1,13 @@
+#!rsc by RouterOS
+# ===================================================================
+# |       RSPM Packages      |   rspm
+# ===================================================================
+# ALL package level functions follows lower camel case.
+# rspm
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="rspm";
     "version"="0.3.0";

@@ -1,5 +1,15 @@
+#!rsc by RouterOS
+# ===================================================================
+# |       RSPM Packages      |   ip.firewall.raw
+# ===================================================================
+# ALL package level functions follows lower camel case.
+# 
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
-    "name"="ip.firewall.address-list";
+    "name"="ip.firewall.raw";
     "version"="0.3.0";
     "description"="";
 };

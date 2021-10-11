@@ -1,10 +1,13 @@
-# Global Functions | Cache
-# =========================================================
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-functions.cache
+# ===================================================================
 # ALL global functions follows upper camel case.
-# Global Cache get, put, update, dalete
+# global functions for cache operation
 #
-# USE as your wish
-
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="global-functions.cache";
     "version"="0.3.0";

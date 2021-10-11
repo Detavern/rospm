@@ -1,10 +1,13 @@
-# Global Variables
-# =========================================================
-# ALL global variables follows upper camel case.
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-variables
+# ===================================================================
+# ALL global functions follows upper camel case.
+# global variable package
 #
-# RUN this file first.
-# USE as your wish
-
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="global-variables";
     "version"="0.3.0";

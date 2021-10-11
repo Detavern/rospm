@@ -1,3 +1,13 @@
+#!rsc by RouterOS
+# ===================================================================
+# |       RSPM Packages      |   tool.http
+# ===================================================================
+# ALL package level functions follows lower camel case.
+# http utility
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="tool.http";
     "version"="0.3.0";

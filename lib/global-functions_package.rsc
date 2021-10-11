@@ -1,10 +1,13 @@
-# Global Functions | Package
-# =========================================================
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-functions.package
+# ===================================================================
 # ALL global functions follows upper camel case.
-# Global Package for package creation, modification, deletion.
+# global functions for package operation
 #
-# USE as your wish
-
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="global-functions.package";
     "version"="0.3.0";

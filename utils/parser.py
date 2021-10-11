@@ -2,6 +2,8 @@ import io
 import os
 from re import S
 
+from yaml.events import NodeEvent
+
 
 class TokenError(Exception):
     pass
@@ -9,7 +11,6 @@ class TokenError(Exception):
 
 class BaseNode:
     def __init__(self, start, end):
-        self.name = None
         self.start = start
         self.end = end
 
@@ -55,6 +56,10 @@ class VarNode(BaseNode):
         return f'<{cls_name} name={self.name} value={brief}>'
 
 
+class HeaderNode(BaseNode):
+    name = "header"
+
+
 class CommentNode(BaseNode):
     pass
 
@@ -69,6 +74,7 @@ class ReturnNode(BaseNode):
 class PackageParser:
     BUFFERING = 512
 
+    TOKEN_HEADER_END = "# Copyright (c)"
     TOKEN_COMMENT = "#"
     TOKEN_LOCAL = ":local "
     TOKEN_GLOBAL = ":global "
@@ -133,10 +139,16 @@ class PackageParser:
 
     def append_node(self, node):
         self._nodes.append(node)
-        self._nodes_mapping[node.name] = node
+        if hasattr(node, "name"):
+            self._nodes_mapping[node.name] = node
 
     def __call__(self, stream: io.BufferedReader):
         self._stream = stream
+        # peek
+        self.peek()
+        # parse header
+        self.parse_header()
+        # parse others
         while True:
             ch = self.peek()
             buffered = self.peek_all()
@@ -159,6 +171,32 @@ class PackageParser:
             else:
                 raise ValueError(f"package: {self.name} unexpected token, {repr(buffered)}")
 
+    def parse_header(self):
+        start = self.stream.tell()
+        ch = self.peek()
+        if ch in {"\n", "\r", "\t", " "}:
+            self.skip_whitespace()
+        while True:
+            ch = self.peek()
+            buffered = self.peek_all()
+            if buffered.startswith(self.TOKEN_HEADER_END):
+                # sjip copyright
+                self.parse_comment()
+                # skip url
+                self.parse_comment()
+                # skip empty
+                self.parse_comment()
+                self.skip_whitespace()
+                break
+            elif buffered.startswith(self.TOKEN_COMMENT):
+                self.parse_comment()
+            else:
+                break
+        self.skip_whitespace()
+        end = self.stream.tell()
+        node = HeaderNode(start, end)
+        self.append_node(node)
+            
     def skip_line(self):
         while True:
             ch = self.read()
@@ -490,4 +528,8 @@ class PackageParser:
             if isinstance(node, CMDNode):
                 if node.is_global:
                     result.append(node)
-        return result 
+        return result
+
+    def get_header(self):
+        node = self._nodes_mapping['header']
+        return node

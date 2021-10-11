@@ -1,10 +1,13 @@
-# Global Functions | String
-# =========================================================
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-functions.string
+# ===================================================================
 # ALL global functions follows upper camel case.
-# Global Package for string related operation.
+# global functions for string related operation
 #
-# USE as your wish
-
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="global-functions.string";
     "version"="0.3.0";

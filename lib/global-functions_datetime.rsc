@@ -1,9 +1,12 @@
-# Global Functions | Datetime
-# =========================================================
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-functions.datetime
+# ===================================================================
 # ALL global functions follows upper camel case.
-# Global package for date and time.
+# global functions for datetime operation
 #
-# USE as your wish
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 # New structure
 # <SDT> array (system datetime)
@@ -30,7 +33,6 @@
 #     "months"=<num>;
 #     "years"=<num>;
 # }
-
 :local metaInfo {
     "name"="global-functions.datetime";
     "version"="0.3.0";

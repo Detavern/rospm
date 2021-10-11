@@ -1,10 +1,13 @@
-# Global Functions | Unicode
-# =========================================================
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-functions.unicode
+# ===================================================================
 # ALL global functions follows upper camel case.
-# Global Package for unicode related operation.
+# Global Package for unicode related operation
 #
-# USE as your wish
-
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="global-functions.unicode";
     "version"="0.3.0";

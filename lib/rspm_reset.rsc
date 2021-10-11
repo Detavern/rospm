@@ -1,3 +1,13 @@
+#!rsc by RouterOS
+# ===================================================================
+# |       RSPM Packages      |   rspm.reset
+# ===================================================================
+# ALL package level functions follows lower camel case.
+# rspm configuration reset tools
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="rspm.reset";
     "version"="0.3.0";

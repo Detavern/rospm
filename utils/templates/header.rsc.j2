@@ -1,0 +1,24 @@
+{% if is_global %}
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   {{ name }}
+# ===================================================================
+# ALL global functions follows upper camel case.
+# {{ description }}
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
+{% endif %}
+{% if is_global is false %}
+#!rsc by RouterOS
+# ===================================================================
+# |       RSPM Packages      |   {{ name }}
+# ===================================================================
+# ALL package level functions follows lower camel case.
+# {{ description }}
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
+{% endif %}

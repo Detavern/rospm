@@ -153,7 +153,7 @@ class PackageMetainfoModifier:
     Modify package's meta info
     """
     def __init__(self):
-        pass
+        self._updates = []
 
     def bump_version(self, path):
         print(f'Parsing library file from folder: {path}')
@@ -166,10 +166,14 @@ class PackageMetainfoModifier:
                 self.update_version(metainfo)
                 self.do_update(fp, node, metainfo)
 
-    def do_update(self, path, node, metainfo):
+    def mark_for_update(self, node, text):
+        self._updates.append((node, text.encode()))
+
+    def do_update(self, path):
         with open(path, 'rb') as f:
             content = f.read()
-        ct = content[:node.start] + self.make_metainfo(metainfo).encode() + content[node.end:]
+        for (node, btext) in self._updates:
+            ct = content[:node.start] + btext + content[node.end:]
         with open(path, 'wb') as f:
             f.write(ct)
 
@@ -200,15 +204,21 @@ class PackageMetainfoModifier:
         for p in os.listdir(path):
             if p.endswith(".rsc"):
                 fp = os.path.abspath(os.path.join(path, p))
+                # parse it into node list
                 pp = PackageParser.from_file(fp)
-                node = pp.get_metainfo()
-                metainfo = node.value
+                meta_node = pp.get_metainfo()
+                metainfo = meta_node.value
                 self.update_version(metainfo)
                 self.update_global_functions(metainfo, pp)
                 self.update_global_variables(metainfo, pp)
                 if metainfo['name'] not in ignore_exec_check:
                     self.check_exec(metainfo, pp)
-                self.do_update(fp, node, metainfo)
+                # do update
+                metainfo_str = self.make_metainfo(metainfo)
+                header_str = self.make_header(metainfo, pp)
+                self.mark_for_update(meta_node, metainfo_str)
+                self.mark_for_update(pp.get_header(), header_str)
+                self.do_update(fp)
 
     def make_metainfo(self, metainfo):
         result = [
@@ -227,3 +237,13 @@ class PackageMetainfoModifier:
         result.append("};\r\n")
         string = "\r\n".join(result)
         return string
+
+    def make_header(self, metainfo, pp):
+        node = pp.get_header()
+        tmpl = TMPL_ENV.get_template("header.rsc.j2")
+        text = tmpl.render(
+            is_global=metainfo.get('global', False),
+            name=metainfo['name'],
+            description=metainfo['description'],
+        )
+        return text

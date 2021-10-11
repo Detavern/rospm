@@ -1,13 +1,20 @@
-# Global helpers
-# =========================================================
-# ALL global functions follows lower camel case.
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-helpers
+# ===================================================================
+# ALL global functions follows upper camel case.
+# global helper package
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 # Helpers are some functions which can greatly help 
 # the construction of a certain number of other functions
 # or frequently invoked by them.
 #
+# Helpers may migrate in the near future, so it follows lower camel case.
+#
 # USE if you known CLEARLY what you are doing.
-
 :local metaInfo {
     "name"="global-helpers";
     "version"="0.3.0";

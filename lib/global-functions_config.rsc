@@ -1,10 +1,13 @@
-# Global Functions | Config
-# =========================================================
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-functions.config
+# ===================================================================
 # ALL global functions follows upper camel case.
-# Configuration file management tool.
+# global functions for configuration management
 #
-# USE as your wish
-
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="global-functions.config";
     "version"="0.3.0";

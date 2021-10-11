@@ -1,11 +1,14 @@
-# Global Functions | Random
-# =========================================================
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-functions.random
+# ===================================================================
 # ALL global functions follows upper camel case.
-# Global Package for random generation.
-# Reference from [GPLv3]https://github.dev/eworm-de/routeros-scripts/global-functions
+# global functions for random related operation
 #
-# USE as your wish
-
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
+# Reference from [GPLv3]https://github.dev/eworm-de/routeros-scripts/global-functions
 :local metaInfo {
     "name"="global-functions.random";
     "version"="0.3.0";

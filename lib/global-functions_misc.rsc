@@ -1,10 +1,13 @@
-# Global Functions | Misc
-# =========================================================
+#!rsc by RouterOS
+# ===================================================================
+# |     Global Functions     |   global-functions.misc
+# ===================================================================
 # ALL global functions follows upper camel case.
-# Global Package for miscellaneous collection.
+# global functions for miscellaneous collection
 #
-# USE as your wish
-
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="global-functions.misc";
     "version"="0.3.0";

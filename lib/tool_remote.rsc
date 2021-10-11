@@ -1,3 +1,13 @@
+#!rsc by RouterOS
+# ===================================================================
+# |       RSPM Packages      |   tool.remote
+# ===================================================================
+# ALL package level functions follows lower camel case.
+# remote script load tools
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+#
 :local metaInfo {
     "name"="tool.remote";
     "version"="0.3.0";

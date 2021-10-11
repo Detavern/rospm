@@ -1,6 +1,12 @@
-# Based on Chupakabra303 and Winand's JSON parser for RouterOS.
-# https://github.com/Winand/mikrotik-json-parser
-# http://www.embest.ru/mikrotik/json-parser-script
+#!rsc by RouterOS
+# ===================================================================
+# |       RSPM Packages      |   tool.json
+# ===================================================================
+# ALL package level functions follows lower camel case.
+# json loads and dumps
+#
+# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 # For loading json string
 # This parser can load validated json string into an array object with following limitations:
@@ -11,7 +17,7 @@
 # - the parser can load validated json string DOES NOT mean the original json string is validated.
 #   there is the situation that original json has format error but the parser could still parse it.
 # You can check the test file `tests/tests_tool_json.rsc` for detail.
-
+#
 :local metaInfo {
     "name"="tool.json";
     "version"="0.3.0";

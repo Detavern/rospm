@@ -39,9 +39,15 @@
 }
 
 # installation
-:put "-----------------------------------";
-:put "| RouterOS Script Package Manager |";
-:put "-----------------------------------";
+:put "=======================================================";
+:put "|                                                     |";
+:put "|    RRRRRR      SSSSSS     PPPPPP      MM    MM      |";
+:put "|    RR   RR    SS          PP   PP     MMM  MMM      |";
+:put "|    RRRRR       SSSSSS     PPPPPP     MM  MM  MM     |";
+:put "|    RR   RR          SS    PP         MM      MM     |";
+:put "|    RR    RR   SSSSSSS     PP        MM        MM    |";
+:put "|                                                     |";
+:put "=======================================================";
 :put "Installer initializing ...";
 :local answer [$RSPMInstallerInput "WARNING: this is a DEVELOPMENT version, FOR DEVELOPER ONLY (y/N)"];
 :if ($answer != "y") do={
