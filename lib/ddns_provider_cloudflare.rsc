@@ -8,6 +8,7 @@
 # Copyright (c) 2020-2021 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
+# Use cloudflare v4 api
 :local metaInfo {
     "name"="ddns.provider.cloudflare";
     "version"="0.3.1";
@@ -54,9 +55,7 @@
     :global IsStr;
     :global GetFunc;
     # local
-    :if (![$IsStr $Name]) do={
-        :error "ddns.provider.cloudflare.getZoneID: \$Name should be string";
-    }
+    :if (![$IsStr $Name]) do={:error "ddns.provider.cloudflare.getZoneID: \$Name should be string"}
     :if (!($Name ~ "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})\$")) do={
         :error "ddns.provider.cloudflare.getZoneID: \$Name should be a domain";
     }
@@ -102,15 +101,9 @@
     :global GetFunc;
     :global NewArray;
     # local
-    :if (![$IsStr $Name]) do={
-        :error "ddns.provider.cloudflare.findDNSRecord: \$Name should be string";
-    }
-    :if (!($Name ~ "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})\$")) do={
-        :error "ddns.provider.cloudflare.findDNSRecord: \$Name should be a domain";
-    }
-    :if (![$IsStr $Type]) do={
-        :error "ddns.provider.cloudflare.findDNSRecord: \$Type should be string";
-    }
+    :if (![$IsStr $Name]) do={:error "ddns.provider.cloudflare.findDNSRecord: \$Name should be string"}
+    :if (!($Name ~ "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})\$")) do={:error "ddns.provider.cloudflare.findDNSRecord: \$Name should be a domain"}
+    :if (![$IsStr $Type]) do={:error "ddns.provider.cloudflare.findDNSRecord: \$Type should be string"}
     :local url "https://api.cloudflare.com/client/v4/zones/$ZoneID/dns_records";
     :local headers {
         "Authorization"="Bearer $Token";
@@ -161,12 +154,8 @@
     :global NewArray;
     # local
     :local pData [$ReadOption $Data $TypeofArray];
-    :if (![$IsStr $ZoneID]) do={
-        :error "ddns.provider.cloudflare.createDNSRecord: \$ZoneID should be string";
-    }
-    :if ([$IsNil $pData]) do={
-        :error "ddns.provider.cloudflare.createDNSRecord: \$Data should be array";
-    }
+    :if (![$IsStr $ZoneID]) do={:error "ddns.provider.cloudflare.createDNSRecord: \$ZoneID should be string"}
+    :if ([$IsNil $pData]) do={:error "ddns.provider.cloudflare.createDNSRecord: \$Data should be array"}
     :local url "https://api.cloudflare.com/client/v4/zones/$ZoneID/dns_records";
     :local headers {
         "Authorization"="Bearer $Token";
@@ -199,15 +188,9 @@
     :global NewArray;
     # local
     :local pData [$ReadOption $Data $TypeofArray];
-    :if (![$IsStr $ZoneID]) do={
-        :error "ddns.provider.cloudflare.updateDNSRecord: \$ZoneID should be string";
-    }
-    :if (![$IsStr $RecordID]) do={
-        :error "ddns.provider.cloudflare.updateDNSRecord: \$RecordID should be string";
-    }
-    :if ([$IsNil $pData]) do={
-        :error "ddns.provider.cloudflare.updateDNSRecord: \$Data should be array";
-    }
+    :if (![$IsStr $ZoneID]) do={:error "ddns.provider.cloudflare.updateDNSRecord: \$ZoneID should be string"}
+    :if (![$IsStr $RecordID]) do={:error "ddns.provider.cloudflare.updateDNSRecord: \$RecordID should be string"}
+    :if ([$IsNil $pData]) do={:error "ddns.provider.cloudflare.updateDNSRecord: \$Data should be array"}
     :local url "https://api.cloudflare.com/client/v4/zones/$ZoneID/dns_records/$RecordID";
     :local headers {
         "Authorization"="Bearer $Token";
@@ -236,12 +219,8 @@
     :global GetFunc;
     :global NewArray;
     # local
-    :if (![$IsStr $ZoneID]) do={
-        :error "ddns.provider.cloudflare.deleteDNSRecord: \$ZoneID should be string";
-    }
-    :if (![$IsStr $RecordID]) do={
-        :error "ddns.provider.cloudflare.deleteDNSRecord: \$RecordID should be string";
-    }
+    :if (![$IsStr $ZoneID]) do={:error "ddns.provider.cloudflare.deleteDNSRecord: \$ZoneID should be string"}
+    :if (![$IsStr $RecordID]) do={:error "ddns.provider.cloudflare.deleteDNSRecord: \$RecordID should be string"}
     :local url "https://api.cloudflare.com/client/v4/zones/$ZoneID/dns_records/$RecordID";
     :local headers {
         "Authorization"="Bearer $Token";
