@@ -1,2 +1,6 @@
 # config script
 config
+
+# specific
+test.rsc
+rspm-installer-test.rsc
