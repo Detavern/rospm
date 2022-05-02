@@ -101,7 +101,7 @@
     # remove not exist env
     :foreach k,v in $metaDiff do={
         :if ($v) do={
-            /system script environment remove [/system script environment find name=$k];
+            /system/script/environment/remove [/system/script/environment/find name=$k];
             # remove global info
             :set (($GlobalEnvInfo->"data")->$k);
         }
@@ -167,7 +167,7 @@
     :local idList [$FindPackage $pkgName];
     :if (![$IsArrayN $idList]) do={:error "Global.Package.GetConfig: config \"$pkgName\" not found"}
     # parse code and get result;
-    :local pSource [:parse [/system script get ($idList->0) source]];
+    :local pSource [:parse [/system/script/get ($idList->0) source]];
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="config"};
     if (![$ValidatePackageContent $pkg $va]) do={:error "Global.Package.GetConfig: could not validate target package"}
@@ -206,13 +206,13 @@
     :local envInput ($2->"environment");
     :local fileName [$Replace $pkgName "." "_"];
     :local pOutput [$ReadOption $Output $TypeofStr "file"];
-    :local pOwner [/system script get [/system script find name=$fileName] owner];
+    :local pOwner [/system/script/get [/system/script/find name=$fileName] owner];
     :local LSL [$NewArray ];
     :local configArray {
         "metaInfo"="noquote:\$metaInfo";
     };
     # TODO: better clock info
-    :local clock [/system clock print as-value];
+    :local clock [/system/clock/print as-value];
     :local date ($clock->"date");
     :local time ($clock->"time");
     # update meta and dump it
@@ -254,7 +254,7 @@
         :return $result;
     }
     # output file
-    /system script set [$FindPackage $pkgName] source=$result owner=$pOwner;
+    /system/script/set [$FindPackage $pkgName] source=$result owner=$pOwner;
     # load env into global
     :if ([$IsArrayN $envConfig] and [$IsArrayN $envInput]) do={
         :if ($envConfig != $envInput) do={
@@ -355,7 +355,7 @@
         "metaInfo"="noquote:\$metaInfo";
     };
     # TODO: better clock info
-    :local clock [/system clock print as-value];
+    :local clock [/system/clock/print as-value];
     :local date ($clock->"date");
     :local time ($clock->"time");
     # dump meta
@@ -395,16 +395,16 @@
     }
     # make config file
     :if ($pForce) do={
-        /system script remove [/system script find name=$fileName];
+        /system/script/remove [/system/script/find name=$fileName];
     } else {
-        :if (![$IsEmpty [/system script find name=$fileName]]) do={
+        :if (![$IsEmpty [/system/script/find name=$fileName]]) do={
             :error "Global.Package.CreateConfig: same configuration file already exist!";
         }
     }
     :if ($pOwner = "") do={
-        /system script add name=$fileName source=$result;
+        /system/script/add name=$fileName source=$result;
     } else {
-        /system script add name=$fileName source=$result owner=$pOwner;
+        /system/script/add name=$fileName source=$result owner=$pOwner;
     }
     # load environment into global
     :if ([$IsArrayN ($config->"environment")]) do={
@@ -462,7 +462,7 @@
         :error "Global.Config.RemoveConfig: not allowed to remove."
     }
     # remove config
-    /system script remove [$FindPackage $pkgName];
+    /system/script/remove [$FindPackage $pkgName];
     # unregister env
     [$LoadGlobalEnv $pkgName [$NewArray ]];
     # unregister config

@@ -16,12 +16,12 @@
     :local URL (($RSPMInstallerConfig->"RSPMBaseURL") . "lib/" . $pkgName . ".rsc");
     :local Owner ($RSPMInstallerConfig->"RSPMOwner");
     :put "Downloading file $pkgName...";
-    :local result [/tool fetch url=$URL output="user" as-value];
+    :local result [/tool/fetch url=$URL output="user" as-value];
     :local scriptStr ($result->"data");
     # check existance
-    :local idList [/system script find name=$pkgName];
+    :local idList [/system/script/find name=$pkgName];
     :if ([:len $idList] != 0) do={
-        :local scriptOwner [/system script get ($idList->0) owner];
+        :local scriptOwner [/system/script get ($idList->0) owner];
         :if ($scriptOwner != $Owner) do={
             :put "Same script name \"$pkgName\" with owner \"$scriptOwner\" found in repository.";
             :local answer [$RSPMInstallerInput "Press y to replace it (y/N)"];
@@ -31,10 +31,10 @@
             }
         }
         # remove exist one
-        /system script remove numbers=$idList; 
+        /system/script/remove numbers=$idList; 
     }
     # add script to repo
-    :local scriptID [/system script add name=$pkgName owner=$Owner source=$scriptStr];
+    :local scriptID [/system/script/add name=$pkgName owner=$Owner source=$scriptStr];
     :return $scriptID;
 }
 
@@ -71,7 +71,7 @@
 
 # load global
 :foreach sid in $sidList do={
-    :local cmdStr "/system script run number=$sid;";
+    :local cmdStr "/system/script/run number=$sid;";
     :local cmdFunc [:parse $cmdStr];
     [$cmdFunc ];
 };
@@ -88,6 +88,6 @@
 [[$GetFunc "rspm.firstRun"] Context=$RSPMInstallerConfig];
 
 # remove RSPM global envs
-:local removeList [/system script environment find name~"RSPMInstaller"];
-/system script environment remove numbers=$removeList;
+:local removeList [/system/script/environment find name~"RSPMInstaller"];
+/system/script/environment remove numbers=$removeList;
 :put "RSPM setup finished, enjoy!";

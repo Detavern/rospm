@@ -39,11 +39,11 @@
 :global itemsFoundEnsureOneEnabled do={
     :foreach v in $2 do={
         # /interface ethernet
-        :local cmdStr "$1 get number=$v disabled";
+        :local cmdStr "$1/get number=$v disabled";
         :local cmdFunc [:parse $cmdStr];
         :if ([$cmdFunc]) do={
             # find a disabled one, then enable it
-            :local cmdEnabledStr "$1 enable $v";
+            :local cmdEnabledStr "$1/enable $v";
             :local cmdEnabledFunc [:parse $cmdEnabledStr];
             $cmdEnabledFunc;
         }
@@ -60,7 +60,7 @@
     :global IsNil;
     :global IsStr;
     # local
-    :local cmdStr "$1 add";
+    :local cmdStr "$1/add";
     :foreach k,v in $2 do={
         :if (![$IsNil $v]) do={
             :if ([$IsStr $v]) do={
@@ -86,7 +86,7 @@
     :global Nil;
     # local
     :foreach v in $2 do={
-        :local cmdStr "$1 get number=$v active";
+        :local cmdStr "$1/get number=$v active";
         :local cmdFunc [:parse $cmdStr];
         :if ([$cmdFunc]) do={
             # find an active one, return it
@@ -106,7 +106,7 @@
     :global Nil;
     # local
     :foreach v in $2 do={
-        :local cmdStr "$1 get number=$v disabled";
+        :local cmdStr "$1/get number=$v disabled";
         :local cmdFunc [:parse $cmdStr];
         :if (![$cmdFunc]) do={
             # find an enabled one, return it
@@ -126,7 +126,7 @@
     :global Nil;
     # local
     :foreach v in $2 do={
-        :local cmdStr "$1 get number=$v disabled";
+        :local cmdStr "$1/get number=$v disabled";
         :local cmdFunc [:parse $cmdStr];
         :if ([$cmdFunc]) do={
             # find an disabled one, return it
@@ -147,7 +147,7 @@
     # local
     :local 
     :foreach v in $2 do={
-        :local cmdStr "$1 get number=$v disabled";
+        :local cmdStr "$1/get number=$v disabled";
         :local cmdFunc [:parse $cmdStr];
         :if (![$cmdFunc]) do={
             # find an enabled one, return it
@@ -178,9 +178,9 @@
     :foreach v in $2 do={
         :local cmdStr;
         :if ([$IsNothing $3]) do={
-            :set cmdStr "$1 get number=$v";
+            :set cmdStr "$1/get number=$v";
         } else {
-            :set cmdStr "$1 get number=$v $3";
+            :set cmdStr "$1/get number=$v $3";
         }
         :local cmdFunc [:parse $cmdStr];
         :local attrV [$cmdFunc];
@@ -206,7 +206,7 @@
     :global getAttrsByIDList;
     # local
     :local pOutput [$ReadOption $Output $TypeofStr "id"];
-    :local cmdStr "$1 find";
+    :local cmdStr "$1/find";
     :foreach k,v in $2 do={
         :if (![$IsNil $v]) do={
             :if ([$IsStr $v]) do={
@@ -244,7 +244,7 @@
     :global IsStr;
     :global IsBool;
     # local
-    :local cmdStr "$1 set number=$2";
+    :local cmdStr "$1/set number=$2";
     :foreach k,v in $3 do={
         :if (![$IsNil $v]) do={
             :if ([$IsStr $v]) do={

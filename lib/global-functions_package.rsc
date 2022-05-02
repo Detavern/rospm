@@ -43,7 +43,7 @@
     # replace
     :local pkgName $1;
     :local fileName [$Replace $pkgName "." "_"];
-    :local idList [/system script find name=$fileName];
+    :local idList [/system/script/find name=$fileName];
     :return $idList;
 }
 
@@ -113,12 +113,12 @@
     :local pkgName $1;
     :local va [$ReadOption $2 $TypeofArray [$NewArray]];
     :local fileName [$Replace $pkgName "." "_"];
-    :local idList [/system script find name=$fileName];
+    :local idList [/system/script/find name=$fileName];
     :if ([$IsEmpty $idList]) do={
         :error "Global.Package.ValidatePackage: script \"$fileName\" not found"
     }
     # parse code and get result;
-    :local pSource [:parse [/system script get ($idList->0) source]];
+    :local pSource [:parse [/system/script/get ($idList->0) source]];
     :local pkg [$pSource ];
     :set ($va->"name") $pkgName;
     :local vf [$ValidatePackageContent $pkg $va];
@@ -136,12 +136,12 @@
     # replace
     :local pkgName $1;
     :local fileName [$Replace $pkgName "." "_"];
-    :local idList [/system script find name=$fileName];
+    :local idList [/system/script/find name=$fileName];
     :if ([$IsEmpty $idList]) do={
         :error "Global.Package.GetSource: script \"$fileName\" not found"
     }
     # get source;
-    :local pSource [/system script get ($idList->0) source];
+    :local pSource [/system/script/get ($idList->0) source];
     :return $pSource;
 }
 
@@ -169,7 +169,7 @@
     :local pVA [$ReadOption $VA $TypeofArray ];
     :if ($pkgName != "") do={
         :local fileName [$Replace $pkgName "." "_"];
-        :local idList [/system script find name=$fileName];
+        :local idList [/system/script/find name=$fileName];
         :if ([$IsEmpty $idList]) do={
             :error "Global.Package.GetMeta: script \"$fileName\" not found"
         } else {
@@ -178,13 +178,13 @@
     }
     :if (![$IsNil $pID]) do={
         :set tID $pID;
-        :set pkgName [$Replace [/system script get $pID name] "_" "."];
+        :set pkgName [$Replace [/system/script/get $pID name] "_" "."];
     }
     :if ([$IsNothing $tID]) do={
         :error "Global.Package.GetMeta: need either <name> or <id>";
     }
     # parse code and get result;
-    :local pSource [:parse [/system script get $tID source]];
+    :local pSource [:parse [/system/script/get $tID source]];
     :local pkg [$pSource ];
     :local va {"name"=$pkgName};
     :if (![$IsNil $pVA]) do={
@@ -282,7 +282,7 @@
     :local pVA [$ReadOption $VA $TypeofArray ];
     :if ($pkgName != "") do={
         :local fileName [$Replace $pkgName "." "_"];
-        :local idList [/system script find name=$fileName];
+        :local idList [/system/script/find name=$fileName];
         :if ([$IsEmpty $idList]) do={
             :error "Global.Package.GetMetaSafe: script \"$fileName\" not found"
         } else {
@@ -291,14 +291,14 @@
     }
     :if (![$IsNil $pID]) do={
         :set tID $pID;
-        :set pkgName [$Replace [/system script get $pID name] "_" "."];
+        :set pkgName [$Replace [/system/script/get $pID name] "_" "."];
     }
     :if ([$IsNothing $tID]) do={
         :error "Global.Package.GetMetaSafe: need either <name> or <id>";
     }
     # manually parse code and get result;
     :local pkg [$NewArray ];
-    :local source [/system script get $tID source];
+    :local source [/system/script/get $tID source];
     :set ($pkg->"metaInfo") [$ParseMetaSafe $source];
     # va
     :local va {"name"=$pkgName};
@@ -326,13 +326,13 @@
     # replace
     :local pkgName $1;
     :local fileName [$Replace $pkgName "." "_"];
-    :local idList [/system script find name=$fileName];
+    :local idList [/system/script/find name=$fileName];
     :if ([$IsEmpty $idList]) do={
         :error "Global.Package.GetEnv: script \"$fileName\" not found"
         :return "";
     }
     # parse code and get result;
-    :local pSource [:parse [/system script get ($idList->0) source]];
+    :local pSource [:parse [/system/script/get ($idList->0) source]];
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="env"};
     if (![$ValidatePackageContent $pkg $va]) do={
@@ -369,11 +369,11 @@
     :local pkgName [$ReadOption $1 $TypeofStr ""];
     :if ($pkgName != "") do={
         :local fileName [$Replace $pkgName "." "_"];
-        :local idList [/system script find name=$fileName];
+        :local idList [/system/script/find name=$fileName];
         :if ([$IsEmpty $idList]) do={
             :error "Global.Package.LoadPackage: script \"$fileName\" not found"
         } else {
-            /system script run $idList;
+            /system/script/run $idList;
         }
     } else {
         :error "Global.Package.LoadPackage: \$1 is empty";
@@ -409,10 +409,10 @@
     :local pkgName ($splitted->0);
     :local funcName ($splitted->1);
     :local fileName [$Replace $pkgName "." "_"];
-    :local idList [/system script find name=$fileName];
+    :local idList [/system/script/find name=$fileName];
     :if (![$IsArrayN $idList]) do={:error "Global.Package.GetFunc: script \"$fileName\" not found"};
     # parse code and get result
-    :local pSource [:parse [/system script get ($idList->0) source]];
+    :local pSource [:parse [/system/script/get ($idList->0) source]];
     :set pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="code"};
     if (![$ValidatePackageContent $pkg $va]) do={
@@ -657,17 +657,17 @@
         :local startTime ($sdt->"time");
         :local startDate ($sdt->"date");
         :local scheduleName "RSPM_SetGlobalVar_$name_Timeout";
-        :local idList [/system scheduler find name=$scheduleName];
+        :local idList [/system/scheduler/find name=$scheduleName];
         :if ([$IsEmpty $idList]) do={
             :local eventStrList {
-                "/system script environment remove $name;";
-                "/system scheduler remove $scheduleName;";
+                "/system/script/environment/remove $name;";
+                "/system/scheduler/remove $scheduleName;";
             }
             :local eventStr [$Join ("\r\n") $eventStrList];
-            /system scheduler add name=$scheduleName start-date=$startDate start-time=$startTime on-event=$eventStr;
+            /system/scheduler/add name=$scheduleName start-date=$startDate start-time=$startTime on-event=$eventStr;
         } else {
             :local sID ($idList->0);
-            /system scheduler set numbers=$sID start-date=$startDate start-time=$startTime;
+            /system/scheduler/set numbers=$sID start-date=$startDate start-time=$startTime;
         }
     }
 }
@@ -690,7 +690,7 @@
     };
     :local varName $1;
     # load
-    :local eID [/system script environment find name=$varName];
+    :local eID [/system/script/environment/find name=$varName];
     :if ([$IsEmpty $eID]) do={
         :return $Nil;
     } else {
@@ -716,10 +716,10 @@
     :if (![$IsStrN $1]) do={:error "Global.Package.UnsetGlobalVar: \$1 should be a string"};
     :local varName $1;
     # from environment
-    /system script environment remove [/system script environment find name=$varName];
+    /system/script/environment/remove [/system/script/environment/find name=$varName];
     # from scheduler
     :local scheduleName "RSPM_SetGlobalVar_$varName_Timeout";
-    /system scheduler remove [/system scheduler find name=$scheduleName];
+    /system/scheduler/remove [/system/scheduler/find name=$scheduleName];
 }
 
 

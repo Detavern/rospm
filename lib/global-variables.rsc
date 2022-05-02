@@ -63,7 +63,7 @@
 :global TypeofArray [:typeof $EmptyArray];
 
 # collect from system
-:local sysInfo [/system resource print as-value]
+:local sysInfo [/system/resource/print as-value]
 :global SYSArchitectureName ($sysInfo->"architecture-name");
 :global SYSBoardName ($sysInfo->"board-name");
 :global SYSCPU ($sysInfo->"cpu");

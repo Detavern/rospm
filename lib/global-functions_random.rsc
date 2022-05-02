@@ -27,7 +27,7 @@
 # generate random 20 chars hex (0-9 and a-f)
 # return: <str>                 random 20 char
 :global Random20CharHex do={
-    :return ([/certificate scep-server otp generate minutes-valid=0 as-value]->"password");
+    :return ([/certificate/scep-server/otp/generate minutes-valid=0 as-value]->"password");
 }
 
 

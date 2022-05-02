@@ -156,7 +156,7 @@
 # get current info from system clock
 # return: <str>                 clock array
 :global GetCurrentClock do={
-    :local clock [/system clock print as-value];
+    :local clock [/system/clock/print as-value];
     :return $clock;
 }
 
@@ -165,7 +165,7 @@
 # get current date from system clock
 # return: <str>                 date
 :global GetCurrentDate do={
-    :local clock [/system clock print as-value];
+    :local clock [/system/clock/print as-value];
     :return ($clock->"date");
 }
 
@@ -174,7 +174,7 @@
 # get current date from system clock
 # return: <str>                 date
 :global GetCurrentTime do={
-    :local clock [/system clock print as-value];
+    :local clock [/system/clock/print as-value];
     :return ($clock->"time");
 }
 
@@ -183,7 +183,7 @@
 # get current SDT from system clock
 # return: <array>               SDT array
 :global GetCurrentSDT do={
-    :local clock [/system clock print as-value];
+    :local clock [/system/clock/print as-value];
     :local dt {
         "time"=($clock->"time");
         "date"=($clock->"date");
