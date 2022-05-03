@@ -55,8 +55,8 @@
             :if (![$IsNil ($funcCache->"next")]) do={
                 :set ((($GlobalCacheFunc->"data")->($funcCache->"next"))->"prev") ($funcCache->"prev")
             }
-            :set ($funcCache->"prev") $Nil;
-            :set ($funcCache->"next") ($GlobalCacheFunc->"head");
+            :set ((($GlobalCacheFunc->"data")->$1)->"prev") $Nil;
+            :set ((($GlobalCacheFunc->"data")->$1)->"next") ($GlobalCacheFunc->"head");
             :set ((($GlobalCacheFunc->"data")->($GlobalCacheFunc->"head"))->"prev") $1;
             :set ($GlobalCacheFunc->"head") $1;
             # return
@@ -129,8 +129,7 @@
         }
     } else {
         # update
-        :set funcCache (($GlobalCacheFunc->"data")->$1);
-        :set ($funcCache->"var") $2;
+        :set ((($GlobalCacheFunc->"data")->$1)->"var") $2;
     }
 }
 
@@ -236,6 +235,9 @@
     :local flag true;
     :local node;
     :while ($flag and ($cc < $max)) do={
+        :if ([$IsNil $cursor]) do={
+            :return $Nil;
+        }
         :set node (($GlobalCacheFunc->"data")->$cursor);
         :set code [:len (($node->"var")->1)];
         :set prev ($node->"prev");

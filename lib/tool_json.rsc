@@ -26,29 +26,28 @@
 
 
 # $skipWhitespace
-# kwargs: JSP=<array>                json parse array
 :local skipWhitespace do={
-    :while (($JSP->"pos") < ($JSP->"len") and ([:pick ($JSP->"text") ($JSP->"pos")] ~ "[ \r\n\t]")) do={
-        :set ($JSP->"pos") (($JSP->"pos") + 1);
+    :global jsp;
+    :while (($jsp->"pos") < ($jsp->"len") and ([:pick ($jsp->"text") ($jsp->"pos")] ~ "[ \r\n\t]")) do={
+        :set ($jsp->"pos") (($jsp->"pos") + 1);
     }
 }
 
 
 # $parseObject
-# kwargs: JSP=<array>                json parse array
 :local parseObject do={
     #DEFINE global
     :global NewArray;
     :global GetFunc;
     # local
-    :local jsp $JSP;
+    :global jsp;
     :local flag true;
     :local ch;
     :local key;
     :local value;
     :local result [$NewArray ];
     # skip whitespace
-    [[$GetFunc "tool.json.skipWhitespace"] JSP=$jsp];
+    [[$GetFunc "tool.json.skipWhitespace"]];
     :while ($flag and ($jsp->"pos") < ($jsp->"len")) do={
         :set ch [:pick ($jsp->"text") ($jsp->"pos")];
         :if ($ch = "}") do={
@@ -61,9 +60,9 @@
             } else {
                 # key
                 :set ($jsp->"pos") (($jsp->"pos") + 1);
-                :set key [[$GetFunc "tool.json.parseString"] JSP=$jsp];
+                :set key [[$GetFunc "tool.json.parseString"]];
                 # delimiter between k,v
-                [[$GetFunc "tool.json.skipWhitespace"] JSP=$jsp];
+                [[$GetFunc "tool.json.skipWhitespace"]];
                 :set ch [:pick ($jsp->"text") ($jsp->"pos")];
                 :if ($ch != ":") do={
                     :local pos ($jsp->"pos");
@@ -71,15 +70,15 @@
                 } else {
                     :set ($jsp->"pos") (($jsp->"pos") + 1);
                     # value
-                    :set value [[$GetFunc "tool.json.parseSwitch"] JSP=$jsp];
+                    :set value [[$GetFunc "tool.json.parseSwitch"]];
                     :set ($result->$key) $value;
                     # delimiter after k,v
                     :set ch [:pick ($jsp->"text") ($jsp->"pos")];
                     :if ($ch = ",") do={
                         :set ($jsp->"pos") (($jsp->"pos") + 1);
-                        [[$GetFunc "tool.json.skipWhitespace"] JSP=$jsp];
+                        [[$GetFunc "tool.json.skipWhitespace"]];
                     } else {
-                        [[$GetFunc "tool.json.skipWhitespace"] JSP=$jsp];
+                        [[$GetFunc "tool.json.skipWhitespace"]];
                         :set ch [:pick ($jsp->"text") ($jsp->"pos")];
                         :if ($ch != "}") do={
                             :local pos ($jsp->"pos");
@@ -95,33 +94,32 @@
 
 
 # $parseArray
-# kwargs: JSP=<array>                json parse array
 :local parseArray do={
     #DEFINE global
     :global NewArray;
     :global GetFunc;
     # local
-    :local jsp $JSP;
+    :global jsp;
     :local flag true;
     :local ch;
     :local value;
     :local result [$NewArray ];
     # skip whitespace
-    [[$GetFunc "tool.json.skipWhitespace"] JSP=$jsp];
+    [[$GetFunc "tool.json.skipWhitespace"]];
     :while ($flag and ($jsp->"pos") < ($jsp->"len")) do={
         :set ch [:pick ($jsp->"text") ($jsp->"pos")];
         :if ($ch = "]") do={
             :set ($jsp->"pos") (($jsp->"pos") + 1);
             :set flag false;
         } else {
-            :set value [[$GetFunc "tool.json.parseSwitch"] JSP=$jsp];
+            :set value [[$GetFunc "tool.json.parseSwitch"]];
             :set ($result->[:len $result]) $value;
             :set ch [:pick ($jsp->"text") ($jsp->"pos")];
             :if ($ch = ",") do={
                 :set ($jsp->"pos") (($jsp->"pos") + 1);
-                [[$GetFunc "tool.json.skipWhitespace"] JSP=$jsp];
+                [[$GetFunc "tool.json.skipWhitespace"]];
             } else {
-                [[$GetFunc "tool.json.skipWhitespace"] JSP=$jsp];
+                [[$GetFunc "tool.json.skipWhitespace"]];
                 :set ch [:pick ($jsp->"text") ($jsp->"pos")];
                 :if ($ch != "]") do={
                     :local pos ($jsp->"pos");
@@ -135,13 +133,12 @@
 
 
 # $parseString
-# kwargs: JSP=<array>                json parse array
 :local parseString do={
     #DEFINE global
     :global UnicodeToUtf8;
     :global GetFunc;
     # local
-    :local jsp $JSP;
+    :global jsp;
     :local ch;
     :local nch;
     :local result "";
@@ -202,13 +199,12 @@
 
 
 # $parseNumber
-# kwargs: JSP=<array>                json parse array
 :local parseNumber do={
     #DEFINE global
     :global IsNum;
     :global GetFunc;
     # local
-    :local jsp $JSP;
+    :global jsp;
     :local flag true;
     :local ch;
     :local startPos ($jsp->"pos");
@@ -232,38 +228,37 @@
 
 
 # $parseSwitch
-# kwargs: JSP=<array>                json parse array
 :local parseSwitch do={
     #DEFINE global
     :global Nil;
     :global IsStr;
     :global GetFunc;
     # local
-    :local jsp $JSP;
+    :global jsp;
     :local ch;
     :local flag true;
     # skip
-    [[$GetFunc "tool.json.skipWhitespace"] JSP=$jsp];
+    [[$GetFunc "tool.json.skipWhitespace"]];
     :set ch [:pick ($jsp->"text") ($jsp->"pos")];
     # switch token
     :if ($flag and $ch = "{") do={
         :set ($jsp->"pos") (($jsp->"pos") + 1);
         :set flag false;
-        :return [[$GetFunc "tool.json.parseObject"] JSP=$jsp];
+        :return [[$GetFunc "tool.json.parseObject"]];
     }
     :if ($flag and $ch = "[") do={
         :set ($jsp->"pos") (($jsp->"pos") + 1);
         :set flag false;
-        :return [[$GetFunc "tool.json.parseArray"] JSP=$jsp];
+        :return [[$GetFunc "tool.json.parseArray"]];
     }
     :if ($flag and $ch = "\"") do={
         :set ($jsp->"pos") (($jsp->"pos") + 1);
         :set flag false;
-        :return [[$GetFunc "tool.json.parseString"] JSP=$jsp];
+        :return [[$GetFunc "tool.json.parseString"]];
     }
     :if ($flag and $ch~"[eE0-9.+-]") do={
         :set flag false;
-        :return [[$GetFunc "tool.json.parseNumber"] JSP=$jsp];
+        :return [[$GetFunc "tool.json.parseNumber"]];
     }
     :if ($flag and $ch = "n") do={
         :local token [:pick ($jsp->"text") ($jsp->"pos") (($jsp->"pos") + 4)];
@@ -320,12 +315,13 @@
         :error "tool.json.loads: empty \$Str";
     }
     # make json parse array
-    :local jsp {
+    :global jsp {
         "text"=$Str;
         "pos"=0;
         "len"=[:len $Str];
     };
-    :local result [[$GetFunc "tool.json.parseSwitch"] JSP=$jsp];
+    :local result [[$GetFunc "tool.json.parseSwitch"]];
+    :set jsp;
     :return $result;
 }
 

@@ -446,6 +446,22 @@ $Print [$LoadGlobalVar "Nothing"];
     $Print $m;
 }
 
+## change value in another func
+
+{
+    :local js {
+        "name"="alice";
+        "age"="20";
+        "id"="1";
+    }
+    :local foo do={
+        :set ($JSP->"age") 25;
+        $Print $JSP;
+    }
+    [$foo JSP=$js]
+    $Print $js;
+}
+
 # Global helpers
 
 ## itemsFoundEnsureOneEnabled

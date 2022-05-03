@@ -79,6 +79,7 @@
     :local et [$GetCurrentDatetime ];
     :put $st;
     :put $et;
+    :put $array;
 }
 
 
@@ -102,9 +103,9 @@
     }
     $Print [[$GetFunc "tool.json.dumps"] Obj=$a];
     :local text [[$GetFunc "tool.json.dumps"] Obj=$a Indent=4];
-    /file print file=dumps;
+    /file/print file=dumps;
     :delay 2000ms;
-    /file set "dumps.txt" content=$text;
+    /file/set "dumps.txt" content=$text;
 }
 
 ## encode, unicode 4B: surrogate pair, U+1F600 😀
