@@ -81,10 +81,10 @@
     :local startupResURL (($context->"RSPMBaseURL") . "res/startup.rsc");
     :put "Get: $startupResURL";
     :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
-    /system scheduler remove [/system scheduler find name=$startupName];
+    /system/scheduler/remove [/system/scheduler/find name=$startupName];
     :put "Adding $startupName schedule...";
     # add scheduler use default policy
-    /system scheduler add name=$startupName start-time=startup on-event=$scriptStr;
+    /system/scheduler/add name=$startupName start-time=startup on-event=$scriptStr;
     :return $Nil;
 }
 
@@ -198,7 +198,7 @@
         };
         :put "Writing source into repository...";
         :local fileName [$Replace $pkgName "." "_"];
-        /system script add name=$fileName source=$pkgStr owner=$EnvRSPMOwner;
+        /system/script/add name=$fileName source=$pkgStr owner=$EnvRSPMOwner;
         # if global, load it
         :if ((($report->"metaConfig")->"global") = true) do={
             :put "Loading global package...";
@@ -228,7 +228,7 @@
             }
         };
         :put "Writing source into repository...";
-        /system script set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
+        /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
         :put "Clean function cache...";
         [$GlobalCacheFuncRemovePrefix $pkgName];
         # if global, load it
@@ -260,7 +260,7 @@
             }
         };
         :put "Writing source into repository...";
-        /system script set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
+        /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
         :put "Clean function cache...";
         [$GlobalCacheFuncRemovePrefix $pkgName];
         # if global, load it
@@ -341,10 +341,10 @@
         :local startupResURL ($EnvRSPMBaseURL . "res/startup.rsc");
         :put "Get: $startupResURL";
         :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
-        /system scheduler remove [/system scheduler find name=$startupName];
+        /system/scheduler/remove [/system/scheduler/find name=$startupName];
         :put "Adding rspm-startup schedule...";
         # add scheduler use default policy
-        /system scheduler add name=$startupName start-time=startup on-event=$scriptStr;
+        /system/scheduler/add name=$startupName start-time=startup on-event=$scriptStr;
     }
     # check ext
     :local counter 0;
@@ -437,7 +437,7 @@
         :put "Get: $pkgUrl";
         :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
         :put "Writing source into repository...";
-        /system script set [$FindPackage $Package] source=$pkgStr owner=$EnvRSPMOwner;
+        /system/script/set [$FindPackage $Package] source=$pkgStr owner=$EnvRSPMOwner;
         :put "Clean function cache...";
         :local pkgName (($report->"metaConfig")->"name");
         [$GlobalCacheFuncRemovePrefix $pkgName];
@@ -486,7 +486,7 @@
         :error "rspm.upgrade: package is essential";
     } else {
         :put "Removing the package $Package...";
-        /system script remove [$FindPackage $Package];
+        /system/script/remove [$FindPackage $Package];
         :put "Clean function cache...";
         :local pkgName (($report->"metaConfig")->"name");
         [$GlobalCacheFuncRemovePrefix $pkgName];
@@ -600,7 +600,7 @@
                 :put "Get: $pkgUrl";
                 :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
                 :put "Writing source into repository...";
-                /system script set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
+                /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
             } else {
                 :local versionR (($report->"metaConfig")->"version");
                 :put "Upgrading extension package $pkgName, latest version is $versionR";
@@ -611,7 +611,7 @@
                 :put "Get: $pkgUrl";
                 :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
                 :put "Writing source into repository...";
-                /system script set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
+                /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
             }
             # if global, load it
             :if ((($report->"metaConfig")->"global") = true) do={

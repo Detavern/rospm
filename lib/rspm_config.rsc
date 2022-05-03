@@ -65,21 +65,21 @@
     :if ([$IsNil $context]) do={:set context [$NewArray ]};
     # const
     :local configName "config.rspm.package";
-    :local environment {
-        "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
-        "RSPMOwner"="rspm";
-    };
     :local config {
-        "environment"=$environment;
+        "environment"={
+            "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
+            "RSPMOwner"="rspm";
+        };
     }
     # update environment
     :foreach k,v in $context do={
-        :set ($environment->$k) $v;
+        :set (($config->"environment")->$k) $v;
     }
+    :local environment ($config->"environment");
     # add resource version
     :local resVersionURL (($environment->"RSPMBaseURL") . "res/version.rsc");
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
-    :set ($environment->"RSPMVersion") $resVersion;
+    :set (($config->"environment")->"RSPMVersion") $resVersion;
     # load remote package info
     :local packageInfoURL (($environment->"RSPMBaseURL") . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
@@ -112,14 +112,14 @@
     :if ([$IsNil $context]) do={:set context [$NewArray ]};
     # const
     :local configName "config.rspm.package.ext";
-    :local environment [$NewArray ];
     :local config {
-        "environment"=$environment;
+        "environment"=[$NewArray ];
     }
     # update environment
     :foreach k,v in $context do={
-        :set ($environment->$k) $v;
+        :set (($config->"environment")->$k) $v;
     }
+    :local environment ($config->"environment");
     # get package config
     :local configPkg [$GetConfig "config.rspm.package"];
     :local environmentPkg ($configPkg->"environment");

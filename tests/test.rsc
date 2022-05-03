@@ -324,7 +324,7 @@ $Print [$LoadGlobalVar "Nothing"];
     :foreach k,v in $a do={
         $Print $k;
         $Print $v;
-    }    
+    }
 }
 
 ## parsed global
@@ -354,6 +354,8 @@ $Print [$LoadGlobalVar "Nothing"];
 }
 
 ## change value of sub array
+
+### v6 is okay
 {
     :local m {
         "a"={
@@ -370,10 +372,31 @@ $Print [$LoadGlobalVar "Nothing"];
     :local a ($m->"a");
     :local b ($m->"b");
     :set ($a->"aa") "new vaa";
+    $Print $a;
+    $Print $m;
+}
+
+## v7 should be
+{
+    :local m {
+        "a"={
+            "aa"="vaa";
+            "ab"="vab";
+            "ac"="vac";
+        }
+        "b"={
+            "ba"="vba";
+            "bb"="vbb";
+            "bc"="vbc";
+        }
+    };
+    :set (($m->"a")->"aa") "new vaa";
     $Print $m;
 }
 
 ## change value in array when iter
+
+### v6 is okay
 {
     :local m {
         {
@@ -395,6 +418,31 @@ $Print [$LoadGlobalVar "Nothing"];
     :foreach v in $m do={
         :set ($v->"age") 25;
     };
+    $Print $m;
+}
+
+### v7 should be
+{
+    :local m {
+        {
+            "name"="alice";
+            "age"="20";
+            "id"="1";
+        };
+        {
+            "name"="bob";
+            "age"="21";
+            "id"="2";
+        };
+        {
+            "name"="cat";
+            "age"="22";
+            "id"="3";
+        }
+    }
+    :for i from=0 to=([:len $m] - 1) do={
+        :set (($m->i)->"age") 25;
+    }
     $Print $m;
 }
 

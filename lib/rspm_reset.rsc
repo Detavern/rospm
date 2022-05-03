@@ -35,12 +35,12 @@
     :local varList ($MetaInfo->"global-variables");
     :if (![$IsNothing $funcList]) do={
         :foreach v in $funcList do={
-            /system script environment remove [/system script environment find name="$v"];
+            /system/script/environment/remove [/system/script/environment/find name="$v"];
         }
     }
     :if (![$IsNothing $varList]) do={
         :foreach v in $varList do={
-            /system script environment remove [/system script environment find name="$v"];
+            /system/script/environment/remove [/system/script/environment/find name="$v"];
         }  
     }
 }

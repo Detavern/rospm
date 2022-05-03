@@ -184,7 +184,7 @@
             :local ad {
                 "The package $Package has found in local repository but can't get meta from it.";
                 "It occurred when your local script is not a valid package, or corrupted.";
-                "Using \"/system script remove [\$FindPackage $Package]\" to manually delete it.";
+                "Using \"/system/script/remove [\$FindPackage $Package]\" to manually delete it.";
             }
             :if ($flagSuppress) do={
                 :local err {
