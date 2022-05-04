@@ -41,18 +41,18 @@
     # check if has routing mark
     :local routeIDList;
     :if ($RoutingMark="") do={
-        :set routeIDList [/ip route find dst-address=$DstAddress active=yes !routing-mark !type];
+        :set routeIDList [/ip/route/find dst-address=$DstAddress active=yes !routing-mark !type];
         :if ([$IsEmpty $routeIDList]) do={
             :error "getGateway: gateway for $DstAddress not found"
         }
     } else {
-        :set routeIDList [/ip route find dst-address=$DstAddress active=yes routing-mark=$RoutingMark !type];
+        :set routeIDList [/ip/route/find dst-address=$DstAddress active=yes routing-mark=$RoutingMark !type];
         :if ([$IsEmpty $routeIDList]) do={
             :error "getGateway: gateway for $DstAddress with mark $RoutingMark not found"
         }
     }
     # check gateway like 1.1.1.1%ether1
-    :local gw ([/ip route get ($routeIDList->0) gateway]->0);
+    :local gw ([/ip/route/get ($routeIDList->0) gateway]->0);
     :local sPos [:find $gw "%"];
     :if ([$IsEmpty $sPos]) do={
         :return [:pick $gw 0 $sPos];
@@ -97,9 +97,9 @@
     # find if exist
     :local routeIDList;
     :if ([$IsNil $pRM]) do={
-        :set routeIDList [/ip route find dst-address=$DstAddress !routing-mark !type];
+        :set routeIDList [/ip/route/find dst-address=$DstAddress !routing-mark !type];
     } else {
-        :set routeIDList [/ip route find dst-address=$DstAddress routing-mark=$RoutingMark !type];
+        :set routeIDList [/ip/route/find dst-address=$DstAddress routing-mark=$RoutingMark !type];
     }
     # if couldn't find matched then add one
     :if ([$IsEmpty $routeIDList]) do={
