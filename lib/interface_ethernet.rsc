@@ -30,23 +30,23 @@
     }
     # find ID by DefaultName & replace its name
     :if ([$IsStr $DefaultName]) do={
-        :local nicIDList [/interface ethernet find default-name=$DefaultName];
+        :local nicIDList [/interface/ethernet/find default-name=$DefaultName];
         :if ([$IsEmpty $nicIDList]) do={
             :error "interface.ethernet.rename: $DefaultName not found";
         } else {
             :local nicID ($nicIDList->0);
-            /interface ethernet set name=$NewName numbers=$nicID;
+            /interface/ethernet/set name=$NewName numbers=$nicID;
         }
         :return true;
     }
     # find ID by Name & replace its name
     :if ([$IsStr $Name]) do={
-        :local nicIDList [/interface ethernet find name=$Name];
+        :local nicIDList [/interface/ethernet/find name=$Name];
         :if ([$IsEmpty $nicIDList]) do={
             :error "interface.ethernet.rename: $Name not found";
         } else {
             :local nicID ($nicIDList->0);
-            /interface ethernet set name=$NewName numbers=$nicID;
+            /interface/ethernet/set name=$NewName numbers=$nicID;
         }
         :return true;
     }
@@ -76,8 +76,8 @@
         :error "interface.ethernet.renameAll: require \$Template";
     }
     # for
-    :foreach i in=[/interface ethernet find] do={
-        :local newName [/interface ethernet get $i "default-name"];
+    :foreach i in=[/interface/ethernet/find] do={
+        :local newName [/interface/ethernet/get $i "default-name"];
         :local newNameP "";
         # select longest match pattern
         :foreach k,v in=$Template do={
@@ -90,7 +90,7 @@
         # replace it
         :if ($newNameP != "") do={
             :local name [$Replace $newName $newNameP ($Template->$newNameP)];
-            /interface ethernet set name=$name numbers=$i;
+            /interface/ethernet/set name=$name numbers=$i;
         }
     }
 }
@@ -99,9 +99,9 @@
 # $resetAll
 # reset all ethernet interface by its default-name attributes
 :local resetAll do={
-    :foreach i in=[/interface ethernet find] do={
-        :local defaultName [/interface ethernet get $i "default-name"];
-        /interface ethernet set name=$defaultName numbers=$i;
+    :foreach i in=[/interface/ethernet/find] do={
+        :local defaultName [/interface/ethernet/get $i "default-name"];
+        /interface/ethernet/set name=$defaultName numbers=$i;
     }
 }
 
