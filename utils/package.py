@@ -44,6 +44,8 @@ class PackageResourceGenerator:
         print(f'Parsing resource file from folder: {path}')
         meta_list = []
         for p in os.listdir(path):
+            if p.startswith('#'):
+                continue
             pp = PackageParser.from_file(os.path.abspath(os.path.join(path, p)))
             node = pp.get_metainfo()
             meta_list.append(node.value)

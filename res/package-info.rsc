@@ -115,7 +115,7 @@
     {
         "name"="global-functions.cache";
         "description"="global functions for cache operation";
-        "version"="0.3.1";
+        "version"="0.4.0";
         "global"=true;
         "global-functions"={
             "GlobalCacheFuncGet";
@@ -176,11 +176,10 @@
     {
         "name"="global-functions.config";
         "description"="global functions for configuration management";
-        "version"="0.3.1";
+        "version"="0.4.0";
         "global"=true;
         "global-functions"={
             "LoadGlobalEnv";
-            "RebuildGlobalEnv";
             "PrintGlobalEnv";
             "GetConfig";
             "UpdateConfig";
@@ -207,7 +206,7 @@
     {
         "name"="global-functions.misc";
         "description"="global functions for miscellaneous collection";
-        "version"="0.3.1";
+        "version"="0.4.0";
         "global"=true;
         "global-functions"={
             "UniqueArray";
@@ -242,7 +241,7 @@
     };
     {
         "name"="ddns.provider.cloudflare";
-        "description"="ddns cloudflare utils";
+        "description"="ddns provider functions for cloudflare";
         "version"="0.3.1";
     };
     {
@@ -288,7 +287,12 @@
     {
         "name"="rspm.config";
         "description"="rspm configuration tools";
-        "version"="0.3.1";
+        "version"="0.4.0";
+    };
+    {
+        "name"="rspm.feature";
+        "description"="rspm feature tools";
+        "version"="0.4.0";
     };
     {
         "name"="rspm.reset";
@@ -339,21 +343,23 @@
     "ddns"=12;
     "ddns.getter"=13;
     "ddns.provider.cloudflare"=14;
-    "interface.ethernet"=15;
-    "interface.list"=16;
-    "ip.address"=17;
-    "ip.firewall.address-list"=18;
-    "ip.firewall.raw"=19;
-    "ip.route"=20;
-    "ip.route.rule"=21;
-    "rspm"=22;
-    "rspm.config"=23;
-    "rspm.reset"=24;
-    "rspm.state"=25;
-    "tool.file"=26;
-    "tool.http"=27;
-    "tool.json"=28;
-    "tool.remote"=29;
+    "hello-world"=15;
+    "interface.ethernet"=16;
+    "interface.list"=17;
+    "ip.address"=18;
+    "ip.firewall.address-list"=19;
+    "ip.firewall.raw"=20;
+    "ip.route"=21;
+    "ip.route.rule"=22;
+    "rspm"=23;
+    "rspm.config"=24;
+    "rspm.feature"=25;
+    "rspm.reset"=26;
+    "rspm.state"=27;
+    "tool.file"=28;
+    "tool.http"=29;
+    "tool.json"=30;
+    "tool.remote"=31;
 }
 
 # the minimum requirement packages of rspm

@@ -505,6 +505,8 @@ class PackageParser:
         return node
 
     def get_metainfo(self):
+        if 'metaInfo' not in self._nodes_mapping:
+            raise ValueError(f"metaInfo not found in package {self.name}")
         node = self._nodes_mapping['metaInfo']
         return node
 

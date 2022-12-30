@@ -65,4 +65,4 @@
     "globalCacheFuncOn"=$globalCacheFuncOn;
     "globalCacheFuncOff"=$globalCacheFuncOff;
 }
-:return $packag
+:return $package
