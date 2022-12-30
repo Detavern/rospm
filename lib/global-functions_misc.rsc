@@ -5,12 +5,12 @@
 # ALL global functions follows upper camel case.
 # global functions for miscellaneous collection
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.misc";
-    "version"="0.3.1";
+    "version"="0.4.0";
     "description"="global functions for miscellaneous collection";
     "global"=true;
     "global-functions"={
@@ -49,4 +49,4 @@
 :local package {
     "metaInfo"=$metaInfo;
 }
-:return $package;
+:return $package;

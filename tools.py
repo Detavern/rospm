@@ -29,6 +29,15 @@ def bump_version(src):
     pmm.bump_version(abs_src)
 
 
+@lib.command(help="Update metainfo of a single file.")
+@click.option('--src', default='lib', help='path of lib folder')
+@click.option('--filename', help='name of target file name')
+def update_single_metainfo(src, filename):
+    abs_src = os.path.abspath(src)
+    pmm = PackageMetainfoModifier()
+    pmm.update_single_metainfo(abs_src, filename)
+
+
 @lib.command(help="Update metainfo of each file.")
 @click.option('--src', default='lib', help='path of lib folder')
 @click.option('--ignore-cmd', multiple=True, help='package name to skip executable commands check(can use multiple times)')

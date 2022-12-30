@@ -396,13 +396,17 @@
     :global GlobalCacheFuncGet;
     :global GlobalCacheFuncPut;
     :global ValidatePackageContent;
+    # env
+    :global EnvGlobalCacheFuncEnabled;
     # local
     :local pkg;
     :local func;
     # try global cache
-    :set func [$GlobalCacheFuncGet $1];
-    :if (![$IsNil $func]) do={
-        :return $func;
+    :if ($EnvGlobalCacheFuncEnabled) do={
+        :set func [$GlobalCacheFuncGet $1];
+        :if (![$IsNil $func]) do={
+            :return $func;
+        }
     }
     # split package & function
     :local splitted [$RSplit $1 "." 1];
@@ -424,7 +428,7 @@
         :error "Global.Package.GetFunc: function $funcName not found in package.";
     } else {
         :local idList [$FindPackage "config.rspm"];
-        :if ([$IsArrayN $idList]) do={
+        :if ($EnvGlobalCacheFuncEnabled and [$IsArrayN $idList]) do={
             # put into global cache
             [$GlobalCacheFuncPut $1 $func];
         }

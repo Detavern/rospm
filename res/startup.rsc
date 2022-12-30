@@ -14,7 +14,7 @@
 }
 
 :foreach fileName in $frameworkScriptList do={
-    :local cmdStr "/system script run [/system script find name=\"$fileName\"];";
+    :local cmdStr "/system/script/run [/system/script/find name=\"$fileName\"];";
     :local cmdFunc [:parse $cmdStr];
     [$cmdFunc ];
 }
@@ -56,7 +56,7 @@
         :local pkgIDList [$FindPackage $pkgName];
         :if ([$IsArrayN $pkgIDList]) do={
             :local fileName [$Replace $pkgName "." "_"];
-            :local cmdStr "/system script run [/system script find name=\"$fileName\"];";
+            :local cmdStr "/system/script/run [/system/script/find name=\"$fileName\"];";
             :local cmdFunc [:parse $cmdStr];
             :do {
                 [$cmdFunc ];
@@ -75,7 +75,7 @@
         :local pkgIDList [$FindPackage $pkgName];
         :if ([$IsArrayN $pkgIDList]) do={
             :local fileName [$Replace $pkgName "." "_"];
-            :local cmdStr "/system script run [/system script find name=\"$fileName\"];";
+            :local cmdStr "/system/script/run [/system/script/find name=\"$fileName\"];";
             :local cmdFunc [:parse $cmdStr];
             :do {
                 [$cmdFunc ];

@@ -5,12 +5,12 @@
 # ALL package level functions follows lower camel case.
 # rspm configuration tools
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="rspm.config";
-    "version"="0.3.1";
+    "version"="0.4.0";
     "description"="rspm configuration tools";
 };
 
@@ -144,4 +144,4 @@
     "initPackageConfig"=$initPackageConfig;
     "initPackageExtConfig"=$initPackageExtConfig;
 }
-:return $package;
+:return $package;

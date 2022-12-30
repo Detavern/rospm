@@ -5,17 +5,16 @@
 # ALL global functions follows upper camel case.
 # global functions for configuration management
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.config";
-    "version"="0.3.1";
+    "version"="0.4.0";
     "description"="global functions for configuration management";
     "global"=true;
     "global-functions"={
         "LoadGlobalEnv";
-        "RebuildGlobalEnv";
         "PrintGlobalEnv";
         "GetConfig";
         "UpdateConfig";
@@ -27,8 +26,8 @@
 
 
 # $LoadGlobalEnv
-# Compare input env array with global env info, and determine
-# which env should be remove or add
+# Load global environments from an array and its source name(the config package name of that array),
+# update global env info, and determine which env should be removed or added.
 # TODO: suppress error, or it will be ambiguous for startup to print out the exact error. 
 # args: <str>                   <config package name>
 # args: <array>                 <env array>
@@ -114,12 +113,6 @@
 }
 
 
-# $RebuildGlobalEnv
-# TODO: Rebuild GlobalEnvInfo by base config.
-:global RebuildGlobalEnv do={
-}
-
-
 # $PrintGlobalEnv
 # Print out GlobalEnvInfo
 :global PrintGlobalEnv do={
@@ -176,7 +169,7 @@
 
 
 # $UpdateConfig
-# update configure with target array.
+# update the configure script file with its name and target array.
 # args: <str>                   <config package name>
 # args: <array>                 config array
 # opt kwargs: Output=<str>      output format: file(default), str, array
@@ -492,4 +485,4 @@
 :local package {
     "metaInfo"=$metaInfo;
 }
-:return $package;
+:return $package;

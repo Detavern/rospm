@@ -275,6 +275,8 @@ class PackageParser:
         name = ''
         while True:
             ch = self.peek()
+            if ch == '':
+                return name
             cho = ord(ch)
             if (48 <= cho <= 57) or (65 <= cho <= 122):
                 self.read()

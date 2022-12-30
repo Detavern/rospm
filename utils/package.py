@@ -174,8 +174,18 @@ class PackageMetainfoModifier:
     def do_update(self, path):
         with open(path, 'rb') as f:
             content = f.read()
-        for (node, btext) in self._updates:
-            ct = content[:node.start] + btext + content[node.end:]
+        # sort updates
+        updates = sorted(self._updates, key=lambda x: x[0].start)
+        # update by node position
+        ct = b''
+        cur = 0
+        for (node, btext) in updates:
+            ct += content[cur:node.start] + btext
+            cur = node.end
+        # add tail content
+        if cur < len(content):
+            ct += content[cur:-1]
+        # save
         with open(path, 'wb') as f:
             f.write(ct)
 
@@ -200,6 +210,24 @@ class PackageMetainfoModifier:
         if cmd_list:
             cmd = cmd_list[0].value
             raise ValueError(f"package: {name} contain executable command: {cmd}")
+
+    def update_single_metainfo(self, path, filename):
+        fp = os.path.abspath(os.path.join(path, filename))
+        if not os.path.isfile(fp):
+            raise FileNotFoundError(f"file does not exist: {fp}")
+        # parse it into node list
+        pp = PackageParser.from_file(fp)
+        meta_node = pp.get_metainfo()
+        metainfo = meta_node.value
+        self.update_version(metainfo)
+        self.update_global_functions(metainfo, pp)
+        self.update_global_variables(metainfo, pp)
+        # do update
+        metainfo_str = self.make_metainfo(metainfo)
+        header_str = self.make_header(metainfo, pp)
+        self.mark_for_update(meta_node, metainfo_str)
+        self.mark_for_update(pp.get_header(), header_str)
+        self.do_update(fp)
 
     def update_metainfo(self, path, ignore_exec_check: list):
         print(f'Parsing library file from folder: {path}')
