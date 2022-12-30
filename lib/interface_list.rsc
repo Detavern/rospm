@@ -43,13 +43,13 @@
     :global IsStr;
     :global IsEmpty;
     # check params
-    :if (![$IsStr $iName]) do={
-        :error "interface.list.ensure: require \$iName";
+    :if (![$IsStr $Name]) do={
+        :error "interface.list.ensure: require \$Name";
     }
-    # ensure iName
-    :local listIDList [/interface/list/find name=$iName];
+    # ensure Name
+    :local listIDList [/interface/list/find name=$Name];
     :if ([$IsEmpty $listIDList]) do={
-        /interface/list/add name=$iName;
+        /interface/list/add name=$Name;
     }
 }
 
