@@ -247,7 +247,7 @@
     {
         "name"="interface.ethernet";
         "description"="";
-        "version"="0.3.1";
+        "version"="0.4.0";
     };
     {
         "name"="interface.list";
@@ -375,6 +375,7 @@
     "global-functions.misc";
     "tool.http";
     "tool.remote";
+    "rspm.feature";
     "rspm.state";
     "rspm.reset";
     "rspm";

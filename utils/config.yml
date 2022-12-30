@@ -27,6 +27,7 @@ essential_package_list:
     - "global-functions.misc"
     - "tool.http"
     - "tool.remote"
+    - "rspm.feature"
     - "rspm.state"
     - "rspm.reset"
     - "rspm"

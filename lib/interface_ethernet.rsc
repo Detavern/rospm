@@ -5,12 +5,12 @@
 # ALL package level functions follows lower camel case.
 # 
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="interface.ethernet";
-    "version"="0.3.1";
+    "version"="0.4.0";
     "description"="";
 };
 
