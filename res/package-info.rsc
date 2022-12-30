@@ -343,23 +343,22 @@
     "ddns"=12;
     "ddns.getter"=13;
     "ddns.provider.cloudflare"=14;
-    "hello-world"=15;
-    "interface.ethernet"=16;
-    "interface.list"=17;
-    "ip.address"=18;
-    "ip.firewall.address-list"=19;
-    "ip.firewall.raw"=20;
-    "ip.route"=21;
-    "ip.route.rule"=22;
-    "rspm"=23;
-    "rspm.config"=24;
-    "rspm.feature"=25;
-    "rspm.reset"=26;
-    "rspm.state"=27;
-    "tool.file"=28;
-    "tool.http"=29;
-    "tool.json"=30;
-    "tool.remote"=31;
+    "interface.ethernet"=15;
+    "interface.list"=16;
+    "ip.address"=17;
+    "ip.firewall.address-list"=18;
+    "ip.firewall.raw"=19;
+    "ip.route"=20;
+    "ip.route.rule"=21;
+    "rspm"=22;
+    "rspm.config"=23;
+    "rspm.feature"=24;
+    "rspm.reset"=25;
+    "rspm.state"=26;
+    "tool.file"=27;
+    "tool.http"=28;
+    "tool.json"=29;
+    "tool.remote"=30;
 }
 
 # the minimum requirement packages of rspm
