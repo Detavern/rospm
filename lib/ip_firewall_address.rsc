@@ -1,16 +1,16 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   ip.firewall.address-list
+# |       RSPM Packages      |   ip.firewall.address
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # 
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
-    "name"="ip.firewall.address-list";
-    "version"="0.3.1";
+    "name"="ip.firewall.address";
+    "version"="0.4.0";
     "description"="";
 };
 
@@ -26,8 +26,7 @@
     :global IsStr;
     :global IsEmpty;
     #DEFINE helper
-    :global findOneEnabledItem;
-    :global findOneDisabledItem;
+    :global helperEnsureOneEnabled;
     # check params
     :if (![$IsStr $List]) do={
         :error "ensureAddress: require \$List";
@@ -40,25 +39,13 @@
     }
     # find
     :local itemID;
-    :local idList [/ip firewall address-list find list=$List address=$pAddress !dynamic];
+    :local idList [/ip/firewall/address-list/find list=$List address=$pAddress !dynamic];
     # check there is same record or not 
     :if ([$IsEmpty $idList]) do={
-        :set itemID [/ip firewall address-list add list=$List address=$pAddress];
+        :set itemID [/ip/firewall/address-list/add list=$List address=$pAddress];
         :return $itemID;
     } else {
-        # find enabled one and return
-        :set itemID [$findOneEnabledItem "/ip firewall address-list" $idList];
-        :if (![$IsNil $itemID]) do={
-            :return $itemID;
-        }
-        # find disabled one then enable it and return
-        :set itemID [$findOneDisabledItem "/ip firewall address-list" $idList];
-        :if (![$IsNil $itemID]) do={
-            /ip firewall address-list enable $itemID;
-            :return $itemID;
-        }
-        # unknown situation
-        :error "ensureAddress: unknown situation";
+        $helperEnsureOneEnabled "/ip/firewall/address-list/" $idList;
     }
 }
 

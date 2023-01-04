@@ -252,7 +252,7 @@
     {
         "name"="interface.list";
         "description"="";
-        "version"="0.3.1";
+        "version"="0.4.0";
     };
     {
         "name"="ip.address";
@@ -260,9 +260,9 @@
         "version"="0.3.1";
     };
     {
-        "name"="ip.firewall.address-list";
+        "name"="ip.firewall.address";
         "description"="";
-        "version"="0.3.1";
+        "version"="0.4.0";
     };
     {
         "name"="ip.firewall.raw";
@@ -278,6 +278,11 @@
         "name"="ip.route.rule";
         "description"="";
         "version"="0.3.1";
+    };
+    {
+        "name"="routing.table";
+        "description"="";
+        "version"="0.4.0";
     };
     {
         "name"="rspm";
@@ -346,19 +351,20 @@
     "interface.ethernet"=15;
     "interface.list"=16;
     "ip.address"=17;
-    "ip.firewall.address-list"=18;
+    "ip.firewall.address"=18;
     "ip.firewall.raw"=19;
     "ip.route"=20;
     "ip.route.rule"=21;
-    "rspm"=22;
-    "rspm.config"=23;
-    "rspm.feature"=24;
-    "rspm.reset"=25;
-    "rspm.state"=26;
-    "tool.file"=27;
-    "tool.http"=28;
-    "tool.json"=29;
-    "tool.remote"=30;
+    "routing.table"=22;
+    "rspm"=23;
+    "rspm.config"=24;
+    "rspm.feature"=25;
+    "rspm.reset"=26;
+    "rspm.state"=27;
+    "tool.file"=28;
+    "tool.http"=29;
+    "tool.json"=30;
+    "tool.remote"=31;
 }
 
 # the minimum requirement packages of rspm

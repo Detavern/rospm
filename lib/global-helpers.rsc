@@ -36,7 +36,7 @@
 # ensure one of specific internal ID item is enabled
 # args: <str>           command
 # args: <array->id>     array of id, result of /find
-:global itemsFoundEnsureOneEnabled do={
+:global helperEnsureOneEnabled do={
     :foreach v in $2 do={
         # /interface ethernet
         :local cmdStr "$1/get number=$v disabled";

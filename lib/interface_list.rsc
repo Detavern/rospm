@@ -5,12 +5,12 @@
 # ALL package level functions follows lower camel case.
 # 
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="interface.list";
-    "version"="0.3.1";
+    "version"="0.4.0";
     "description"="";
 };
 
@@ -63,7 +63,7 @@
     :global IsStr;
     :global IsArray;
     :global IsEmpty;
-    :global Append;
+    :global Extend;
     :global UniqueArray;
     # check params
     :if (![$IsStr $Name]) do={
@@ -77,7 +77,6 @@
     :if ([$IsEmpty $idList]) do={
         :error "interface.list.ensureInclude: interface list name $Name not found";
     }
-    :local itemID ($idList->0);
     :foreach v in $List do={
         :local vIDList [/interface/list/find name=$v];
         :if ([$IsEmpty $vIDList]) do={
@@ -85,10 +84,10 @@
         }
     }
     # get current include
-    :local srcIncludeList [/interface/list/get number=$itemID "include"];
-    :local mergedList [$UniqueArray [$Append $srcIncludeList $List]];
+    :local srcIncludeList [/interface/list/get number=$idList "include"];
+    :local mergedList [$UniqueArray [$Extend $srcIncludeList $List]];
     # set it
-    /interface/list/set numbers=$itemID include=$mergedList;
+    /interface/list/set $Name include=$mergedList;
 }
 
 
@@ -101,7 +100,7 @@
     :global IsStr;
     :global IsArray;
     :global IsEmpty;
-    :global Append;
+    :global Extend;
     :global UniqueArray;
     # check params
     :if (![$IsStr $Name]) do={
@@ -115,7 +114,6 @@
     :if ([$IsEmpty $idList]) do={
         :error "interface.list.ensureExclude: interface list name $Name not found";
     }
-    :local itemID ($idList->0);
     :foreach v in $List do={
         :local vIDList [/interface/list/find name=$v];
         :if ([$IsEmpty $vIDList]) do={
@@ -124,9 +122,9 @@
     }
     # get current include
     :local srcExcludeList [/interface/list/get number=$itemID "include"];
-    :local mergedList [$UniqueArray [$Append $srcExcludeList $List]];
+    :local mergedList [$UniqueArray [$Extend $srcExcludeList $List]];
     # set it
-    /interface/list/set numbers=$itemID include=$mergedList;
+    /interface/list/set $Name include=$mergedList;
 }
 
 
@@ -176,7 +174,7 @@
     :global IsArray;
     :global IsEmpty;
     #DEFINE helper
-    :global itemsFoundEnsureOneEnabled;
+    :global helperEnsureOneEnabled;
     # check params
     :if (![$IsStr $Name]) do={
         :error "interface.list.ensureMembers: require \$Name";
@@ -203,7 +201,7 @@
         :if ([$IsEmpty $vIDList]) do={
             /interface/list/member/add interface=$v list=$Name;
         } else {
-            $itemsFoundEnsureOneEnabled "/interface/list/member" $vIDList;
+            $helperEnsureOneEnabled "/interface/list/member" $vIDList;
         }
     }
 }
