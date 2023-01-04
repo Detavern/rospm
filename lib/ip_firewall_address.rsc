@@ -45,7 +45,7 @@
         :set itemID [/ip/firewall/address-list/add list=$List address=$pAddress];
         :return $itemID;
     } else {
-        $helperEnsureOneEnabled "/ip/firewall/address-list/" $idList;
+        $helperEnsureOneEnabled "/ip/firewall/address-list" $idList;
     }
 }
 

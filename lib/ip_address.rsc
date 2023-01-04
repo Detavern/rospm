@@ -5,12 +5,12 @@
 # ALL package level functions follows lower camel case.
 # 
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="ip.address";
-    "version"="0.3.1";
+    "version"="0.4.0";
     "description"="";
 };
 
@@ -34,7 +34,7 @@
     :global ReadOption;
     :global GetFunc;
     #DEFINE helper
-    :global findAllItemsByTemplate;
+    :global helperFindByTemplate;
     # read opt
     :local intf [$ReadOption $Interface $TypeofStr];
     :local intfL [$ReadOption $InterfaceList $TypeofArray];
@@ -59,7 +59,7 @@
     :set ($template->"disabled") no;
     :foreach v in $intfList do={
         :set ($template->"interface") $v;
-        :local addrList [$findAllItemsByTemplate "/ip address" $template Output="address"];
+        :local addrList [$helperFindByTemplate "/ip/address" $template Output="address"];
         :set addressList ($addressList, $addrList);
     }
     :if ($pOutput = "ip") do={
@@ -79,4 +79,4 @@
     "metaInfo"=$metaInfo;
     "find"=$find;
 }
-:return $package;
+:return $package;

@@ -5,7 +5,7 @@
 # ALL global functions follows upper camel case.
 # global helper package
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 # Helpers are some functions which can greatly help 
@@ -17,18 +17,18 @@
 # USE if you known CLEARLY what you are doing.
 :local metaInfo {
     "name"="global-helpers";
-    "version"="0.3.1";
+    "version"="0.4.0";
     "description"="global helper package";
     "global"=true;
     "global-functions"={
-        "itemsFoundEnsureOneEnabled";
+        "helperEnsureOneEnabled";
         "addItemByTemplate";
         "findOneActiveItem";
         "findOneEnabledItem";
         "findOneDisabledItem";
         "findAllEnabledItems";
         "getAttrsByIDList";
-        "findAllItemsByTemplate";
+        "helperFindByTemplate";
         "setItemAttrByTemplate";
     };
 };
@@ -190,12 +190,12 @@
 }
 
 
-# $findAllItemsByTemplate
+# $helperFindByTemplate
 # find items by a template and return an array
 # args: <str>                   command
 # args: <array->str>            template
 # opt kwargs: Output=<str>      output format
-:global findAllItemsByTemplate do={
+:global helperFindByTemplate do={
     # global declare
     :global IsNil;
     :global IsStr;
@@ -270,4 +270,4 @@
 :local package {
     "metaInfo"=$metaInfo;
 }
-:return $package;
+:return $package;

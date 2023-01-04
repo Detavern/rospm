@@ -215,17 +215,17 @@
     {
         "name"="global-helpers";
         "description"="global helper package";
-        "version"="0.3.1";
+        "version"="0.4.0";
         "global"=true;
         "global-functions"={
-            "itemsFoundEnsureOneEnabled";
+            "helperEnsureOneEnabled";
             "addItemByTemplate";
             "findOneActiveItem";
             "findOneEnabledItem";
             "findOneDisabledItem";
             "findAllEnabledItems";
             "getAttrsByIDList";
-            "findAllItemsByTemplate";
+            "helperFindByTemplate";
             "setItemAttrByTemplate";
         };
     };
@@ -257,7 +257,7 @@
     {
         "name"="ip.address";
         "description"="";
-        "version"="0.3.1";
+        "version"="0.4.0";
     };
     {
         "name"="ip.firewall.address";

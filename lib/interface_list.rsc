@@ -227,7 +227,7 @@
     :global UniqueArray;
     :global ReadOption;
     :global TypeofBool;
-    :global findAllItemsByTemplate;
+    :global helperFindByTemplate;
     # check params
     :if (![$IsStr $Name]) do={
         :error "interface.list.findMembers: require \$Name";
@@ -243,12 +243,12 @@
     :if ($pEnabled) do={
         :set ($template->"disabled") no;
     }
-    :local nameList [$findAllItemsByTemplate "/interface/list/member" $template Output="interface"];
+    :local nameList [$helperFindByTemplate "/interface/list/member" $template Output="interface"];
     # find in include
     :local includeList [/interface/list/get ($intfIDList->0) include];
     :foreach listName in $includeList do={
         :set ($template->"list") $listName;
-        :local nList [$findAllItemsByTemplate "/interface/list/member" $template Output="interface"];
+        :local nList [$helperFindByTemplate "/interface/list/member" $template Output="interface"];
         :set nameList ($nameList, $nList);
     }
     :return [$UniqueArray $nameList];
