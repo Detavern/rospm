@@ -16,8 +16,8 @@
 
 
 # $find
-# opt kwargs: Interface=<str>                       find addresses by interface name
-# opt kwargs: InterfaceList=<array->str>|<str>      find addresses by interface list name or interface array
+# opt kwargs: Interface=<str>                       find addresses by interface
+# opt kwargs: InterfaceList=<str>                   find addresses by interface list
 # opt kwargs: Output=<str>                          "cidr"=<str>, "ip"=<ip>(default)
 # return: <array->str>                              list of addresses
 :local find do={
@@ -27,28 +27,23 @@
     :global IsArray;
     :global IsEmpty;
     :global TypeofStr;
-    :global TypeofArray;
     :global NewArray;
     :global Split;
-    :global Appends;
     :global ReadOption;
     :global GetFunc;
     #DEFINE helper
     :global helperFindByTemplate;
     # read opt
-    :local intf [$ReadOption $Interface $TypeofStr];
-    :local intfL [$ReadOption $InterfaceList $TypeofArray];
+    :local intf [$ReadOption $Interface $TypeofStr ""];
+    :local intfL [$ReadOption $InterfaceList $TypeofStr ""];
     :local pOutput [$ReadOption $Output $TypeofStr "ip"];
     # local
     :local intfList;
-    :if ([$IsStr $intf] and ($intf != "")) do={
+    :if ($intf != "") do={
         :set intfList {$intf};
     }
-    :if ([$IsStr $intfL]) do={
+    :if ($intfL != "") do={
         :set intfList [[$GetFunc "interface.list.findMembers"] Name=$intfL Enabled=true];
-    }
-    :if ([$IsArray $intfL]) do={
-        :set intfList $intfL;
     }
     :if ([$IsNothing $intfList]) do={
         :error "ip.address.find: one of \$Interface, \$InterfaceList needed";
@@ -66,7 +61,7 @@
         :local splitted [$NewArray ];
         :foreach v in $addressList do={
             :local ipAddr [:toip ([$Split $v "/" 1]->0)];
-            [$Appends $splitted $ipAddr];
+            :set ($splitted->[:len $splitted]) $ipAddr;
         }
         :return $splitted;
     } else {
@@ -79,4 +74,4 @@
     "metaInfo"=$metaInfo;
     "find"=$find;
 }
-:return $package;
+:return $package;

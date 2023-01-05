@@ -22,23 +22,23 @@
     "global"=true;
     "global-functions"={
         "helperEnsureOneEnabled";
-        "addItemByTemplate";
-        "findOneActiveItem";
-        "findOneEnabledItem";
-        "findOneDisabledItem";
-        "findAllEnabledItems";
-        "getAttrsByIDList";
+        "helperEnsureOneDisabled";
+        "helperAddByTemplate";
+        "helperSetByTemplate";
         "helperFindByTemplate";
-        "setItemAttrByTemplate";
+        "findOneEnabled";
+        "findOneDisabled";
+        "findOneActive";
+        "findAllEnabled";
+        "getAttrsByIDList";
     };
 };
 
 # ensure one of specific internal ID item is enabled
-# args: <str>           command
+# args: <str>           command, no tailing /
 # args: <array->id>     array of id, result of /find
 :global helperEnsureOneEnabled do={
     :foreach v in $2 do={
-        # /interface ethernet
         :local cmdStr "$1/get number=$v disabled";
         :local cmdFunc [:parse $cmdStr];
         :if ([$cmdFunc]) do={
@@ -52,10 +52,28 @@
 }
 
 
+# ensure one of specific internal ID item is disabled
+# args: <str>           command, no tailing /
+# args: <array->id>     array of id, result of /find
+:global helperEnsureOneDisabled do={
+    :foreach v in $2 do={
+        :local cmdStr "$1/get number=$v enabled";
+        :local cmdFunc [:parse $cmdStr];
+        :if ([$cmdFunc]) do={
+            # find an enabled one, then disable it
+            :local cmdDisabledStr "$1/disable $v";
+            :local cmdDisabledFunc [:parse $cmdDisabledStr];
+            $cmdDisabledFunc;
+        }
+        :return true;
+    }
+}
+
+
 # add item by a template
 # args: <str>           command
 # args: <array->str>    template 
-:global addItemByTemplate do={
+:global helperAddByTemplate do={
     # global declare
     :global IsNil;
     :global IsStr;
@@ -77,116 +95,36 @@
 }
 
 
-# find a currently active item in id list, return nil if not exist
+# set item's attributes by a template
 # args: <str>           command
-# args: <array->id>     array of id, scope of search
-# return: <id> or Nil
-:global findOneActiveItem do={
-    # global declare
-    :global Nil;
-    # local
-    :foreach v in $2 do={
-        :local cmdStr "$1/get number=$v active";
-        :local cmdFunc [:parse $cmdStr];
-        :if ([$cmdFunc]) do={
-            # find an active one, return it
-            :return $v;
-        }
-    }
-    :return $Nil;
-}
-
-
-# find a currently enabled item in id list, return nil if not exist
-# args: <str>           command
-# args: <array->id>     array of id, scope of search
-# return: <id> or Nil
-:global findOneEnabledItem do={
-    # global declare
-    :global Nil;
-    # local
-    :foreach v in $2 do={
-        :local cmdStr "$1/get number=$v disabled";
-        :local cmdFunc [:parse $cmdStr];
-        :if (![$cmdFunc]) do={
-            # find an enabled one, return it
-            :return $v;
-        }
-    }
-    :return $Nil;
-}
-
-
-# find a currently disabled item in id list, return nil if not exist
-# args: <str>           command
-# args: <array->id>     array of id, scope of search
-# return: <id> or Nil
-:global findOneDisabledItem do={
-    # global declare
-    :global Nil;
-    # local
-    :foreach v in $2 do={
-        :local cmdStr "$1/get number=$v disabled";
-        :local cmdFunc [:parse $cmdStr];
-        :if ([$cmdFunc]) do={
-            # find an disabled one, return it
-            :return $v;
-        }
-    }
-    :return $Nil;
-}
-
-# TODO:
-# find all currently enabled item in id list
-# args: <str>           command
-# args: <array->id>     array of id, scope of search
-# return: <array->id>
-:global findAllEnabledItems do={
-    # global declare
-    :global Nil;
-    # local
-    :local 
-    :foreach v in $2 do={
-        :local cmdStr "$1/get number=$v disabled";
-        :local cmdFunc [:parse $cmdStr];
-        :if (![$cmdFunc]) do={
-            # find an enabled one, return it
-            :return $v;
-        }
-    }
-    :return $Nil;
-}
-
-
-# $getAttrsByIDList
-# find items by a template and return an array
-# args: <str>                   command
-# args: <array->id>             array of id
-# args: <str>                   name of attribute
-# return: <array->v>
-:global getAttrsByIDList do={
+# args: <id>            item's internal ID
+# args: <array->str>    template
+:global helperSetByTemplate do={
     # global declare
     :global IsNil;
     :global IsStr;
-    :global IsNothing;
     :global IsBool;
-    :global NewArray;
-    :global Append;
-    :global ReadOption;
     # local
-    :local result [$NewArray];
-    :foreach v in $2 do={
-        :local cmdStr;
-        :if ([$IsNothing $3]) do={
-            :set cmdStr "$1/get number=$v";
-        } else {
-            :set cmdStr "$1/get number=$v $3";
+    :local cmdStr "$1/set number=$2";
+    :foreach k,v in $3 do={
+        :if (![$IsNil $v]) do={
+            :if ([$IsStr $v]) do={
+                :set cmdStr ($cmdStr . " $k=\"$v\"");
+            } else {
+                :if ([$IsBool $v]) do={
+                    :if ($v) do={
+                        :set cmdStr ($cmdStr . " $k=yes");
+                    } else {
+                        :set cmdStr ($cmdStr . " $k=no");
+                    }
+                } else {
+                    :set cmdStr ($cmdStr . " $k=$v");
+                }
+            }   
         }
-        :local cmdFunc [:parse $cmdStr];
-        :local attrV [$cmdFunc];
-        :set result [$Append $result $attrV];
     }
-    :return $result;
+    :local cmdFunc [:parse $cmdStr];
+    $cmdFunc;
 }
 
 
@@ -234,37 +172,119 @@
 }
 
 
-# set item's attributes by a template
+# find a currently enabled item in id list, return nil if not exist
 # args: <str>           command
-# args: <id>            item's internal ID
-# args: <array->str>    template
-:global setItemAttrByTemplate do={
+# args: <array->id>     array of id, scope of search
+# return: <id> or Nil
+:global findOneEnabled do={
+    # global declare
+    :global Nil;
+    # local
+    :foreach v in $2 do={
+        :local cmdStr "$1/get number=$v disabled";
+        :local cmdFunc [:parse $cmdStr];
+        :if (![$cmdFunc]) do={
+            # find an enabled one, return it
+            :return $v;
+        }
+    }
+    :return $Nil;
+}
+
+
+# find a currently disabled item in id list, return nil if not exist
+# args: <str>           command
+# args: <array->id>     array of id, scope of search
+# return: <id> or Nil
+:global findOneDisabled do={
+    # global declare
+    :global Nil;
+    # local
+    :foreach v in $2 do={
+        :local cmdStr "$1/get number=$v disabled";
+        :local cmdFunc [:parse $cmdStr];
+        :if ([$cmdFunc]) do={
+            # find an disabled one, return it
+            :return $v;
+        }
+    }
+    :return $Nil;
+}
+
+
+# find a currently active item in id list, return nil if not exist
+# args: <str>           command
+# args: <array->id>     array of id, scope of search
+# return: <id> or Nil
+:global findOneActive do={
+    # global declare
+    :global Nil;
+    # local
+    :foreach v in $2 do={
+        :local cmdStr "$1/get number=$v active";
+        :local cmdFunc [:parse $cmdStr];
+        :if ([$cmdFunc]) do={
+            # find an active one, return it
+            :return $v;
+        }
+    }
+    :return $Nil;
+}
+
+
+# TODO:
+# find all currently enabled item in id list
+# args: <str>           command
+# args: <array->id>     array of id, scope of search
+# return: <array->id>
+:global findAllEnabled do={
+    # global declare
+    :global Nil;
+    # local
+    :local 
+    :foreach v in $2 do={
+        :local cmdStr "$1/get number=$v disabled";
+        :local cmdFunc [:parse $cmdStr];
+        :if (![$cmdFunc]) do={
+            # find an enabled one, return it
+            :return $v;
+        }
+    }
+    :return $Nil;
+}
+
+
+# $getAttrsByIDList
+# find items by a template and return an array
+# args: <str>                   command
+# args: <array->id>             array of id
+# args: <str>                   name of attribute
+# return: <array->v>
+:global getAttrsByIDList do={
     # global declare
     :global IsNil;
     :global IsStr;
+    :global IsNothing;
     :global IsBool;
+    :global NewArray;
+    :global Append;
+    :global ReadOption;
     # local
-    :local cmdStr "$1/set number=$2";
-    :foreach k,v in $3 do={
-        :if (![$IsNil $v]) do={
-            :if ([$IsStr $v]) do={
-                :set cmdStr ($cmdStr . " $k=\"$v\"");
-            } else {
-                :if ([$IsBool $v]) do={
-                    :if ($v) do={
-                        :set cmdStr ($cmdStr . " $k=yes");
-                    } else {
-                        :set cmdStr ($cmdStr . " $k=no");
-                    }
-                } else {
-                    :set cmdStr ($cmdStr . " $k=$v");
-                }
-            }   
+    :local result [$NewArray];
+    :foreach v in $2 do={
+        :local cmdStr;
+        :if ([$IsNothing $3]) do={
+            :set cmdStr "$1/get number=$v";
+        } else {
+            :set cmdStr "$1/get number=$v $3";
         }
+        :local cmdFunc [:parse $cmdStr];
+        :local attrV [$cmdFunc];
+        :set result [$Append $result $attrV];
     }
-    :local cmdFunc [:parse $cmdStr];
-    $cmdFunc;
+    :return $result;
 }
+
 
 # package info
 :local package {

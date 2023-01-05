@@ -74,7 +74,7 @@
     # iter
     :local idList [$NewArray ]; 
     :foreach addr in $AddressList do={
-        :local itemID [[$GetFunc "ip.firewall.address-list.ensureAddress"] List=$List Address=$addr];
+        :local itemID [[$GetFunc "ip.firewall.address.ensureAddress"] List=$List Address=$addr];
         :set idList [$Append $idList $itemID];
     }
     :return $idList;

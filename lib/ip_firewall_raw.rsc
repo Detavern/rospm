@@ -33,10 +33,10 @@
     :global Print;
     :global ReadOption;
     #DEFINE helper
-    :global addItemByTemplate;
-    :global findOneEnabledItem;
-    :global findOneDisabledItem;
-    :global setItemAttrByTemplate;
+    :global helperAddByTemplate;
+    :global findOneEnabled;
+    :global findOneDisabled;
+    :global helperSetByTemplate;
     # check params
     :if (![$IsStr $DstAddress]) do={
         :error "ensureStaticRoute: require \$DstAddress";

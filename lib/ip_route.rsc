@@ -5,59 +5,51 @@
 # ALL package level functions follows lower camel case.
 # 
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="ip.route";
-    "version"="0.3.1";
+    "version"="0.4.0";
     "description"="";
 };
 
 
 # $getGateway
 # kwargs: DstAddress=<str>
-# kwargs: RoutingMark=<str>
+# kwargs: RoutingTable=<str>
 # return: Gateway=<str>
 :local getGateway do={
     #DEFINE global
     :global IsNil;
-    :global IsNothing;
-    :global IsStr;
     :global IsEmpty;
     :global IsIPPrefix;
+    :global Print;
+    :global TypeofStr;
+    :global ReadOption;
+    # read opt
+    :local pDstAddress [$ReadOption $DstAddress $TypeofStr];
+    :local pRoutingTable [$ReadOption $RoutingTable $TypeofStr];
     # check params
-    :if (![$IsStr $DstAddress]) do={
+    :if ([$IsNil $pDstAddress]) do={
         :error "getGateway: require \$DstAddress";
     }
-    # HACK: don't know why ':set RoutingMark "";' get error without following line.
-    $IsNothing $RoutingMark;
-    :if ([$IsNothing $RoutingMark]) do={
-        :set RoutingMark "";
-    }
-    :if (![$IsStr $RoutingMark]) do={
-        :error "getGateway: require \$RoutingMark";
+    :if ([$IsNil $pRoutingTable]) do={
+        :error "getGateway: require \$RoutingTable";
     }
     # check if has routing mark
-    :local routeIDList;
-    :if ($RoutingMark="") do={
-        :set routeIDList [/ip/route/find dst-address=$DstAddress active=yes !routing-mark !type];
-        :if ([$IsEmpty $routeIDList]) do={
-            :error "getGateway: gateway for $DstAddress not found"
-        }
-    } else {
-        :set routeIDList [/ip/route/find dst-address=$DstAddress active=yes routing-mark=$RoutingMark !type];
-        :if ([$IsEmpty $routeIDList]) do={
-            :error "getGateway: gateway for $DstAddress with mark $RoutingMark not found"
-        }
+    :local routeIDList [/ip/route/find dst-address=$pDstAddress active=yes routing-table=$pRoutingTable];
+    :if ([$IsEmpty $routeIDList]) do={
+        :error "getGateway: gateway for $pDstAddress with mark $pRoutingTable not found"
     }
+    
     # check gateway like 1.1.1.1%ether1
-    :local gw ([/ip/route/get ($routeIDList->0) gateway]->0);
+    :local gw [:tostr [/ip/route/get ($routeIDList->0) gateway]];
     :local sPos [:find $gw "%"];
-    :if ([$IsEmpty $sPos]) do={
-        :return [:pick $gw 0 $sPos];
-    } else {
+    :if ([$IsNil $sPos]) do={
         :return $gw;
+    } else {
+        :return [:pick $gw 0 $sPos];
     }
 }
 
@@ -80,10 +72,10 @@
     :global Print;
     :global ReadOption;
     #DEFINE helper
-    :global addItemByTemplate;
-    :global findOneEnabledItem;
-    :global findOneDisabledItem;
-    :global setItemAttrByTemplate;
+    :global helperAddByTemplate;
+    :global findOneEnabled;
+    :global findOneDisabled;
+    :global helperSetByTemplate;
     # check params
     :if (![$IsStr $DstAddress]) do={
         :error "ensureStaticRoute: require \$DstAddress";
@@ -108,24 +100,24 @@
         :set ($template->"gateway") $Gateway;
         :set ($template->"routing-mark") $pRM;
         :set ($template->"distance") $pDist;
-        :local idAdded [$addItemByTemplate "/ip route" $template];
+        :local idAdded [$helperAddByTemplate "/ip route" $template];
         :return $idAdded;
     } else {
         # first, find enabled one
-        :local idEnabled [$findOneEnabledItem "/ip route" $routeIDList];
+        :local idEnabled [$findOneEnabled "/ip route" $routeIDList];
         :if (![$IsNil $idEnabled]) do={
             :local template [$NewArray ];
             :set ($template->"distance") $pDist;
-            $setItemAttrByTemplate "/ip route" $idEnabled $template;
+            $helperSetByTemplate "/ip route" $idEnabled $template;
             :return $idEnabled;
         }
         # if no enabled one, then find a disabled one and enable it
-        :local idDisabled [$findOneDisabledItem "/ip route" $routeIDList];
+        :local idDisabled [$findOneDisabled "/ip route" $routeIDList];
         :if (![$IsNil $idDisabled]) do={
             :local template [$NewArray ];
             :set ($template->"distance") $pDist;
             :set ($template->"disabled") "no";
-            $setItemAttrByTemplate "/ip route" $idDisabled $template;
+            $helperSetByTemplate "/ip route" $idDisabled $template;
             :return $idDisabled;
         }
     }

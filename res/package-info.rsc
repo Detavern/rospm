@@ -219,15 +219,21 @@
         "global"=true;
         "global-functions"={
             "helperEnsureOneEnabled";
-            "addItemByTemplate";
-            "findOneActiveItem";
-            "findOneEnabledItem";
-            "findOneDisabledItem";
-            "findAllEnabledItems";
-            "getAttrsByIDList";
+            "helperEnsureOneDisabled";
+            "helperAddByTemplate";
+            "helperSetByTemplate";
             "helperFindByTemplate";
-            "setItemAttrByTemplate";
+            "findOneEnabled";
+            "findOneDisabled";
+            "findOneActive";
+            "findAllEnabled";
+            "getAttrsByIDList";
         };
+    };
+    {
+        "name"="cidr";
+        "description"="collections of special CIDRs";
+        "version"="0.4.0";
     };
     {
         "name"="ddns";
@@ -272,12 +278,12 @@
     {
         "name"="ip.route";
         "description"="";
-        "version"="0.3.1";
+        "version"="0.4.0";
     };
     {
-        "name"="ip.route.rule";
-        "description"="";
-        "version"="0.3.1";
+        "name"="routing.rule";
+        "description"="routing rule tools";
+        "version"="0.4.0";
     };
     {
         "name"="routing.table";
@@ -345,26 +351,27 @@
     "global-functions.unicode"=9;
     "global-functions.misc"=10;
     "global-helpers"=11;
-    "ddns"=12;
-    "ddns.getter"=13;
-    "ddns.provider.cloudflare"=14;
-    "interface.ethernet"=15;
-    "interface.list"=16;
-    "ip.address"=17;
-    "ip.firewall.address"=18;
-    "ip.firewall.raw"=19;
-    "ip.route"=20;
-    "ip.route.rule"=21;
-    "routing.table"=22;
-    "rspm"=23;
-    "rspm.config"=24;
-    "rspm.feature"=25;
-    "rspm.reset"=26;
-    "rspm.state"=27;
-    "tool.file"=28;
-    "tool.http"=29;
-    "tool.json"=30;
-    "tool.remote"=31;
+    "cidr"=12;
+    "ddns"=13;
+    "ddns.getter"=14;
+    "ddns.provider.cloudflare"=15;
+    "interface.ethernet"=16;
+    "interface.list"=17;
+    "ip.address"=18;
+    "ip.firewall.address"=19;
+    "ip.firewall.raw"=20;
+    "ip.route"=21;
+    "routing.rule"=22;
+    "routing.table"=23;
+    "rspm"=24;
+    "rspm.config"=25;
+    "rspm.feature"=26;
+    "rspm.reset"=27;
+    "rspm.state"=28;
+    "tool.file"=29;
+    "tool.http"=30;
+    "tool.json"=31;
+    "tool.remote"=32;
 }
 
 # the minimum requirement packages of rspm
