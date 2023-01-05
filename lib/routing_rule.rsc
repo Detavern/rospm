@@ -24,7 +24,9 @@
 # opt kwargs: Table=<str>
 :local ensure do={
     #DEFINE global
+    :global Nil;
     :global IsNil;
+    :global IsEmpty;
     :global TypeofStr;
     :global NewArray;
     :global ReadOption;
@@ -50,11 +52,35 @@
     :set ($tmpl->"table") $pTable;
     # find
     :local idList [$helperFindByTemplate "/routing/rule" $tmpl];
+    :if ([$IsEmpty $idList]) do={
+        [$helperAddByTemplate "/routing/rule" $tmpl];
+        :return $Nil;
+    }
     :local disableID [$findOneDisabled "/routing/rule" $idList];
     :if (![$IsNil $disableID]) do={
         /routing/rule/enable numbers=$disableID;
-    } else {
-        [$helperAddByTemplate "/routing/rule" $tmpl];
+        :return $Nil;
+    }
+}
+
+
+# $ensureReserved
+:local ensureReserved do={
+    #DEFINE global
+    :global IsEmpty;
+    # local
+    :local prefix "ENSURE RESERVED";
+    # clean
+    /routing/rule/remove [/routing/rule/find comment~$prefix];
+    # check
+    :local idList [/ip/firewall/address-list/find list="IP-CIDR_RESERVED"];
+    :if ([$IsEmpty $idList]) do={
+        :error "routing.rule.ensureReserved: IP-CIDR_RESERVED not found";
+    }
+    # add
+    :foreach v in $idList do={
+        :local addr [/ip/firewall/address-list/get number=$v address];
+        /routing/rule/add dst-address=$addr action=lookup table=main comment="$prefix";
     }
 }
 
@@ -62,5 +88,6 @@
 :local package {
     "metaInfo"=$metaInfo;
     "ensure"=$ensure;
+    "ensureReserved"=$ensureReserved;
 }
-:return $package;
+:return $package;

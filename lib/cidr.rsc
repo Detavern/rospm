@@ -14,8 +14,8 @@
     "description"="collections of special CIDRs";
 };
 
-# $ensureCidrReserved
-:local ensureCidrReserved do={
+# $ensureReserved
+:local ensureReserved do={
     /ip/firewall/address-list/remove [/ip/firewall/address-list/find list=IP-CIDR_RESERVED];
     /ip/firewall/address-list/remove [/ip/firewall/address-list/find list=IP-CIDR_NO-FORWARD];
     /ip/firewall/address-list/remove [/ip/firewall/address-list/find list=IP-CIDR_BAD];
@@ -69,6 +69,6 @@
 
 :local package {
     "metaInfo"=$metaInfo;
-    "ensureCidrReserved"=$ensureCidrReserved;
+    "ensureReserved"=$ensureReserved;
 }
 :return $package
