@@ -17,13 +17,14 @@ to help you conveniently write and organize your script.
 
 ## Requirements
 
-RouterOS 6.47+
+RouterOS v7+
 
 ## Installation
 
 Open the RouterOS terminal, copy & paste the following and run:
 ```
-/tool fetch url="https://raw.githubusercontent.com/Detavern/rspm/master/rspm-installer.rsc"; /import rspm-installer.rsc;
+/tool fetch url="https://raw.githubusercontent.com/Detavern/rspm/master/rspm-installer.rsc";
+/import rspm-installer.rsc;
 ```
 
 ## Getting Started
