@@ -1,5 +1,5 @@
 :global RSPMInstallerConfig {
-    "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/development/";
+    "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/develop/";
     "RSPMOwner"="rspm";
 };
 :global RSPMInstallerInput do={
