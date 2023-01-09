@@ -57,25 +57,21 @@
 # $ensureStaticRoute
 # kwargs: DstAddress=<str>
 # kwargs: Gateway=<str>
-# opt kwargs: RoutingMark=<str>
+# opt kwargs: RoutingTable=<str>
 # opt kwargs: Distance=<num>
 :local ensureStaticRoute do={
     #DEFINE global
-    :global Nil;
     :global IsNil;
     :global IsStr;
     :global IsEmpty;
-    :global IsNum;
     :global TypeofNum;
     :global TypeofStr;
     :global NewArray;
-    :global Print;
     :global ReadOption;
     #DEFINE helper
     :global helperAddByTemplate;
-    :global findOneEnabled;
-    :global findOneDisabled;
-    :global helperSetByTemplate;
+    :global helperFindByTemplate;
+    :global helperEnsureOneEnabled;
     # check params
     :if (![$IsStr $DstAddress]) do={
         :error "ensureStaticRoute: require \$DstAddress";
@@ -84,42 +80,23 @@
         :error "ensureStaticRoute: require \$Gateway";
     }
     # read opt
-    :local pDist [$ReadOption $Distance $TypeofNum];
-    :local pRM [$ReadOption $RoutingMark $TypeofStr];
+    :local pDistance [$ReadOption $Distance $TypeofNum];
+    :local pRoutingTable [$ReadOption $RoutingTable $TypeofStr];
+    # set template
+    :local tmpl [$NewArray ];
+    :set ($tmpl->"dst-address") $DstAddress;
+    :set ($tmpl->"gateway") $Gateway;
+    :set ($tmpl->"routing-table") $pRoutingTable;
+    if (![$IsNil pDistance]) do={
+        :set ($tmpl->"distance") $pDistance;
+    };
     # find if exist
-    :local routeIDList;
-    :if ([$IsNil $pRM]) do={
-        :set routeIDList [/ip/route/find dst-address=$DstAddress !routing-mark !type];
+    :local idList [$helperFindByTemplate "ip/route" $tmpl];
+    :if ([$IsEmpty $idList]) do={
+        # if couldn't find matched then add one
+        [$helperAddByTemplate "/ip/route" $tmpl];
     } else {
-        :set routeIDList [/ip/route/find dst-address=$DstAddress routing-mark=$RoutingMark !type];
-    }
-    # if couldn't find matched then add one
-    :if ([$IsEmpty $routeIDList]) do={
-        :local template [$NewArray ];
-        :set ($template->"dst-address") $DstAddress;
-        :set ($template->"gateway") $Gateway;
-        :set ($template->"routing-mark") $pRM;
-        :set ($template->"distance") $pDist;
-        :local idAdded [$helperAddByTemplate "/ip route" $template];
-        :return $idAdded;
-    } else {
-        # first, find enabled one
-        :local idEnabled [$findOneEnabled "/ip route" $routeIDList];
-        :if (![$IsNil $idEnabled]) do={
-            :local template [$NewArray ];
-            :set ($template->"distance") $pDist;
-            $helperSetByTemplate "/ip route" $idEnabled $template;
-            :return $idEnabled;
-        }
-        # if no enabled one, then find a disabled one and enable it
-        :local idDisabled [$findOneDisabled "/ip route" $routeIDList];
-        :if (![$IsNil $idDisabled]) do={
-            :local template [$NewArray ];
-            :set ($template->"distance") $pDist;
-            :set ($template->"disabled") "no";
-            $helperSetByTemplate "/ip route" $idDisabled $template;
-            :return $idDisabled;
-        }
+        [$helperEnsureOneEnabled "/ip/route" $idList];
     }
 }
 

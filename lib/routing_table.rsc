@@ -52,6 +52,10 @@
     #DEFINE global
     :global IsStr;
     :global IsEmpty;
+    :global TypeofBool;
+    :global ReadOption;
+    # read option
+    :local pFIB [$ReadOption $FIB $TypeofBool false];
     # check params
     :if (![$IsStr $Name]) do={
         :error "routing.table.ensure: require \$Name";
@@ -66,10 +70,17 @@
         }
     } else {
         :if ($pFIB) do={
-            /routing/table/set $Name fib;
+            /routing/table/set $listIDList fib;
         } else {
-            /routing/table/add $Name !fib;
+            /routing/table/set $listIDList !fib;
         }
     }
 }
 
+
+:local package {
+    "metaInfo"=$metaInfo;
+    "add"=$add;
+    "ensure"=$ensure;
+}
+:return $package;
