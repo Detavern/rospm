@@ -37,7 +37,7 @@
     {
         "name"="global-functions";
         "description"="global function package";
-        "version"="0.3.1";
+        "version"="0.4.1";
         "global"=true;
         "global-functions"={
             "IsNil";

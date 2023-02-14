@@ -8,6 +8,38 @@
     $Assert ($srcV=$dstV) "recover type error";
 }
 
+## positional args
+{
+    :put "testing positional arguments...";
+    :local v 1.1.1.1;
+    :local Foo do={
+        :local t1 [:typeof $1];
+        :local t2 [:typeof $2];
+        :local t3 [:typeof $3];
+        $Assert ($t1=$TypeofIP) "t1 should be ip";
+        $Assert ($t2=$TypeofStr) "t2 should be string";
+        $Assert ($t3=$TypeofNothing) "t3 should be nothing";
+    }
+
+    [$Foo $v 1.1.1.1];
+}
+
+## keyword args
+{
+    :put "testing keyword arguments...";
+    :local v 1.1.1.1;
+    :local Foo do={
+        :local t1 [:typeof $a];
+        :local t2 [:typeof $b];
+        :local t3 [:typeof $c];
+        $Assert ($t1=$TypeofIP) "t1 should be ip";
+        $Assert ($t2=$TypeofStr) "t2 should be string";
+        $Assert ($t3=$TypeofNothing) "t3 should be nothing";
+    }
+
+    [$Foo a=$v b=1.1.1.1];
+}
+
 ## replace
 :put [$Replace "abcd abc ab a" "ab" "xx"];
 :put [$Replace "hello world" "hello" "new"];
@@ -89,7 +121,8 @@
 ## append
 {
     :local a {1;2;3;4};
-    :put [$Append $a 5];
+    :local app [$Append $a 5];
+    $Print $app;
 }
 {
     :local a {1;2;3};
@@ -187,6 +220,12 @@
 ## unique
 {
     :local a {1;2;3;4;5;3;4;5;6;7;9;20;"20"};
+    :put $a;
+    :put [$UniqueArray $a];
+}
+
+{
+    :local a {"WAN-PPP";"WAN-ETH";"WAN-PPP";"WAN-ETH"};
     :put $a;
     :put [$UniqueArray $a];
 }

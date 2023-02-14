@@ -72,7 +72,7 @@
         :error "ensureAddressList: require \$AddressList";
     }
     # iter
-    :local idList [$NewArray ]; 
+    :local idList [$NewArray ];
     :foreach addr in $AddressList do={
         :local itemID [[$GetFunc "ip.firewall.address.ensureAddress"] List=$List Address=$addr];
         :set idList [$Append $idList $itemID];

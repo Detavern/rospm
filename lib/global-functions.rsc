@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="global-functions";
-    "version"="0.3.1";
+    "version"="0.4.1";
     "description"="global function package";
     "global"=true;
     "global-functions"={
@@ -345,6 +345,26 @@
 }
 
 
+# $TypeRecovery
+# recover type and value from a string
+# args: <str>                   value to recover
+# return: <var>                 recovered value
+:global TypeRecovery do={
+    :local value;
+    :if ([:len $1]=0) do={
+        :error "Global.TypeRecovery: no value";
+    }
+    :do {
+        :local cmdStr "{:local rT do={:return \$1}; :local v $1; \$rT \$v;}";
+        :local cmdFunc [:parse $cmdStr];
+        :set value [$cmdFunc ];
+    } on-error={
+        :set value $1;
+    }
+    :return $value;
+}
+
+
 # $ReadOption
 # validate the type of input, could set default value
 # args: <var>                   <value>
@@ -465,26 +485,9 @@
 }
 
 
-# $TypeRecovery
-# recover type and value from a string
-# args: <str>                   value to recover
-# return: <var>                 recovered value
-:global TypeRecovery do={
-    :local value;
-    :do {
-        :local cmdStr "{:local rT do={:return \$1}; :local v $1; \$rT \$v;}";
-        :local cmdFunc [:parse $cmdStr];
-        :set value [$cmdFunc ];
-    } on-error={
-        :set value $1;
-    }
-    :return $value;
-}
-
-
 # $Input
 # get value from interaction
-# args: <str>                   info
+# args: <str>                   hint
 # return: <var>                 value
 :global Input do={
     :terminal style escaped;
@@ -494,10 +497,11 @@
 
 
 # $InputV
-# get value from interaction and recover its type and value
-# args: <str>                   info
-# opt args: <str>               answer
-# return: <var>                 recovered value
+# get value from interaction and recover its type and value.
+# if input is empty and default is not setted, error will be raised.
+# args: <str>                   hint
+# opt kwargs: Default=<var>     default value
+# return: <var>                 recovered input value
 :global InputV do={
     # global declare
     :global IsNothing;
@@ -506,13 +510,24 @@
     :global TypeRecovery;
     # local
     :if (![$IsStr $1]) do={
-        :error "Global.InputV: first param should be str";
+        :error "Global.InputV: hint should be str";
     }
-    :if ([$IsNothing $2]) do={
-        :local valueStr [$Input $1];
+    :local hint $1;
+    :local valueStr;
+    :if ([$IsNothing $Default]) do={
+        # no default value
+        :set valueStr [$Input $hint];
+        :if ([:len $valueStr]=0) do={
+            :error "Global.InputV: input needed";
+        }
         :return [$TypeRecovery $valueStr];
     } else {
-        :return [$TypeRecovery $2];
+        # has default value
+        :set valueStr [$Input ("$hint (Default: $Default)")];
+        :if ([:len $valueStr]=0) do={
+            :return [$TypeRecovery $Default];
+        }
+        :return [$TypeRecovery $valueStr];
     }
 }
 
