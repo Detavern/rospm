@@ -160,15 +160,18 @@ class PackageMetainfoModifier:
     def bump_version(self, path):
         print(f'Parsing library file from folder: {path}')
         for p in os.listdir(path):
-            if p.endswith(".rsc"):
-                fp = os.path.abspath(os.path.join(path, p))
-                pp = PackageParser.from_file(fp)
-                node = pp.get_metainfo()
-                metainfo = node.value
-                self.update_version(metainfo)
-                metainfo_str = self.make_metainfo(metainfo)
-                self.mark_for_update(node, metainfo_str)
-                self.do_update(fp)
+            if p.startswith("#"):
+                continue
+            if not p.endswith(".rsc"):
+                continue
+            fp = os.path.abspath(os.path.join(path, p))
+            pp = PackageParser.from_file(fp)
+            node = pp.get_metainfo()
+            metainfo = node.value
+            self.update_version(metainfo)
+            metainfo_str = self.make_metainfo(metainfo)
+            self.mark_for_update(node, metainfo_str)
+            self.do_update(fp)
 
     def mark_for_update(self, node, text):
         self._updates.append((node, text.encode()))
@@ -234,23 +237,26 @@ class PackageMetainfoModifier:
     def update_metainfo(self, path, ignore_exec_check: list):
         print(f'Parsing library file from folder: {path}')
         for p in os.listdir(path):
-            if p.endswith(".rsc"):
-                fp = os.path.abspath(os.path.join(path, p))
-                # parse it into node list
-                pp = PackageParser.from_file(fp)
-                meta_node = pp.get_metainfo()
-                metainfo = meta_node.value
-                self.update_version(metainfo)
-                self.update_global_functions(metainfo, pp)
-                self.update_global_variables(metainfo, pp)
-                if metainfo['name'] not in ignore_exec_check:
-                    self.check_exec(metainfo, pp)
-                # do update
-                metainfo_str = self.make_metainfo(metainfo)
-                header_str = self.make_header(metainfo, pp)
-                self.mark_for_update(meta_node, metainfo_str)
-                self.mark_for_update(pp.get_header(), header_str)
-                self.do_update(fp)
+            if p.startswith("#"):
+                continue
+            if not p.endswith(".rsc"):
+                continue
+            fp = os.path.abspath(os.path.join(path, p))
+            # parse it into node list
+            pp = PackageParser.from_file(fp)
+            meta_node = pp.get_metainfo()
+            metainfo = meta_node.value
+            self.update_version(metainfo)
+            self.update_global_functions(metainfo, pp)
+            self.update_global_variables(metainfo, pp)
+            if metainfo['name'] not in ignore_exec_check:
+                self.check_exec(metainfo, pp)
+            # do update
+            metainfo_str = self.make_metainfo(metainfo)
+            header_str = self.make_header(metainfo, pp)
+            self.mark_for_update(meta_node, metainfo_str)
+            self.mark_for_update(pp.get_header(), header_str)
+            self.do_update(fp)
 
     def make_metainfo(self, metainfo):
         result = [
