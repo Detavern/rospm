@@ -351,7 +351,7 @@
 # return: <var>                 recovered value
 :global TypeRecovery do={
     :local value;
-    :if ([:len $1]=0) do={
+    :if ([:len $1] = 0) do={
         :error "Global.TypeRecovery: no value";
     }
     :do {
@@ -517,14 +517,14 @@
     :if ([$IsNothing $Default]) do={
         # no default value
         :set valueStr [$Input $hint];
-        :if ([:len $valueStr]=0) do={
+        :if ([:len $valueStr] = 0) do={
             :error "Global.InputV: input needed";
         }
         :return [$TypeRecovery $valueStr];
     } else {
         # has default value
         :set valueStr [$Input ("$hint (Default: $Default)")];
-        :if ([:len $valueStr]=0) do={
+        :if ([:len $valueStr] = 0) do={
             :return [$TypeRecovery $Default];
         }
         :return [$TypeRecovery $valueStr];

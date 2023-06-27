@@ -295,8 +295,8 @@
     }
     # unknown char
     :local pos ($jsp->"pos");
-    :local t [:pick ($jsp->"text") $pos ($pos+1000)];
-    :error "tool.json.parseSwitch: pos: $pos, unexpected character: $ch, $t";
+    :local t [:pick ($jsp->"text") $pos ($pos+50)];
+    :error "tool.json.parseSwitch: pos: $pos, unexpected character \"$ch\" around \"$t\"";
 }
 
 

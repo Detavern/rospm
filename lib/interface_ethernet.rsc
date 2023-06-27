@@ -76,13 +76,13 @@
         :error "interface.ethernet.renameAll: require \$Template";
     }
     # for
-    :foreach i in=[/interface/ethernet/find] do={
+    :foreach i in [/interface/ethernet/find] do={
         :local newName [/interface/ethernet/get $i "default-name"];
         :local newNameP "";
         # select longest match pattern
-        :foreach k,v in=$Template do={
+        :foreach k,v in $Template do={
             :if ([$StartsWith $newName $k]) do={
-                :if ([:len $k]>[:len $newNameP]) do={
+                :if ([:len $k] > [:len $newNameP]) do={
                     :set newNameP $k;
                 }
             }
@@ -99,7 +99,7 @@
 # $resetAll
 # reset all ethernet interface by its default-name attributes
 :local resetAll do={
-    :foreach i in=[/interface/ethernet/find] do={
+    :foreach i in [/interface/ethernet/find] do={
         :local defaultName [/interface/ethernet/get $i "default-name"];
         /interface/ethernet/set name=$defaultName numbers=$i;
     }
