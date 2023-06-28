@@ -1,5 +1,6 @@
 import os
 import re
+import io
 from collections import OrderedDict
 
 import yaml
@@ -224,7 +225,7 @@ class PackageMetainfoModifier:
         pp = PackageParser.from_file(fp)
         meta_node = pp.get_metainfo()
         metainfo = meta_node.value
-        self.update_version(metainfo)
+        # self.update_version(metainfo)
         self.update_global_functions(metainfo, pp)
         self.update_global_variables(metainfo, pp)
         # do update
@@ -246,7 +247,7 @@ class PackageMetainfoModifier:
             pp = PackageParser.from_file(fp)
             meta_node = pp.get_metainfo()
             metainfo = meta_node.value
-            self.update_version(metainfo)
+            # self.update_version(metainfo)
             self.update_global_functions(metainfo, pp)
             self.update_global_variables(metainfo, pp)
             if metainfo['name'] not in ignore_exec_check:
@@ -282,6 +283,10 @@ class PackageMetainfoModifier:
         text = tmpl.render(
             is_global=metainfo.get('global', False),
             name=metainfo['name'],
-            description=metainfo['description'],
+            description=self.pretty_text(metainfo['description']),
         )
         return text
+
+    @staticmethod
+    def pretty_text(s):
+        return s.replace("\\n", "\n# ").replace('\\"', '"')

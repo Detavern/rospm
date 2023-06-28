@@ -92,6 +92,20 @@ class PackageParser:
     TOKEN_VAR_BRACKET_END = ")"
     TOKEN_VAR_CMD = "["
     TOKEN_VAR_CMD_END = "]"
+    TOKEN_VAR_STR_ESCAPE_MAP = {
+        '"': '"',
+        '\\': '\\',
+        '$': '$',
+        '?': '?',
+        'n': '\n',
+        'r': '\r',
+        't': '\t',
+        'a': '\a',
+        'b': '\b',
+        'v': '\v',
+        '_': ' ',
+        'f': '\xff',
+    }
 
     def __init__(self, name):
         self.name = name
@@ -416,13 +430,35 @@ class PackageParser:
 
     def parse_var_str(self):
         s = ''
+        # skip beginning double quote
         self.read()
+        # parse
         while True:
-            ch = self.read()
-            if ch == "\"":
+            ch = self.peek()
+            if ch == "\\":
+                before_escape = self.parse_var_str_escaped()
+                s = f'{s}{before_escape}'
+            elif ch == '"':
+                self.read()
                 return s
             else:
+                self.read()
                 s = f'{s}{ch}'
+
+    def parse_var_str_escaped(self):
+        # skip beginning backslash
+        s = self.read()
+        # parse
+        while True:
+            chs = self.peek(2)
+            if chs[0] in self.TOKEN_VAR_STR_ESCAPE_MAP:
+                self.read()
+                return f'{s}{chs[0]}'
+            else:
+                # hex value
+                int(f'0x{chs}', 16)
+                self.read(2)
+                return f'{s}{chs}'
 
     def parse_var_quote(self):
         self.skip_token(self.TOKEN_VAR_QUOTE)

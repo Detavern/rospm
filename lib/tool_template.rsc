@@ -3,7 +3,7 @@
 # |       RSPM Packages      |   tool.template
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# simple template utility
+# This is a simple template utility.
 # Use {{ foo }} in the template to define a template variable,
 # use {{ "{{" }} in the template to escaping.
 #
@@ -13,7 +13,7 @@
 :local metaInfo {
     "name"="tool.template";
     "version"="0.4.0";
-    "description"="template utility";
+    "description"="This is a simple template utility.\nUse {{ foo }} in the template to define a template variable,\nuse {{ \"{{\" }} in the template to escaping.";
 };
 
 
