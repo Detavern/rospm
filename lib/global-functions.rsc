@@ -491,7 +491,7 @@
 # return: <var>                 value
 :global Input do={
     :terminal style escaped;
-    :put $1; 
+    :put $1;
     :return;
 }
 

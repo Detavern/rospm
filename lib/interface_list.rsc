@@ -3,15 +3,15 @@
 # |       RSPM Packages      |   interface.list
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# 
+# interface list related functions.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="interface.list";
-    "version"="0.4.0";
-    "description"="";
+    "version"="0.4.1";
+    "description"="interface list related functions.";
 };
 
 
@@ -51,6 +51,29 @@
     :if ([$IsEmpty $listIDList]) do={
         /interface/list/add name=$Name;
     }
+}
+
+
+# $getInclude
+# kwargs: Name=<str>                target list name
+:local getInclude do={
+    #DEFINE global
+    :global IsStr;
+    :global IsEmpty;
+    :global NewArray;
+    :global helperFindByTemplate;
+    # check params
+    :if (![$IsStr $Name]) do={
+        :error "interface.list.getInclude: require \$Name";
+    }
+    :local intfIDList [/interface/list/find name=$Name !disabled];
+    :if ([$IsEmpty $intfIDList]) do={
+        :error "interface.list.getInclude: specific \$Name not exist or disabled";
+    }
+ 
+    # get include
+    :local includeList [/interface/list/get ($intfIDList->0) include];
+    :return $includeList;
 }
 
 
@@ -255,11 +278,11 @@
 }
 
 
-
 :local package {
     "metaInfo"=$metaInfo;
     "add"=$add;
     "ensure"=$ensure;
+    "getInclude"=$getInclude;
     "ensureInclude"=$ensureInclude;
     "ensureExclude"=$ensureExclude;
     "addMembers"=$addMembers;
@@ -267,4 +290,4 @@
     "setMembersAttrs"=$setMembersAttrs;
     "findMembers"=$findMembers;
 }
-:return $package;
+:return $package;
