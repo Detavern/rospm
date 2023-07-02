@@ -129,13 +129,12 @@
     {
         "name"="global-functions.datetime";
         "description"="global functions for datetime operation";
-        "version"="0.3.1";
+        "version"="0.4.1";
         "global"=true;
         "global-functions"={
             "IsSDT";
             "IsDatetime";
             "IsTimedelta";
-            "GetCurrentClock";
             "GetCurrentDate";
             "GetCurrentTime";
             "GetCurrentSDT";
@@ -231,14 +230,69 @@
         };
     };
     {
+        "name"="ip.address";
+        "description"="";
+        "version"="0.4.0";
+    };
+    {
+        "name"="routing.rule";
+        "description"="routing rule tools";
+        "version"="0.4.0";
+    };
+    {
+        "name"="tool.remote";
+        "description"="remote script load tools";
+        "version"="0.3.1";
+    };
+    {
+        "name"="rspm.state";
+        "description"="rspm package state tools";
+        "version"="0.3.1";
+    };
+    {
+        "name"="rspm.feature";
+        "description"="rspm feature tools";
+        "version"="0.4.0";
+    };
+    {
+        "name"="interface.list";
+        "description"="interface list related functions.";
+        "version"="0.4.1";
+    };
+    {
+        "name"="tool.json";
+        "description"="json loads and dumps";
+        "version"="0.3.1";
+    };
+    {
         "name"="cidr";
         "description"="collections of special CIDRs";
+        "version"="0.4.0";
+    };
+    {
+        "name"="rspm.config";
+        "description"="rspm configuration tools";
+        "version"="0.4.0";
+    };
+    {
+        "name"="ip.firewall.raw";
+        "description"="";
+        "version"="0.3.1";
+    };
+    {
+        "name"="interface.ethernet";
+        "description"="";
         "version"="0.4.0";
     };
     {
         "name"="ddns";
         "description"="ddns schedule framework";
         "version"="0.3.1";
+    };
+    {
+        "name"="routing.table";
+        "description"="";
+        "version"="0.4.0";
     };
     {
         "name"="ddns.getter";
@@ -251,73 +305,8 @@
         "version"="0.3.1";
     };
     {
-        "name"="interface.ethernet";
-        "description"="";
-        "version"="0.4.0";
-    };
-    {
-        "name"="interface.list";
-        "description"="";
-        "version"="0.4.0";
-    };
-    {
-        "name"="ip.address";
-        "description"="";
-        "version"="0.4.0";
-    };
-    {
-        "name"="ip.firewall.address";
-        "description"="";
-        "version"="0.4.0";
-    };
-    {
-        "name"="ip.firewall.raw";
-        "description"="";
-        "version"="0.3.1";
-    };
-    {
-        "name"="ip.route";
-        "description"="";
-        "version"="0.4.0";
-    };
-    {
-        "name"="routing.rule";
-        "description"="routing rule tools";
-        "version"="0.4.0";
-    };
-    {
-        "name"="routing.table";
-        "description"="";
-        "version"="0.4.0";
-    };
-    {
         "name"="rspm";
         "description"="rspm";
-        "version"="0.3.1";
-    };
-    {
-        "name"="rspm.config";
-        "description"="rspm configuration tools";
-        "version"="0.4.0";
-    };
-    {
-        "name"="rspm.feature";
-        "description"="rspm feature tools";
-        "version"="0.4.0";
-    };
-    {
-        "name"="rspm.reset";
-        "description"="rspm configuration reset tools";
-        "version"="0.3.1";
-    };
-    {
-        "name"="rspm.state";
-        "description"="rspm package state tools";
-        "version"="0.3.1";
-    };
-    {
-        "name"="tool.file";
-        "description"="file utility";
         "version"="0.3.1";
     };
     {
@@ -326,13 +315,33 @@
         "version"="0.3.1";
     };
     {
-        "name"="tool.json";
-        "description"="json loads and dumps";
+        "name"="rspm.reset";
+        "description"="rspm configuration reset tools";
         "version"="0.3.1";
     };
     {
-        "name"="tool.remote";
-        "description"="remote script load tools";
+        "name"="ip.firewall.address.watcher";
+        "description"="watch and store address on specific interface";
+        "version"="0.4.0";
+    };
+    {
+        "name"="ip.firewall.address";
+        "description"="";
+        "version"="0.4.0";
+    };
+    {
+        "name"="tool.template";
+        "description"="This is a simple template utility.\nUse {{ foo }} in the template to define a template variable,\nuse {{ \"{{\" }} in the template to escaping.";
+        "version"="0.4.0";
+    };
+    {
+        "name"="ip.route";
+        "description"="";
+        "version"="0.4.0";
+    };
+    {
+        "name"="tool.file";
+        "description"="file utility";
         "version"="0.3.1";
     };
 };
@@ -351,27 +360,29 @@
     "global-functions.unicode"=9;
     "global-functions.misc"=10;
     "global-helpers"=11;
-    "cidr"=12;
-    "ddns"=13;
-    "ddns.getter"=14;
-    "ddns.provider.cloudflare"=15;
-    "interface.ethernet"=16;
+    "ip.address"=12;
+    "routing.rule"=13;
+    "tool.remote"=14;
+    "rspm.state"=15;
+    "rspm.feature"=16;
     "interface.list"=17;
-    "ip.address"=18;
-    "ip.firewall.address"=19;
-    "ip.firewall.raw"=20;
-    "ip.route"=21;
-    "routing.rule"=22;
-    "routing.table"=23;
-    "rspm"=24;
-    "rspm.config"=25;
-    "rspm.feature"=26;
-    "rspm.reset"=27;
-    "rspm.state"=28;
-    "tool.file"=29;
-    "tool.http"=30;
-    "tool.json"=31;
-    "tool.remote"=32;
+    "tool.json"=18;
+    "cidr"=19;
+    "rspm.config"=20;
+    "ip.firewall.raw"=21;
+    "interface.ethernet"=22;
+    "ddns"=23;
+    "routing.table"=24;
+    "ddns.getter"=25;
+    "ddns.provider.cloudflare"=26;
+    "rspm"=27;
+    "tool.http"=28;
+    "rspm.reset"=29;
+    "ip.firewall.address.watcher"=30;
+    "ip.firewall.address"=31;
+    "tool.template"=32;
+    "ip.route"=33;
+    "tool.file"=34;
 }
 
 # the minimum requirement packages of rspm
