@@ -331,7 +331,7 @@
     };
     {
         "name"="tool.template";
-        "description"="This is a simple template utility.\nUse {{ foo }} in the template to define a template variable,\nuse {{ \"{{\" }} in the template to escaping.";
+        "description"="A simple template utility.";
         "version"="0.4.0";
     };
     {

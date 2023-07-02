@@ -3,17 +3,19 @@
 # |       RSPM Packages      |   tool.template
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# This is a simple template utility.
-# Use {{ foo }} in the template to define a template variable,
-# use {{ "{{" }} in the template to escaping.
+# A simple template utility.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
+# This is a simple template utility.
+# Use {{ foo }} in the template to define a template variable,
+# use {{ "{{" }} in the template to escaping.
+#
 :local metaInfo {
     "name"="tool.template";
     "version"="0.4.0";
-    "description"="This is a simple template utility.\nUse {{ foo }} in the template to define a template variable,\nuse {{ \"{{\" }} in the template to escaping.";
+    "description"="A simple template utility.";
 };
 
 
@@ -306,4 +308,4 @@
     "parseVariable"=$parseVariable;
     "render"=$render;
 }
-:return $package;
+:return $package
