@@ -573,24 +573,6 @@ Type  : bool
 Value : false
 ```
 
-#### `$GetCurrentClock`
-```
-# $GetCurrentClock
-# get current info from system clock
-# same as [/system clock print as-value]
-# return: <str>                 clock info array
-
-[admin@MikroTik] > $Print [$GetCurrentClock ];
-
-Type  : array
-Key date: aug/11/2021
-Key dst-active: false
-Key gmt-offset: 0
-Key time: 20:00:00
-Key time-zone-autodetect: true
-Key time-zone-name: UTC
-```
-
 #### `$GetCurrentSDT`
 ```
 # $GetCurrentSDT

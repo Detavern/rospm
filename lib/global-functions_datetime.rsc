@@ -5,13 +5,13 @@
 # ALL global functions follows upper camel case.
 # global functions for datetime operation
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 # New structure
 # <SDT> array (system datetime)
 # {
-#     "date"=<str>;
+#     "date"="YYYY-MM-DD";
 #     "time"=<time>;
 # }
 #
@@ -35,14 +35,13 @@
 # }
 :local metaInfo {
     "name"="global-functions.datetime";
-    "version"="0.3.1";
+    "version"="0.4.1";
     "description"="global functions for datetime operation";
     "global"=true;
     "global-functions"={
         "IsSDT";
         "IsDatetime";
         "IsTimedelta";
-        "GetCurrentClock";
         "GetCurrentDate";
         "GetCurrentTime";
         "GetCurrentSDT";
@@ -152,21 +151,29 @@
 }
 
 
-# $GetCurrentClock
-# get current info from system clock
-# return: <str>                 clock array
-:global GetCurrentClock do={
-    :local clock [/system/clock/print as-value];
-    :return $clock;
-}
-
-
 # $GetCurrentDate
-# get current date from system clock
+# Get current date from system clock. There are two types of format now:
+# jan/02/1970 or 1970-01-02, and the first type will be choose.
 # return: <str>                 date
 :global GetCurrentDate do={
-    :local clock [/system/clock/print as-value];
-    :return ($clock->"date");
+    # global declare
+    :global Split;
+    :global MonthsName;
+    # local
+    :local date ([/system/clock/print as-value]->"date");
+    :if ($date~"^\\w+/\\d+/\\d+\$") do={
+        :return $date;
+    }
+    :if ($date~"^\\d+-\\d+-\\d+\$") do={
+        # convert 1970-01-02 to jan/02/1970
+        :local yymmdd [$Split $date "-"];
+        :local yy [:tonum ($yymmdd->0)];
+        :local mm [:tonum ($yymmdd->1)];
+        :local dd [:tonum ($yymmdd->2)];
+        :local mmName ($MonthsName->($mm - 1));
+        :return "$mmName/$dd/$yy";
+    }
+    :error "Global.Datetime.GetCurrentDate: unknown format of date $date";
 }
 
 
@@ -183,10 +190,13 @@
 # get current SDT from system clock
 # return: <array>               SDT array
 :global GetCurrentSDT do={
+    # global declare
+    :global GetCurrentDate;
+    # local
     :local clock [/system/clock/print as-value];
     :local dt {
         "time"=($clock->"time");
-        "date"=($clock->"date");
+        "date"=[$GetCurrentDate ];
     }
     :return $dt;
 }
