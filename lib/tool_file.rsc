@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="tool.file";
-    "version"="0.3.1";
+    "version"="0.4.1";
     "description"="file utility";
 };
 
@@ -40,11 +40,11 @@
     :local interval 200;
     :local timer 0;
     :local timerMax 5000;
-    /file print file=$Name;
+    /file/print file=$Name;
     :while ($timer < $timerMax) do={
         :delay ("$interval" . "ms");
         :set timer ($timer + $interval)
-        :if (![$IsEmpty [/file find name=$Name]]) do={
+        :if (![$IsEmpty [/file/find name=$Name]]) do={
             :return $timer;
         }
     }
@@ -70,11 +70,11 @@
     }
     # local
     :do {
-        :local result [/tool fetch "http://127.0.0.1/favicon.png" dst-path="$Name/tmp" as-value];
+        :local result [/tool/fetch "http://127.0.0.1/favicon.png" dst-path="$Name/tmp" as-value];
     } on-error={}
-    :local idList [/file find name="$Name/tmp"];
-    :if (![$IsEmpty]) do={
-        /file remove $idList;
+    :local idList [/file/find name="$Name/tmp"];
+    :if (![$IsEmpty $idList]) do={
+        /file/remove $idList;
     }
 }
 
