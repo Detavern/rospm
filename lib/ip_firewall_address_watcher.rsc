@@ -38,7 +38,6 @@
     :local pInterfaceList [$ReadOption $InterfaceList $TypeofStr];
     :local pInterval [$ReadOption $Interval $TypeofTime 00:00:15];
     # get remote resource
-    :local startupName "RSPM_STARTUP";
     :local resURL ($EnvRSPMBaseURL . "templates/schedule_ip_firewall_address_watcher.rsc");
     :local scriptTemplate [[$GetFunc "tool.remote.loadRemoteSource"] URL=$resURL Normalize=true];
     # render
@@ -52,7 +51,7 @@
     :local scheduleComment ("rspm: watch ip change on interface list " . $pInterfaceList)
 
     /system/scheduler/remove [/system/scheduler/find name=$scheduleName];
-    :put "Adding $startupName schedule...";
+    :put "Adding $scheduleName schedule...";
     # add scheduler use default policy
     :local id [/system/scheduler/add name=$scheduleName start-time=startup interval=$pInterval on-event=$scriptStr];
     :return $id;
