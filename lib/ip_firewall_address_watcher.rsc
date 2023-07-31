@@ -39,7 +39,7 @@
     :local pInterval [$ReadOption $Interval $TypeofTime 00:00:15];
     # add a placeholder for pName
     :local placeholder {"127.1.1.1"};
-    [[$GetFunc "ip.firewall.address.ensureAddressList"] List=$placeholder AddressList=$pName];
+    [[$GetFunc "ip.firewall.address.ensureAddressList"] List=$pName AddressList=$placeholder];
     # get remote resource
     :local resURL ($EnvRSPMBaseURL . "templates/schedule_ip_firewall_address_watcher.rsc");
     :local scriptTemplate [[$GetFunc "tool.remote.loadRemoteSource"] URL=$resURL Normalize=true];
