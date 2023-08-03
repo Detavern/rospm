@@ -90,8 +90,9 @@
 
 
 # $install
-# kwargs: Package=<str>         package name
-# kwargs: URL=<str>             package url, use for install ext package
+# kwargs: Package=<str>             package name
+# kwargs: URL=<str>                 package url, use for install ext package
+# opt kwargs: Suggestion=<bool>     use suggestion or not
 :local install do={
     #DEFINE global
     :global Nil;
@@ -102,8 +103,10 @@
     :global FindPackage;
     :global GetConfig;
     :global GetFunc;
+    :global InputV;
     :global InValues;
     :global TypeofStr;
+    :global TypeofBool;
     :global NewArray;
     :global ParseMetaSafe;
     :global LoadPackage;
@@ -114,8 +117,9 @@
     :global EnvRSPMBaseURL;
     :global EnvRSPMOwner;
     # local
-    :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pkgName $Package;
+    :local pURL [$ReadOption $URL $TypeofStr ""];
+    :local pSuggestion [$ReadOption $Suggestion $TypeofBool yes];
     :local pkgStr "";
     :local configPkgName "config.rspm.package";
     :local configExtPkgName "config.rspm.package.ext";
@@ -205,9 +209,17 @@
             [$LoadPackage $pkgName];
         }
     }
-    # downgrade
-    # TODO: ask continue
+    # suggest downgrading the package
     :if ($state = "LT") do={
+        :if ($pSuggestion) do={
+            :local answer [$InputV ("Remote version is lower than the local. Enter yes to downgrade.") Default=no];
+            :if ($answer) do={
+                # TODO: action
+            }
+        }
+        :put "Package $pkgName already exist, could be downgrade, skipped...";
+        :return $Nil;
+
         :local versionL (($report->"metaScript")->"version");
         :local versionR (($report->"metaConfig")->"version");
         :if (($report->"configName") = $configPkgName) do={
@@ -238,9 +250,14 @@
             [$LoadPackage $pkgName];
         }
     }
-    # reinstall
-    # TODO: ask continue
+    # suggest reinstalling the package
     :if ($state = "SAME") do={
+        :if ($pSuggestion) do={
+            :local answer [$InputV ("Remote version is equal to the local. Enter yes to reinstall.") Default=no];
+            :if (!$answer) do={
+                :return $Nil;
+            }
+        }
         :local versionR (($report->"metaConfig")->"version");
         :if (($report->"configName") = $configPkgName) do={
             :put "Reinstalling core package $pkgName, latest version is $versionR";

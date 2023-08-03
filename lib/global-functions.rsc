@@ -369,7 +369,7 @@
 # validate the type of input, could set default value
 # args: <var>                   <value>
 # args: <var>                   typeof <value>
-# args: <var>                   default value of $1
+# opt args: <var>                   default value of $1
 # return: <var>                 <value or default>
 :global ReadOption do={
     # global declare

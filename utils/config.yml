@@ -29,5 +29,6 @@ essential_package_list:
     - "tool.remote"
     - "rspm.feature"
     - "rspm.state"
+    - "rspm.action"
     - "rspm.reset"
     - "rspm"

@@ -10,8 +10,8 @@
 #
 :local metaInfo {
     "name"="rspm.state";
-    "version"="0.3.1";
-    "description"="rspm package state tools";
+    "version"="0.4.1";
+    "description"="RSPM package state tools.";
 };
 
 
@@ -70,8 +70,8 @@
 # | ----------------------- | ----------------------- | -----------------------
 # |     meta from script    |     meta from config    |    state & action
 # | ----------------------- | ----------------------- | -----------------------
-# |  exist(higher version)  |          exist          |   LT,   remove;install(downgrade)
-# |   exist(same version)   |          exist          |   SAME, remove;register(do nothing);install(reinstall)
+# |  exist(higher version)  |          exist          |   LT,   remove;downgrade
+# |   exist(same version)   |          exist          |   SAME, remove;register;reinstall
 # |         exist           |  exist(higher version)  |   GT,   remove;upgrade
 # |       not exist         |          exist          |   NES,  install
 # |         exist           |        not exist        |   NEC,  register
@@ -241,7 +241,7 @@
         :if ($versionConfig = $versionScript) do={
             :set state "SAME";
             :set ($actionList->[:len $actionList]) "remove";
-            :set ($actionList->[:len $actionList]) "install";
+            :set ($actionList->[:len $actionList]) "reinstall";
             :set ($actionList->[:len $actionList]) "register";
             :set ($adviceList->[:len $adviceList]) "The package $Package is up to date(version: $versionConfig).";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
@@ -258,7 +258,7 @@
         :if ($versionConfig < $versionScript) do={
             :set state "LT";
             :set ($actionList->[:len $actionList]) "remove";
-            :set ($actionList->[:len $actionList]) "install";
+            :set ($actionList->[:len $actionList]) "downgrade";
             :set ($adviceList->[:len $adviceList]) "The package $Package can be downgraded(version: $versionScript, latest: $versionConfig).";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.install\" to downgrade this package.";
@@ -266,11 +266,12 @@
     }
     # make result
     :local result {
+        "package"=$Package;
         "metaScript"=$metaScript;
         "metaConfig"=$metaConfig;
         "configName"=$configName;
         "state"=$state;
-        "action"=$actionList;
+        "actions"=$actionList;
         "advice"=$adviceList;
     }
     :return $result;
