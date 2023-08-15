@@ -3,15 +3,15 @@
 # |       RSPM Packages      |   rspm
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rspm
+# rspm entry
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="rspm";
-    "version"="0.3.1";
-    "description"="rspm";
+    "version"="0.4.1";
+    "description"="rspm entry";
 };
 
 
@@ -89,211 +89,8 @@
 }
 
 
-# $install
-# kwargs: Package=<str>             package name
-# kwargs: URL=<str>                 package url, use for install ext package
-# opt kwargs: Suggestion=<bool>     use suggestion or not
-:local install do={
-    #DEFINE global
-    :global Nil;
-    :global IsNum;
-    :global IsNothing;
-    :global ReadOption;
-    :global Replace;
-    :global FindPackage;
-    :global GetConfig;
-    :global GetFunc;
-    :global InputV;
-    :global InValues;
-    :global TypeofStr;
-    :global TypeofBool;
-    :global NewArray;
-    :global ParseMetaSafe;
-    :global LoadPackage;
-    :global UpdateConfig;
-    :global ValidatePackageContent;
-    :global GlobalCacheFuncRemovePrefix;
-    # env
-    :global EnvRSPMBaseURL;
-    :global EnvRSPMOwner;
-    # local
-    :local pkgName $Package;
-    :local pURL [$ReadOption $URL $TypeofStr ""];
-    :local pSuggestion [$ReadOption $Suggestion $TypeofBool yes];
-    :local pkgStr "";
-    :local configPkgName "config.rspm.package";
-    :local configExtPkgName "config.rspm.package.ext";
-    :put "Loading local configuration: $configPkgName...";
-    :local config [$GetConfig $configPkgName];
-    :put "Loading local configuration: $configExtPkgName...";
-    :local configExt [$GetConfig $configExtPkgName];
-    # check latest
-    :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
-    :if (!$isLatest) do={
-        :error "rspm.install: local package list is out of date, please update first.";
-    }
-    # install by url
-    :if ($pURL != "") do={
-        :put "Get: $pURL";
-        :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pURL Normalize=true];
-        # safe load
-        :local metaR [$ParseMetaSafe $pkgStr];
-        :set pkgName ($metaR->"name");
-        :local metaUrl ($metaR->"url");
-        :local va {"type"="code";"url"=true};
-        :put "Validating package $pkgName...";
-        :local pkg [$NewArray ];
-        :set ($pkg->"metaInfo") $metaR;
-        :if (![$ValidatePackageContent $pkg $va]) do={
-            :error "rspm.install: package validate failed, check log for detail";
-        };
-        # set proxy url
-        :if ($metaUrl != $pURL) do={
-            :set ($metaR->"proxyUrl") $pURL;
-        }
-        # check pkgName
-        :if ([$IsNum (($config->"packageMapping")->$pkgName)]) do={
-            :put "Same package name $pkgName found in package list.";
-            :put "Using \"rspm.install\" with package name $pkgName instead.";
-            :error "rspm.install: same package name.";
-        }
-        # update config
-        :put "Updating config.rspm.package.ext...";
-        :local pkgExtNum (($configExt->"packageMapping")->$pkgName);
-        :local pm ($configExt->"packageMapping");
-        :local pl ($configExt->"packageList");
-        :if ([$IsNothing $pkgExtNum]) do={
-            :set ($pm->$pkgName) [:len $pl];
-            :set ($pl->[:len $pl]) $metaR;
-        } else {
-            :set ($pl->$pkgExtNum) $metaR;
-        }
-        [$UpdateConfig "config.rspm.package.ext" $configExt];
-    }
-    # generate report
-    :put "Check package $pkgName state...";
-    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
-    :local state ($report->"state");
-    :if (![$InValues "install" ($report->"action")]) do={
-        :foreach ad in ($report->"advice") do={
-            :put $ad;
-        }
-        :error "rspm.install: state not match.";
-    }
-    # in available action
-    :if ($state = "NES") do={
-        :local versionR (($report->"metaConfig")->"version");
-        :if (($report->"configName") = $configPkgName) do={
-            :put "Installing core package $pkgName, latest version is $versionR";
-            :local pn [$Replace $pkgName "." "_"];
-            :local pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
-            :put "Get: $pkgUrl";
-            :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-        } else {
-            :put "Installing extension package $pkgName, latest version is $versionR";
-            :local pkgUrl (($report->"metaConfig")->"proxyUrl");
-            :if ([$IsNothing $pkgUrl]) do={
-                :set pkgUrl (($report->"metaConfig")->"url");
-            }
-            :if ($pkgStr = "") do={
-                :put "Get: $pkgUrl";
-                :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-            }
-        };
-        :put "Writing source into repository...";
-        :local fileName [$Replace $pkgName "." "_"];
-        /system/script/add name=$fileName source=$pkgStr owner=$EnvRSPMOwner;
-        # if global, load it
-        :if ((($report->"metaConfig")->"global") = true) do={
-            :put "Loading global package...";
-            [$LoadPackage $pkgName];
-        }
-    }
-    # suggest downgrading the package
-    :if ($state = "LT") do={
-        :if ($pSuggestion) do={
-            :local answer [$InputV ("Remote version is lower than the local. Enter yes to downgrade.") Default=no];
-            :if ($answer) do={
-                # TODO: action
-            }
-        }
-        :put "Package $pkgName already exist, could be downgrade, skipped...";
-        :return $Nil;
-
-        :local versionL (($report->"metaScript")->"version");
-        :local versionR (($report->"metaConfig")->"version");
-        :if (($report->"configName") = $configPkgName) do={
-            :put "Downgrading core package $pkgName, latest version is $versionR(current: $versionL)";
-            :local pn [$Replace $pkgName "." "_"];
-            :local pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
-            :put "Get: $pkgUrl";
-            :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-        } else {
-            :put "Downgrading extension package $pkgName, latest version is $versionR(current: $versionL)";
-            :local pkgUrl (($report->"metaConfig")->"proxyUrl");
-            :if ([$IsNothing $pkgUrl]) do={
-                :set pkgUrl (($report->"metaConfig")->"url");
-            }
-            :if ($pkgStr = "") do={
-                :put "Get: $pkgUrl";
-                :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-            }
-        };
-        :put "Writing source into repository...";
-        /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
-        :put "Clean function cache...";
-        [$GlobalCacheFuncRemovePrefix $pkgName];
-        # if global, load it
-        :if ((($report->"metaConfig")->"global") = true) do={
-            :put "Loading global package...";
-            [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
-            [$LoadPackage $pkgName];
-        }
-    }
-    # suggest reinstalling the package
-    :if ($state = "SAME") do={
-        :if ($pSuggestion) do={
-            :local answer [$InputV ("Remote version is equal to the local. Enter yes to reinstall.") Default=no];
-            :if (!$answer) do={
-                :return $Nil;
-            }
-        }
-        :local versionR (($report->"metaConfig")->"version");
-        :if (($report->"configName") = $configPkgName) do={
-            :put "Reinstalling core package $pkgName, latest version is $versionR";
-            :local pn [$Replace $pkgName "." "_"];
-            :local pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
-            :put "Get: $pkgUrl";
-            :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-        } else {
-            :put "Reinstalling extension package $pkgName, latest version is $versionR";
-            :local pkgUrl (($report->"metaConfig")->"proxyUrl");
-            :if ([$IsNothing $pkgUrl]) do={
-                :set pkgUrl (($report->"metaConfig")->"url");
-            }
-            :if ($pkgStr = "") do={
-                :put "Get: $pkgUrl";
-                :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-            }
-        };
-        :put "Writing source into repository...";
-        /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
-        :put "Clean function cache...";
-        [$GlobalCacheFuncRemovePrefix $pkgName];
-        # if global, load it
-        :if ((($report->"metaConfig")->"global") = true) do={
-            :put "Loading global package...";
-            [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
-            [$LoadPackage $pkgName];
-        }
-    }
-    :put "The package has been installed.";
-    :return $Nil;
-}
-
-
 # $update
-# update local package configuration file
+# Update local package configuration file.
 # kwargs: Package=<str>         package name
 :local update do={
     #DEFINE global
@@ -401,170 +198,152 @@
 }
 
 
-# $upgrade
-# upgrade package according to local package list.
+# $register
 # kwargs: Package=<str>         package name
-:local upgrade do={
+:local register do={
     #DEFINE global
     :global Nil;
-    :global IsStr;
-    :global IsNothing;
-    :global InValues;
-    :global FindPackage;
-    :global LoadPackage;
     :global GetFunc;
-    :global GetConfig;
-    :global GlobalCacheFuncRemovePrefix;
-    # env
-    :global EnvRSPMBaseURL;
-    :global EnvRSPMOwner;
-    # local
-    :local configPkgName "config.rspm.package";
-    :put "Loading local configuration: $configPkgName...";
-    :local config [$GetConfig $configPkgName];
+    # opt
+    :local pkgName $Package;
     # generate report
-    :put "Check package $Package state...";
-    :local report [[$GetFunc "rspm.state.checkState"] Package=$Package];
+    :put "Check package $pkgName state...";
+    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
     :local state ($report->"state");
-    :if (![$InValues "upgrade" ($report->"action")]) do={
-        :foreach ad in ($report->"advice") do={
-            :put $ad;
-        }
-        :error "rspm.upgrade: state not match.";
+    # register
+    :if ($state = "NEC") do={
+        [[$GetFunc "rspm.action.register"] Report=$report];
+        :return $Nil;
     }
-    # in available action
-    :if ($state = "GT") do={
-        :local pkgUrl;
-        :local versionR (($report->"metaConfig")->"version");
-        :local versionL (($report->"metaScript")->"version");
-        :if (($report->"configName") = $configPkgName) do={
-            :put "Upgrading core package $Package, latest version is $versionR(current: $versionL)";
-            :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
-            :if (!$isLatest) do={
-                :error "rspm.upgrade: local package list is out of date, please update first.";
-            }
-            :set pkgUrl ($EnvRSPMBaseURL . "lib/$Package.rsc")
-        } else {
-            :put "Upgrading extension package $Package, latest version is $versionR(current: $versionL)";
-            :set pkgUrl (($report->"metaConfig")->"proxyUrl");
-            :if ([$IsNothing $pkgUrl]) do={
-                :set pkgUrl (($report->"metaConfig")->"url");
-            }
-        }
-        :put "Get: $pkgUrl";
-        :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-        :put "Writing source into repository...";
-        /system/script/set [$FindPackage $Package] source=$pkgStr owner=$EnvRSPMOwner;
-        :put "Clean function cache...";
-        :local pkgName (($report->"metaConfig")->"name");
-        [$GlobalCacheFuncRemovePrefix $pkgName];
-        # if global, load it
-        :if ((($report->"metaConfig")->"global") = true) do={
-            :put "Loading global package...";
-            [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
-            [$LoadPackage $pkgName];
-        }
+    # fallback
+    :foreach ad in ($report->"advice") do={
+        :put $ad;
     }
-    :put "The package has been upgraded.";
-    :return $Nil;
+    :error "rspm.register: state not match.";
+}
+
+
+# $install
+# kwargs: Package=<str>             package name
+# kwargs: URL=<str>                 package url, use for install ext package
+# opt kwargs: Suggestion=<bool>     use suggestion or not
+:local install do={
+    #DEFINE global
+    :global Nil;
+    :global InputV;
+    :global GetFunc;
+    :global ReadOption;
+    :global TypeofStr;
+    :global TypeofBool;
+    # opt
+    :local pkgName $Package;
+    :local pURL [$ReadOption $URL $TypeofStr ""];
+    :local pSuggestion [$ReadOption $Suggestion $TypeofBool yes];
+    # TODO: use specific version
+    :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
+    :if (!$isLatest) do={
+        :error "rspm.install: local package list is out of date, please update first.";
+    }
+    # register ext package by url
+    :if ($pURL != "") do={
+        [[$GetFunc "rspm.action.registerExt"] URL=$pURL];
+    }
+    # generate report
+    :put "Check package $pkgName state...";
+    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
+    :local state ($report->"state");
+    # install
+    :if ($state = "NES") do={
+        [[$GetFunc "rspm.action.install"] Report=$report];
+        :return $Nil;
+    }
+    # suggest downgrading the package
+    :if ($state = "LT") do={
+        :if ($pSuggestion) do={
+            :local answer [$InputV ("Remote version is lower than the local. Enter yes to downgrade.") Default=no];
+            :if ($answer) do={
+                [[$GetFunc "rspm.action.downgrade"] Report=$report];
+                :return $Nil;
+            }
+        }
+        :put "Package $pkgName already exist, could be downgrade, skipped...";
+        :return $Nil;
+    }
+    # suggest reinstalling the package
+    :if ($state = "SAME") do={
+        :if ($pSuggestion) do={
+            :local answer [$InputV ("Remote version is equal to the local. Enter yes to reinstall.") Default=no];
+            :if (!$answer) do={
+                [[$GetFunc "rspm.action.reinstall"] Report=$report];
+                :return $Nil;
+            }
+        }
+        :put "Package $pkgName already exist, could be reinstall, skipped...";
+        :return $Nil;
+    }
+    # fallback
+    :foreach ad in ($report->"advice") do={
+        :put $ad;
+    }
+    :error "rspm.install: state not match.";
 }
 
 
 # $remove
-# remove an installed package from local repository.
 # kwargs: Package=<str>         package name
 :local remove do={
     #DEFINE global
     :global Nil;
     :global GetFunc;
     :global GetConfig;
-    :global InValues;
-    :global FindPackage;
-    :global GlobalCacheFuncRemovePrefix;
     # local
     :local configPkgName "config.rspm.package";
     :put "Loading local configuration: $configPkgName...";
     :local config [$GetConfig $configPkgName];
+    # opt
+    :local pkgName $Package;
     # generate report
-    :put "Check package $Package state...";
-    :local report [[$GetFunc "rspm.state.checkState"] Package=$Package];
+    :put "Check package $pkgName state...";
+    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
     :local state ($report->"state");
-    :if (![$InValues "remove" ($report->"action")]) do={
-        :foreach ad in ($report->"advice") do={
-            :put $ad;
-        }
-        :error "rspm.upgrade: state not match.";
+    # comment if not installed
+    :if ($state = "NES") do={
+        :put "Package $pkgName has not yet installed.";
+        :error "rspm.remove: state not match.";
     }
-    # in available action
-    :local epkgList ($config->"essentialPackageList");
-    :if ([$InValues $Package $epkgList]) do={
-        :put "Package $Package is an essential package for RSPM.";
-        :put "Removing this package will corrupt RSPM.";
-        :error "rspm.upgrade: package is essential";
-    } else {
-        :put "Removing the package $Package...";
-        /system/script/remove [$FindPackage $Package];
-        :put "Clean function cache...";
-        :local pkgName (($report->"metaConfig")->"name");
-        [$GlobalCacheFuncRemovePrefix $pkgName];
-        # remove global
-        :local isGlobal (($report->"metaScript")->"global");
-        :if ($isGlobal = true) do={
-            :put "Removing global functions and variables from environment...";
-            [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
-        }
-        :put "The package has been removed.";
+    # comment to register it first
+    :if ($state = "NEC") do={
+        :put "Package $pkgName found, but it is an orphaned one. You should register it first.";
+        :error "rspm.remove: state not match.";
     }
+    # remove
+    [[$GetFunc "rspm.action.remove"] Report=$report];
     :return $Nil;
 }
 
 
-# $register
-# register a local package into package manager.
+# $upgrade
 # kwargs: Package=<str>         package name
-:local register do={
+:local upgrade do={
     #DEFINE global
     :global Nil;
     :global GetFunc;
-    :global GetConfig;
-    :global InValues;
-    :global LoadPackage;
-    :global UpdateConfig;
-    # local
-    :local configPkgName "config.rspm.package";
-    :local configExtPkgName "config.rspm.package.ext";
-    :put "Loading local configuration: $configPkgName...";
-    :local config [$GetConfig $configPkgName];
-    :put "Loading local configuration: $configExtPkgName...";
-    :local configExt [$GetConfig $configExtPkgName];
+    # opt
+    :local pkgName $Package;
     # generate report
-    :put "Check package $Package state...";
-    :local report [[$GetFunc "rspm.state.checkState"] Package=$Package];
+    :put "Check package $pkgName state...";
+    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
     :local state ($report->"state");
-    :if (![$InValues "register" ($report->"action")]) do={
-        :foreach ad in ($report->"advice") do={
-            :put $ad;
-        }
-        :error "rspm.register: state not match.";
+    # upgrade
+    :if ($state = "GT") do={
+        [[$GetFunc "rspm.action.upgrade"] Report=$report];
+        :return $Nil;
     }
-    # in available action
-    :if ($state = "NEC") do={
-        :local meta ($report->"metaScript");
-        :local pkgName ($meta->"name");
-        :local ml ($configExt->"packageList");
-        :local mp ($configExt->"packageMapping");
-        :set ($mp->$pkgName) [:len $ml];
-        :set ($ml->[:len $ml]) $meta;
-        :put "Updating extension package list...";
-        [$UpdateConfig $configExtPkgName $configExt];
-        # if global, load it
-        :if (($meta->"global") = true) do={
-            :put "Loading global package...";
-            [$LoadPackage $pkgName];
-        }
-    };
-    :put "The package has been registed.";
-    :return $Nil;
+    # fallback
+    :foreach ad in ($report->"advice") do={
+        :put $ad;
+    }
+    :error "rspm.upgrade: state not match.";
 }
 
 
@@ -593,54 +372,23 @@
     # check latest
     :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
     :if (!$isLatest) do={
-        :error "rspm.upgrade: local package list is out of date, please update first.";
+        :error "rspm.upgradeAll: local package list is out of date, please update first.";
     }
     # generate upgrade list
     :local reportList [[$GetFunc "rspm.state.checkAllState"] ];
     :local upgradeList [$NewArray ];
     :foreach report in $reportList do={
-        :if ([$InValues "upgrade" ($report->"action")]) do={
+        :if (($report->"state") = "GT") do={
             :set ($upgradeList->[:len $upgradeList]) $report;
         }
     };
     # do upgrade
     :local lenUpradeList [:len $upgradeList];
-    :put "$lenUpradeList packages need upgrade.";  
+    :put "$lenUpradeList packages need upgrade.";
     :foreach report in $upgradeList do={
-        :local state ($report->"state");
-        :if ($state = "GT") do={
-            :local pkgName (($report->"metaConfig")->"name");
-            :if (($report->"configName") = $configPkgName) do={
-                :local versionR (($report->"metaConfig")->"version");
-                :put "Upgrading core package $pkgName, latest version is $versionR";
-                :local pkgUrl ($EnvRSPMBaseURL . "lib/$pkgName.rsc")
-                :put "Get: $pkgUrl";
-                :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-                :put "Writing source into repository...";
-                /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
-            } else {
-                :local versionR (($report->"metaConfig")->"version");
-                :put "Upgrading extension package $pkgName, latest version is $versionR";
-                :local pkgUrl (($report->"metaConfig")->"proxyUrl");
-                :if ([$IsNothing $pkgUrl]) do={
-                    :set pkgUrl (($report->"metaConfig")->"url");
-                }
-                :put "Get: $pkgUrl";
-                :local pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-                :put "Writing source into repository...";
-                /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
-            }
-            # if global, load it
-            :if ((($report->"metaConfig")->"global") = true) do={
-                :put "Loading global package...";
-                [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
-                [$LoadPackage $pkgName];
-            }
-        }
+        [[$GetFunc "rspm.action.upgrade"] Report=$report];
     };
-    :put "Flush function cache...";
-    [$GlobalCacheFuncFlush ];
-    :put "$lenUpradeList packages have been upgraded.";  
+    :put "$lenUpradeList packages have been upgraded.";
     :return $Nil;
 }
 
@@ -648,11 +396,11 @@
 :local package {
     "metaInfo"=$metaInfo;
     "firstRun"=$firstRun;
-    "install"=$install;
     "update"=$update;
-    "upgrade"=$upgrade;
-    "remove"=$remove;
     "register"=$register;
+    "install"=$install;
+    "remove"=$remove;
+    "upgrade"=$upgrade;
     "upgradeAll"=$upgradeAll;
 }
 :return $package;

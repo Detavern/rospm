@@ -264,6 +264,7 @@
 
 
 # $upgrade
+# Upgrade an outdated package to the latest.
 # kwargs: Report=<array->str>(<report>)     package report
 :local upgrade do={
     #DEFINE global
@@ -331,6 +332,7 @@
 
 
 # $downgrade
+# TODO: For development only. This is not a literally downgrade function.
 # kwargs: Report=<array->str>(<report>)     package report
 :local downgrade do={
     #DEFINE global
