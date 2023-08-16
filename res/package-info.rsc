@@ -246,8 +246,8 @@
     };
     {
         "name"="rspm.state";
-        "description"="rspm package state tools";
-        "version"="0.3.1";
+        "description"="RSPM package state tools.";
+        "version"="0.4.1";
     };
     {
         "name"="rspm.feature";
@@ -306,8 +306,13 @@
     };
     {
         "name"="rspm";
-        "description"="rspm";
-        "version"="0.3.1";
+        "description"="rspm entry";
+        "version"="0.4.1";
+    };
+    {
+        "name"="rspm.action";
+        "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
+        "version"="0.4.1";
     };
     {
         "name"="tool.http";
@@ -376,13 +381,14 @@
     "ddns.getter"=25;
     "ddns.provider.cloudflare"=26;
     "rspm"=27;
-    "tool.http"=28;
-    "rspm.reset"=29;
-    "ip.firewall.address.watcher"=30;
-    "ip.firewall.address"=31;
-    "tool.template"=32;
-    "ip.route"=33;
-    "tool.file"=34;
+    "rspm.action"=28;
+    "tool.http"=29;
+    "rspm.reset"=30;
+    "ip.firewall.address.watcher"=31;
+    "ip.firewall.address"=32;
+    "tool.template"=33;
+    "ip.route"=34;
+    "tool.file"=35;
 }
 
 # the minimum requirement packages of rspm
@@ -401,6 +407,7 @@
     "tool.remote";
     "rspm.feature";
     "rspm.state";
+    "rspm.action";
     "rspm.reset";
     "rspm";
 }
