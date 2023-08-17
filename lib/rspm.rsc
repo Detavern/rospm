@@ -42,37 +42,21 @@
         :local state ($report->"state");
         # remote version lt local, warn it and let user determine
         :if ($state = "LT") do={
-            :local pn (($report->"metaConfig")->"name");
-            :local pvr (($report->"metaConfig")->"version");
-            :local pvl (($report->"metaScript")->"version");
-            :put "The package $pn its remote version is $pvr, but local version is $pvl.";
-            :local flag true;
-            :local flagInstall false;
-            :while ($flag) do={
-                :local answer [$InputV "Enter [Y]es to install(downgrade to) remote version, [N]o to keep local version." ];
-                :if ($answer = "Y" or $answer = "N") do={
-                    :set flag false;
-                    :set flagInstall ($answer = "Y");
-                } else {
-                    :put "Unrecognized value, input again!";
-                }
-            };
-            # keep or not
-            :if ($flagInstall) do={
-                [[$GetFunc "rspm.install"] Package=$pn];
-            };
+            :local answer [$InputV ("Remote version is lower than the local. Enter yes to downgrade.") Default=no];
+            :if ($answer) do={
+                [[$GetFunc "rspm.action.downgrade"] Report=$report];
+            }
         };
         # remote version gt local, let user know it will be updated
         :if ($state = "GT") do={
-            :local pn (($report->"metaConfig")->"name");
-            [[$GetFunc "rspm.upgrade"] Package=$pn];
+            [[$GetFunc "rspm.action.upgrade"] Report=$report];
         };
         # not exist in local repository, use config to install it
         :if ($state = "NES") do={
             :local pn (($report->"metaConfig")->"name");
             :local epkgList ($packageInfo->"essentialPackageList");
             :if ([$InValues $pn $epkgList]) do={
-                [[$GetFunc "rspm.install"] Package=$pn];
+                [[$GetFunc "rspm.action.install"] Report=$report];
             }
         };
     }
@@ -273,7 +257,7 @@
     :if ($state = "SAME") do={
         :if ($pSuggestion) do={
             :local answer [$InputV ("Remote version is equal to the local. Enter yes to reinstall.") Default=no];
-            :if (!$answer) do={
+            :if ($answer) do={
                 [[$GetFunc "rspm.action.reinstall"] Report=$report];
                 :return $Nil;
             }
