@@ -515,7 +515,7 @@
     }
     :local hint $1;
     :local valueStr;
-    # nothing
+    # no default value
     :if ([$IsNothing $Default]) do={
         # no default value
         :set valueStr [$Input $hint];
@@ -524,13 +524,12 @@
         }
         :return [$TypeRecovery $valueStr];
     }
-    # nil value
-    :if ([:len $Default] = 0) do={
-        :return $Nil;
-    }
     # has default value
     :set valueStr [$Input ("$hint (Default: $Default)")];
     :if ([:len $valueStr] = 0) do={
+        :if ([:len $Default] = 0) do={
+            :return $Nil;
+        }
         :return [$TypeRecovery $Default];
     }
     :return [$TypeRecovery $valueStr];
