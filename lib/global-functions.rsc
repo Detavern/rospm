@@ -499,6 +499,7 @@
 # $InputV
 # Get value from interaction and recover its type and value.
 # If input is empty and default is not setted, error will be raised.
+# If input is empty and default is a nil value, nil will be returned.
 # args: <str>                   hint
 # opt kwargs: Default=<var>     default value
 # return: <var>                 recovered input value
@@ -525,7 +526,11 @@
         :return [$TypeRecovery $valueStr];
     }
     # has default value
-    :set valueStr [$Input ("$hint (Default: $Default)")];
+    :local defaultStr $Default;
+    :if ([:len $Default] = 0) do={
+        :set defaultStr "\$Nil";
+    }
+    :set valueStr [$Input ("$hint (Default: $defaultStr)")];
     :if ([:len $valueStr] = 0) do={
         :if ([:len $Default] = 0) do={
             :return $Nil;
