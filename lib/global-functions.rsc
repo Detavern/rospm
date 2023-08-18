@@ -44,7 +44,7 @@
 };
 
 # $IsNil
-# validate if the variable is nil.
+# Validate if the variable is nil.
 # Some example of nil situation:
 # {
 #     :local v;
@@ -64,7 +64,7 @@
 
 
 # $IsNothing
-# validate if the variable is nothing.
+# Validate if the variable is nothing.
 # Some example of nothing situation:
 # {
 #     :local v;
@@ -87,7 +87,7 @@
 
 
 # $IsNum
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsNum do={
     :global TypeofNum;
@@ -100,7 +100,7 @@
 
 
 # $IsStr
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsStr do={
     :global TypeofStr;
@@ -113,7 +113,7 @@
 
 
 # $IsBool
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsBool do={
     :global TypeofBool;
@@ -126,7 +126,7 @@
 
 
 # $IsTime
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsTime do={
     :global TypeofTime;
@@ -139,7 +139,7 @@
 
 
 # $IsArray
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsArray do={
     :global TypeofArray;
@@ -152,7 +152,7 @@
 
 
 # $IsIP
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsIP do={
     :global TypeofIP;
@@ -165,7 +165,7 @@
 
 
 # $IsIPv6
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsIPv6 do={
     :global TypeofIPv6;
@@ -178,7 +178,7 @@
 
 
 # $IsIPPrefix
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsIPPrefix do={
     :global TypeofIPPrefix;
@@ -191,7 +191,7 @@
 
 
 # $IsIPv6Prefix
-# validate the type of variable.
+# Validate the type of variable.
 # args: <var>                   variable
 :global IsIPv6Prefix do={
     :global TypeofIPv6Prefix;
@@ -204,8 +204,7 @@
 
 
 # $IsEmpty
-# TODO: migrate it!
-# validate if $1 is an array and is empty.
+# Validate if $1 is an array and is empty.
 # if $1 is not an array, then raise error.
 # if $1 is empty, return false.
 # args: <array>                 array
@@ -222,7 +221,7 @@
 
 
 # $IsStrN
-# validate if $1 is a str and not empty.
+# Validate if $1 is a str and not empty.
 # else, return false.
 # args: <var>                   variable
 :global IsStrN do={
@@ -237,7 +236,7 @@
 
 
 # $IsArrayN
-# validate if $1 is an array and not empty.
+# Validate if $1 is an array and not empty.
 # else, return false.
 # args: <var>                   variable
 :global IsArrayN do={
@@ -252,7 +251,7 @@
 
 
 # $IsDict
-# validate if an array is a dictionary(contain any key which type is string).
+# Validate if an array is a dictionary(contain any key which type is string).
 # args: <array>                 array
 :global IsDict do={
     :global IsNum;
@@ -270,7 +269,7 @@
 
 
 # $NewArray
-# get a new empty array.
+# Get a new empty array.
 # return: <array>               <empty array>
 :global NewArray do={
     :return [:toarray ""]
@@ -278,7 +277,7 @@
 
 
 # $Assert
-# assert the condition, print error message if false.
+# Assert the condition, print error message if false.
 # args: <bool>                  condition
 # args: <str>                   error message
 :global Assert do={
@@ -289,7 +288,7 @@
 
 
 # $Print
-# print the detail of the variable
+# Print the type and value of the variable.
 # TODO: embbed array
 # args: <var>                   variable
 :global Print do={
@@ -314,7 +313,7 @@
 
 
 # $PrintK
-# print the keys of an array
+# Print the keys of an array.
 # args: <array>                 array
 :global PrintK do={
     # global declare
@@ -335,7 +334,7 @@
 
 
 # $GetGlobal
-# get global variable's value by its name
+# Get global variable's value by its name.
 # args: <name>                  name
 :global GetGlobal do={
     :local cmd ":global $1;:return \$$1";
@@ -346,7 +345,7 @@
 
 
 # $TypeRecovery
-# recover type and value from a string
+# Recover type and value from a string.
 # args: <str>                   value to recover
 # return: <var>                 recovered value
 :global TypeRecovery do={
@@ -366,10 +365,11 @@
 
 
 # $ReadOption
-# validate the type of input, could set default value
+# Read and validate the input, could set default value.
+# If nothing, return nil.
 # args: <var>                   <value>
 # args: <var>                   typeof <value>
-# opt args: <var>                   default value of $1
+# opt args: <var>               default value of $1
 # return: <var>                 <value or default>
 :global ReadOption do={
     # global declare
@@ -456,7 +456,7 @@
 
 
 # $InKeys
-# check if an element exists in the keys of an array
+# Check if an element exists in the keys of an array.
 # args: <var>                   key to seach
 # args: <array->var>            array to search in
 # return: <bool>                in or not
@@ -471,7 +471,7 @@
 
 
 # $InKeys
-# check if an element exists in the values of an array
+# Check if an element exists in the values of an array
 # args: <var>                   value to seach
 # args: <array->var>            array to search in
 # return: <bool>                in or not
@@ -486,7 +486,7 @@
 
 
 # $Input
-# get value from interaction
+# Get value from interaction.
 # args: <str>                   hint
 # return: <var>                 value
 :global Input do={
@@ -497,8 +497,8 @@
 
 
 # $InputV
-# get value from interaction and recover its type and value.
-# if input is empty and default is not setted, error will be raised.
+# Get value from interaction and recover its type and value.
+# If input is empty and default is not setted, error will be raised.
 # args: <str>                   hint
 # opt kwargs: Default=<var>     default value
 # return: <var>                 recovered input value
