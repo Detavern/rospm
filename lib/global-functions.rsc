@@ -504,6 +504,7 @@
 # return: <var>                 recovered input value
 :global InputV do={
     # global declare
+    :global Nil;
     :global IsNothing;
     :global IsStr;
     :global Input;
@@ -514,6 +515,7 @@
     }
     :local hint $1;
     :local valueStr;
+    # nothing
     :if ([$IsNothing $Default]) do={
         # no default value
         :set valueStr [$Input $hint];
@@ -521,14 +523,17 @@
             :error "Global.InputV: input needed";
         }
         :return [$TypeRecovery $valueStr];
-    } else {
-        # has default value
-        :set valueStr [$Input ("$hint (Default: $Default)")];
-        :if ([:len $valueStr] = 0) do={
-            :return [$TypeRecovery $Default];
-        }
-        :return [$TypeRecovery $valueStr];
     }
+    # nil value
+    :if ([:len $Default] = 0) do={
+        :return $Nil;
+    }
+    # has default value
+    :set valueStr [$Input ("$hint (Default: $Default)")];
+    :if ([:len $valueStr] = 0) do={
+        :return [$TypeRecovery $Default];
+    }
+    :return [$TypeRecovery $valueStr];
 }
 
 
