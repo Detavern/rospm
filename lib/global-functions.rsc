@@ -366,7 +366,7 @@
 
 # $ReadOption
 # Read and validate the input, could set default value.
-# If nothing, return nil.
+# Nil value is not allowed as input. If nothing and no default, return nil.
 # args: <var>                   <value>
 # args: <var>                   typeof <value>
 # opt args: <var>               default value of $1
@@ -417,10 +417,10 @@
     }
     # type specific
     :if ($2 = $TypeofBool) do={
-        :if ($1 = "false") do={
+        :if ($1 = "false" or $1 = "no") do={
             :return false;
         };
-        :if ($1 = "true") do={
+        :if ($1 = "true" or $1 = "yes") do={
             :return true;
         }
         :local b [:tobool $1];
