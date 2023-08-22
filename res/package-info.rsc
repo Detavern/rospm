@@ -272,7 +272,7 @@
     {
         "name"="rspm.config";
         "description"="rspm configuration tools";
-        "version"="0.4.0";
+        "version"="0.4.1";
     };
     {
         "name"="ip.firewall.raw";
