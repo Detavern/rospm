@@ -1,3 +1,4 @@
+:global RSPMInstallerBaseURL "https://raw.githubusercontent.com/Detavern/rspm/master/";
 :global RSPMInstallerConfig {
     "RSPMRepoName"="Detavern/rspm";
     "RSPMBranch"="master";
@@ -11,11 +12,11 @@
 
 # args: <str>           name of package
 :local installPackage do={
+    :global RSPMInstallerBaseURL;
     :global RSPMInstallerConfig;
     :global RSPMInstallerInput;
     :local pkgName $1;
-    :local baseURL (($RSPMInstallerConfig->"RSPMRepoName") . ($RSPMInstallerConfig->"RSPMBranch") . "/");
-    :local URL ($baseURL . "lib/" . $pkgName . ".rsc");
+    :local URL ($RSPMInstallerBaseURL . "lib/" . $pkgName . ".rsc");
     :local Owner ($RSPMInstallerConfig->"RSPMOwner");
     :put "Downloading file $pkgName...";
     :local result [/tool/fetch url=$URL output="user" as-value];
@@ -51,7 +52,7 @@
 :put "|                                                     |";
 :put "=======================================================";
 :put "Installer initializing ...";
-:local devMark "develop-";
+:local devMark "develop";
 :if ([:pick ($RSPMInstallerConfig->"RSPMBranch") 0 [:len $devMark]] = $devMark) do={
     :local answer [$RSPMInstallerInput "WARNING: this is a DEVELOPMENT version, FOR DEVELOPER ONLY (y/N)"];
     :if ($answer != "y" and $answer != "yes") do={

@@ -38,7 +38,7 @@
     # github
     :if ($repoType = "github") do={
         :local branch ($context->"RSPMBranch");
-        :return "https://raw.githubusercontent.com/$repoName/$branch/"
+        :return "https://raw.githubusercontent.com/$repoName/$branch/";
     }
     # NOTE: add other types here
     # fallback
@@ -165,9 +165,8 @@
     # get package config
     :local configPkg [$GetConfig "config.rspm.package"];
     :local env ($configPkg->"environment");
-    :local baseURL (($env->"RSPMRepoName") . ($env->"RSPMBranch") . "/");
     # load remote package info
-    :local packageInfoURL ($baseURL . "res/package-info-ext.rsc");
+    :local packageInfoURL (($env->"RSPMBaseURL") . "res/package-info-ext.rsc");
     :put "Get: $packageInfoURL";
     :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
     # update config
@@ -176,7 +175,7 @@
     }
     # make new config.rspm.package
     [$CreateConfig $configName $config \
-        Force=true Owner=($environmentPkg->"RSPMOwner") \
+        Force=true Owner=($env->"RSPMOwner") \
         Description="Auto-generated rspm package extension configuration."];
     :put "Configuration: $configName initialized."
 }
