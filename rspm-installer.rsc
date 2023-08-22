@@ -1,10 +1,11 @@
 :global RSPMInstallerConfig {
-    "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
+    "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/";
+    "RSPMBranch"="master";
     "RSPMOwner"="rspm";
 };
 :global RSPMInstallerInput do={
     :terminal style escaped;
-    :put $1; 
+    :put $1;
     :return;
 }
 
@@ -13,7 +14,8 @@
     :global RSPMInstallerConfig;
     :global RSPMInstallerInput;
     :local pkgName $1;
-    :local URL (($RSPMInstallerConfig->"RSPMBaseURL") . "lib/" . $pkgName . ".rsc");
+    :local baseURL (($RSPMInstallerConfig->"RSPMBaseURL") . ($RSPMInstallerConfig->"RSPMBranch") . "/");
+    :local URL ($baseURL . "lib/" . $pkgName . ".rsc");
     :local Owner ($RSPMInstallerConfig->"RSPMOwner");
     :put "Downloading file $pkgName...";
     :local result [/tool/fetch url=$URL output="user" as-value];
@@ -31,7 +33,7 @@
             }
         }
         # remove exist one
-        /system/script/remove numbers=$idList; 
+        /system/script/remove numbers=$idList;
     }
     # add script to repo
     :local scriptID [/system/script/add name=$pkgName owner=$Owner source=$scriptStr];
@@ -49,12 +51,15 @@
 :put "|                                                     |";
 :put "=======================================================";
 :put "Installer initializing ...";
-:local answer [$RSPMInstallerInput "WARNING: this is an APLHA version, FOR TEST ONLY (y/N)"];
-:if ($answer != "y") do={
-    :put "Installation abort, use";
-    :put "/import rspm-installer.rsc";
-    :put "to run again.";
-    :return "";
+:local devMark "develop-";
+:if ([:pick ($RSPMInstallerConfig->"RSPMBranch") 0 [:len $devMark]] = $devMark) do={
+    :local answer [$RSPMInstallerInput "WARNING: this is a DEVELOPMENT version, FOR DEVELOPER ONLY (y/N)"];
+    :if ($answer != "y" and $answer != "yes") do={
+        :put "Installation abort, use";
+        :put "/import rspm-installer.rsc";
+        :put "to run again.";
+        :return "";
+    }
 }
 
 :local sidList [:toarray ""];
