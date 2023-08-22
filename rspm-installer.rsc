@@ -1,5 +1,5 @@
 :global RSPMInstallerConfig {
-    "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/";
+    "RSPMRepoName"="Detavern/rspm";
     "RSPMBranch"="master";
     "RSPMOwner"="rspm";
 };
@@ -14,7 +14,7 @@
     :global RSPMInstallerConfig;
     :global RSPMInstallerInput;
     :local pkgName $1;
-    :local baseURL (($RSPMInstallerConfig->"RSPMBaseURL") . ($RSPMInstallerConfig->"RSPMBranch") . "/");
+    :local baseURL (($RSPMInstallerConfig->"RSPMRepoName") . ($RSPMInstallerConfig->"RSPMBranch") . "/");
     :local URL ($baseURL . "lib/" . $pkgName . ".rsc");
     :local Owner ($RSPMInstallerConfig->"RSPMOwner");
     :put "Downloading file $pkgName...";
@@ -86,6 +86,7 @@
 [$installPackage "tool_remote"];
 [$installPackage "rspm_config"];
 [$installPackage "rspm_state"];
+[$installPackage "rspm_action"];
 [$installPackage "rspm_reset"];
 [$installPackage "rspm"];
 # invoke rspm.firstRun to complete the installation

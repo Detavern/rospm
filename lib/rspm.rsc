@@ -25,16 +25,14 @@
     :global GetFunc;
     :global InValues;
     :global InputV;
-    # local
+    # check
     :local context [$ReadOption $Context $TypeofArray];
-    # get remote version
-    :local versionURL (($context->"RSPMBaseURL") . "res/version.rsc");
-    :local version [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
-    :set ($context->"RSPMVersion") $version;
     # init config
-    [[$GetFunc "rspm.config.initConfig"]];
-    [[$GetFunc "rspm.config.initPackageConfig"] Context=$context];
-    [[$GetFunc "rspm.config.initPackageExtConfig"]];
+    [[$GetFunc "rspm.config.generateConfig"]];
+    :set context [[$GetFunc "rspm.config.generatePackageConfig"] Context=$context];
+    [[$GetFunc "rspm.config.generatePackageExtConfig"]];
+    # local
+    :local baseURL ($context->"RSPMBaseURL");
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
     :local reportList [[$GetFunc "rspm.state.checkAllState"] CheckExt=false CheckVersion=false];
@@ -62,7 +60,7 @@
     }
     # register startup
     :local startupName "RSPM_STARTUP";
-    :local startupResURL (($context->"RSPMBaseURL") . "res/startup.rsc");
+    :local startupResURL ($baseURL . "res/startup.rsc");
     :put "Get: $startupResURL";
     :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
     /system/scheduler/remove [/system/scheduler/find name=$startupName];

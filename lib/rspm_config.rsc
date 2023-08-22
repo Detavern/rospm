@@ -10,13 +10,44 @@
 #
 :local metaInfo {
     "name"="rspm.config";
-    "version"="0.4.0";
+    "version"="0.4.1";
     "description"="rspm configuration tools";
 };
 
 
-# $initConfig
-:local initConfig do={
+# $generateBaseURL
+# Generate base url by context.
+# kwargs: Context=<array>       context comes from installer or others
+# return: <str>                 base url
+:local generateBaseURL do={
+    #DEFINE GLOBAL
+    :global IsNil;
+    :global IsStr;
+    :global TypeofArray;
+    :global ReadOption;
+    # check
+    :local context [$ReadOption $Context $TypeofArray];
+    :local repoType ($context->"RSPMRepoType");
+    :local repoName ($context->"RSPMRepoName");
+    :if (![$IsStr $repoType]) do={
+        :error "rspm.config.generateBaseURL: need RSPMRepoType in \$Context";
+    };
+    :if (![$IsStr $repoName]) do={
+        :error "rspm.config.generateBaseURL: need RSPMRepoName in \$Context";
+    };
+    # github
+    :if ($repoType = "github") do={
+        :local branch ($context->"RSPMBranch");
+        :return "https://raw.githubusercontent.com/$repoName/$branch/"
+    }
+    # NOTE: add other types here
+    # fallback
+    :error "rspm.config.generateBaseURL: RepoType not recognized: $repoType";
+}
+
+
+# $generateConfig
+:local generateConfig do={
     #DEFINE GLOBAL
     :global NewArray;
     :global GetFunc;
@@ -49,11 +80,14 @@
 }
 
 
-# $initPackageConfig
+# $generatePackageConfig
+# Generate package config by context and return modified context.
 # kwargs: Context=<array>       context comes from installer or others
-:local initPackageConfig do={
+# return: <array>               modified context
+:local generatePackageConfig do={
     #DEFINE GLOBAL
     :global IsNil;
+    :global IsNothing;
     :global TypeofArray;
     :global ReadOption;
     :global NewArray;
@@ -67,21 +101,27 @@
     :local configName "config.rspm.package";
     :local config {
         "environment"={
-            "RSPMBaseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
+            "RSPMRepoType"="github";
+            "RSPMRepoName"="Detavern/rspm";
+            "RSPMBranch"="master";
             "RSPMOwner"="rspm";
         };
     }
-    # update environment
+    # update environment from context
     :foreach k,v in $context do={
         :set (($config->"environment")->$k) $v;
     }
-    :local environment ($config->"environment");
-    # add resource version
-    :local resVersionURL (($environment->"RSPMBaseURL") . "res/version.rsc");
+    # add RSPMBaseURL & RSPMVersion
+    :if ([$IsNothing (($config->"environment")->"RSPMBaseURL")]) do={
+        :set (($config->"environment")->"RSPMBaseURL") \
+            [[$GetFunc "rspm.config.generateBaseURL"] Context=($config->"environment")];
+    }
+    :local baseURL (($config->"environment")->"RSPMBaseURL");
+    :local resVersionURL ($baseURL . "res/version.rsc");
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
     :set (($config->"environment")->"RSPMVersion") $resVersion;
     # load remote package info
-    :local packageInfoURL (($environment->"RSPMBaseURL") . "res/package-info.rsc");
+    :local packageInfoURL ($baseURL . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
     :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
     # update config
@@ -89,15 +129,17 @@
         :set ($config->$k) $v;
     }
     # make new config.rspm.package
-    [$CreateConfig $configName $config Force=true \
-        Owner=($environment->"RSPMOwner") Description="Auto-generated rspm package configuration."];
+    [$CreateConfig $configName $config \
+        Force=true Owner=(($config->"environment")->"RSPMOwner") \
+        Description="Auto-generated rspm package configuration."];
     :put "Configuration: $configName initialized."
+    :return ($config->"environment");
 }
 
 
-# $initPackageExtConfig
+# $generatePackageExtConfig
 # kwargs: Context=<array>       context comes from installer or others
-:local initPackageExtConfig do={
+:local generatePackageExtConfig do={
     #DEFINE GLOBAL
     :global IsNil;
     :global TypeofArray;
@@ -122,9 +164,10 @@
     :local environment ($config->"environment");
     # get package config
     :local configPkg [$GetConfig "config.rspm.package"];
-    :local environmentPkg ($configPkg->"environment");
+    :local env ($configPkg->"environment");
+    :local baseURL (($env->"RSPMRepoName") . ($env->"RSPMBranch") . "/");
     # load remote package info
-    :local packageInfoURL (($environmentPkg->"RSPMBaseURL") . "res/package-info-ext.rsc");
+    :local packageInfoURL ($baseURL . "res/package-info-ext.rsc");
     :put "Get: $packageInfoURL";
     :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
     # update config
@@ -132,16 +175,18 @@
         :set ($config->$k) $v;
     }
     # make new config.rspm.package
-    [$CreateConfig $configName $config Force=true \
-        Owner=($environmentPkg->"RSPMOwner") Description="Auto-generated rspm package extension configuration."];
+    [$CreateConfig $configName $config \
+        Force=true Owner=($environmentPkg->"RSPMOwner") \
+        Description="Auto-generated rspm package extension configuration."];
     :put "Configuration: $configName initialized."
 }
 
 
 :local package {
     "metaInfo"=$metaInfo;
-    "initConfig"=$initConfig;
-    "initPackageConfig"=$initPackageConfig;
-    "initPackageExtConfig"=$initPackageExtConfig;
+    "generateBaseURL"=$generateBaseURL;
+    "generateConfig"=$generateConfig;
+    "generatePackageConfig"=$generatePackageConfig;
+    "generatePackageExtConfig"=$generatePackageExtConfig;
 }
-:return $package;
+:return $package;

@@ -487,6 +487,7 @@ $Print [$LoadGlobalVar "Nothing"];
 
 ## change value in another func
 
+### v6 is okay
 {
     :local js {
         "name"="alice";
@@ -497,7 +498,22 @@ $Print [$LoadGlobalVar "Nothing"];
         :set ($JSP->"age") 25;
         $Print $JSP;
     }
-    [$foo JSP=$js]
+    [$foo JSP=$js];
+    $Print $js;
+}
+
+### v7 should be
+{
+    :local js {
+        "name"="alice";
+        "age"="20";
+        "id"="1";
+    }
+    :local foo do={
+        :set ($JSP->"age") 25;
+        :return $JSP;
+    }
+    :set js [$foo JSP=$js];
     $Print $js;
 }
 
