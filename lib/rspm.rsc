@@ -40,9 +40,10 @@
         :local state ($report->"state");
         # remote version lt local, warn it and let user determine
         :if ($state = "LT") do={
-            :local answer [$InputV ("Remote version is lower than the local. Enter yes to downgrade.") Default=no];
+            :put "Local version is higher than the remote. This might be due to some local modifications.";
+            :local answer [$InputV ("Enter yes to reinstall.") Default=no];
             :if ($answer) do={
-                [[$GetFunc "rspm.action.downgrade"] Report=$report];
+                [[$GetFunc "rspm.action.reinstall"] Report=$report];
             }
         };
         # remote version gt local, let user know it will be updated
@@ -239,22 +240,24 @@
         [[$GetFunc "rspm.action.install"] Report=$report];
         :return $Nil;
     }
-    # suggest downgrading the package
+    # suggest reinstalling the package
     :if ($state = "LT") do={
         :if ($pSuggestion) do={
-            :local answer [$InputV ("Remote version is lower than the local. Enter yes to downgrade.") Default=no];
+            :put "Local version is higher than the remote. This might be due to some local modifications.";
+            :local answer [$InputV ("Enter yes to reinstall.") Default=yes];
             :if ($answer) do={
-                [[$GetFunc "rspm.action.downgrade"] Report=$report];
+                [[$GetFunc "rspm.action.reinstall"] Report=$report];
                 :return $Nil;
             }
         }
-        :put "Package $pkgName already exist, could be downgrade, skipped...";
+        :put "Package $pkgName may be modified, could be reinstall, skipped...";
         :return $Nil;
     }
     # suggest reinstalling the package
     :if ($state = "SAME") do={
         :if ($pSuggestion) do={
-            :local answer [$InputV ("Remote version is equal to the local. Enter yes to reinstall.") Default=no];
+            :put "Local version is equal to the remote.";
+            :local answer [$InputV ("Enter yes to reinstall.") Default=no];
             :if ($answer) do={
                 [[$GetFunc "rspm.action.reinstall"] Report=$report];
                 :return $Nil;
