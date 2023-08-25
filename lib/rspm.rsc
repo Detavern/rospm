@@ -148,9 +148,9 @@
     :foreach meta in ($newConfigExt->"packageList") do={
         :local pkgURL;
         :if ([$IsNothing ($meta->"proxyUrl")]) do={
-            :set pkgURL ($meta->"url"); 
+            :set pkgURL ($meta->"url");
         } else {
-            :set pkgURL ($meta->"proxyUrl"); 
+            :set pkgURL ($meta->"proxyUrl");
         }
         :local extName ($meta->"name");
         :local extVerL ($meta->"version");
@@ -226,9 +226,9 @@
     :if (!$isLatest) do={
         :error "rspm.install: local package list is out of date, please update first.";
     }
-    # register ext package by url
+    # install ext package by url
     :if ($pURL != "") do={
-        [[$GetFunc "rspm.action.registerExt"] URL=$pURL];
+        [[$GetFunc "rspm.action.installExt"] URL=$pURL];
     }
     # generate report
     :put "Check package $pkgName state...";
@@ -354,6 +354,7 @@
     # check latest
     :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
     :if (!$isLatest) do={
+        # TODO: interactive to update
         :error "rspm.upgradeAll: local package list is out of date, please update first.";
     }
     # generate upgrade list

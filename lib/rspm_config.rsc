@@ -46,6 +46,40 @@
 }
 
 
+# $generateVersionBaseURL
+# Generate base url of version control by context.
+# kwargs: Context=<array>       context comes from installer or others
+# return: <str>                 base url of version control
+:local generateVersionBaseURL do={
+    #DEFINE GLOBAL
+    :global IsNil;
+    :global IsStr;
+    :global TypeofArray;
+    :global ReadOption;
+    # check
+    :local context [$ReadOption $Context $TypeofArray];
+    :local repoType ($context->"RSPMRepoType");
+    :local repoName ($context->"RSPMRepoName");
+    :local version ($context->"RSPMVersion");
+    :if (![$IsStr $repoType]) do={
+        :error "rspm.config.generateVersionBaseURL: need RSPMRepoType in \$Context";
+    };
+    :if (![$IsStr $repoName]) do={
+        :error "rspm.config.generateVersionBaseURL: need RSPMRepoName in \$Context";
+    };
+    :if (![$IsStr $version]) do={
+        :error "rspm.config.generateVersionBaseURL: need RSPMVersion in \$Context";
+    };
+    # github
+    :if ($repoType = "github") do={
+        :return "https://raw.githubusercontent.com/$repoName/v$version/";
+    }
+    # NOTE: add other types here
+    # fallback
+    :error "rspm.config.generateVersionBaseURL: RepoType not recognized: $repoType";
+}
+
+
 # $generateConfig
 :local generateConfig do={
     #DEFINE GLOBAL
@@ -111,15 +145,22 @@
     :foreach k,v in $context do={
         :set (($config->"environment")->$k) $v;
     }
-    # add RSPMBaseURL & RSPMVersion
+    # add RSPMBaseURL
     :if ([$IsNothing (($config->"environment")->"RSPMBaseURL")]) do={
         :set (($config->"environment")->"RSPMBaseURL") \
             [[$GetFunc "rspm.config.generateBaseURL"] Context=($config->"environment")];
     }
+    # query remote version
     :local baseURL (($config->"environment")->"RSPMBaseURL");
     :local resVersionURL ($baseURL . "res/version.rsc");
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
+    # add RSPMVersion as current version
     :set (($config->"environment")->"RSPMVersion") $resVersion;
+    # add RSPMVersionBaseURL
+    :if ([$IsNothing (($config->"environment")->"RSPMVersionBaseURL")]) do={
+        :set (($config->"environment")->"RSPMVersionBaseURL") \
+            [[$GetFunc "rspm.config.generateVersionBaseURL"] Context=($config->"environment")];
+    }
     # load remote package info
     :local packageInfoURL ($baseURL . "res/package-info.rsc");
     :put "Get: $packageInfoURL";
@@ -184,6 +225,7 @@
 :local package {
     "metaInfo"=$metaInfo;
     "generateBaseURL"=$generateBaseURL;
+    "generateVersionBaseURL"=$generateVersionBaseURL;
     "generateConfig"=$generateConfig;
     "generatePackageConfig"=$generatePackageConfig;
     "generatePackageExtConfig"=$generatePackageExtConfig;

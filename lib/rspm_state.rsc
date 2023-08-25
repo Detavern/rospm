@@ -16,7 +16,7 @@
 
 
 # $checkVersion
-# check if the package list version is the latest.
+# Check if the package list version is up-to-date.
 # opt kwargs: ForceUpdate=<bool>        false(default), force reload remote version
 # return: <bool>                        latest or not
 :local checkVersion do={
@@ -60,7 +60,7 @@
 
 
 # $checkState
-# compare package in local repository and configuration file.
+# Compare package in local repository and configuration file.
 # | ----------------------- | ----------------------- | -----------------------
 # |     meta from script    |     meta from config    |    state & advice
 # | ----------------------- | ----------------------- | -----------------------
@@ -70,9 +70,9 @@
 # | ----------------------- | ----------------------- | -----------------------
 # |     meta from script    |     meta from config    |    state & action
 # | ----------------------- | ----------------------- | -----------------------
-# |  exist(higher version)  |          exist          |   LT,   remove;downgrade
-# |   exist(same version)   |          exist          |   SAME, remove;register;reinstall
-# |         exist           |  exist(higher version)  |   GT,   remove;upgrade
+# |  exist(higher version)  |          exist          |   LT,   remove;reinstall;downgrade
+# |   exist(same version)   |          exist          |   SAME, remove;reinstall;downgrade
+# |         exist           |  exist(higher version)  |   GT,   remove;upgrade;downgrade
 # |       not exist         |          exist          |   NES,  install
 # |         exist           |        not exist        |   NEC,  register
 # | ----------------------- | ----------------------- | -----------------------
@@ -238,30 +238,36 @@
     :if ($flag) do={
         :local versionConfig ($metaConfig->"version");
         :local versionScript ($metaScript->"version");
+        # TODO: better version compare
+        :if ($versionConfig < $versionScript) do={
+            :set state "LT";
+            :set ($actionList->[:len $actionList]) "remove";
+            :set ($actionList->[:len $actionList]) "reinstall";
+            :set ($actionList->[:len $actionList]) "downgrade";
+            :set ($adviceList->[:len $adviceList]) "The package $Package can be reinstall(version: $versionScript, latest: $versionConfig).";
+            :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
+            :set ($adviceList->[:len $adviceList]) "Using \"rspm.install\" to reinstall this package.";
+            :set ($adviceList->[:len $adviceList]) "Using \"rspm.downgrade\" to downgrade this package.";
+        }
         :if ($versionConfig = $versionScript) do={
             :set state "SAME";
             :set ($actionList->[:len $actionList]) "remove";
             :set ($actionList->[:len $actionList]) "reinstall";
-            :set ($actionList->[:len $actionList]) "register";
+            :set ($actionList->[:len $actionList]) "downgrade";
             :set ($adviceList->[:len $adviceList]) "The package $Package is up to date(version: $versionConfig).";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.install\" to reinstall this package.";
+            :set ($adviceList->[:len $adviceList]) "Using \"rspm.downgrade\" to downgrade this package.";
         }
         :if ($versionConfig > $versionScript) do={
             :set state "GT";
             :set ($actionList->[:len $actionList]) "remove";
             :set ($actionList->[:len $actionList]) "upgrade";
+            :set ($actionList->[:len $actionList]) "downgrade";
             :set ($adviceList->[:len $adviceList]) "The package $Package can be upgraded(version: $versionScript, latest: $versionConfig).";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.upgrade\" to upgrade this package.";
-        }
-        :if ($versionConfig < $versionScript) do={
-            :set state "LT";
-            :set ($actionList->[:len $actionList]) "remove";
-            :set ($actionList->[:len $actionList]) "downgrade";
-            :set ($adviceList->[:len $adviceList]) "The package $Package can be downgraded(version: $versionScript, latest: $versionConfig).";
-            :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
-            :set ($adviceList->[:len $adviceList]) "Using \"rspm.install\" to downgrade this package.";
+            :set ($adviceList->[:len $adviceList]) "Using \"rspm.downgrade\" to downgrade this package.";
         }
     }
     # make result

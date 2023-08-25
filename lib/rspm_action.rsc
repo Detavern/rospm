@@ -16,7 +16,7 @@
 
 
 # $register
-# Register a local package into package manager.
+# Register a local package into extension config of package manager.
 # If it is a global package, load it.
 # kwargs: Report=<array->str>(<report>)     package report
 :local register do={
@@ -62,80 +62,8 @@
 }
 
 
-# $registerExt
-# Register an extension package into package manager.
-# kwargs: URL=<str>                 package url, use for install ext package
-:local registerExt do={
-    #DEFINE global
-    :global Nil;
-    :global IsNil;
-    :global IsNothing;
-    :global TypeofStr;
-    :global Replace;
-    :global GetFunc;
-    :global InValues;
-    :global ReadOption;
-    :global ParseMetaSafe;
-    :global ValidatePackageContent;
-    :global GetConfig;
-    :global UpdateConfig;
-    :global LoadPackage;
-    # env
-    :global EnvRSPMOwner;
-    # init
-    :local pkgStr "";
-    :local configPkgName "config.rspm.package";
-    :local configExtPkgName "config.rspm.package.ext";
-    :local config [$GetConfig $configPkgName];
-    :local configExt [$GetConfig $configExtPkgName];
-    # read opt
-    :local pkgUrl [$ReadOption $URL $TypeofStr];
-    # check params
-    :if ([$IsNil $pkgUrl]) do={
-        :error "rspm.action.registerExt: require \$URL";
-    }
-    # install by url
-    :put "Get: $pkgUrl";
-    :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
-    # load meta info from package string
-    :local metaR [$ParseMetaSafe $pkgStr];
-    :local pkgName ($metaR->"name");
-    :local metaUrl ($metaR->"url");
-    # validate package
-    :local va {"type"="code";"url"=true};
-    :put "Validating package $pkgName...";
-    :local pkg [$NewArray ];
-    :set ($pkg->"metaInfo") $metaR;
-    :if (![$ValidatePackageContent $pkg $va]) do={
-        :error "rspm.action.registerExt: package validate failed, check log for detail";
-    };
-    # set proxy url
-    :if ($metaUrl != $pkgUrl) do={
-        :set ($metaR->"proxyUrl") $pkgUrl;
-    }
-    # ensure package name not in config
-    :if ([$IsNum (($config->"packageMapping")->$pkgName)]) do={
-        :put "Same package name $pkgName found in package list.";
-        :put "Using \"rspm.install\" with package name $pkgName instead.";
-        :error "rspm.action.registerExt: not an extension package.";
-    }
-    # update ext config
-    :put "Updating config.rspm.package.ext...";
-    :local pkgExtNum (($configExt->"packageMapping")->$pkgName);
-    :local pm ($configExt->"packageMapping");
-    :local pl ($configExt->"packageList");
-    :if ([$IsNothing $pkgExtNum]) do={
-        :set ($pm->$pkgName) [:len $pl];
-        :set ($pl->[:len $pl]) $metaR;
-    } else {
-        :set ($pl->$pkgExtNum) $metaR;
-    }
-    [$UpdateConfig $configExtPkgName $configExt];
-    :return $Nil;
-}
-
-
 # $install
+# Install a core package.
 # kwargs: Report=<array->str>(<report>)     package report
 :local install do={
     #DEFINE global
@@ -197,7 +125,81 @@
 }
 
 
+# $installExt
+# Install an extension package into package manager.
+# kwargs: URL=<str>                 package url, use for install ext package
+:local installExt do={
+    #DEFINE global
+    :global Nil;
+    :global IsNil;
+    :global IsNothing;
+    :global TypeofStr;
+    :global Replace;
+    :global GetFunc;
+    :global InValues;
+    :global ReadOption;
+    :global ParseMetaSafe;
+    :global ValidatePackageContent;
+    :global GetConfig;
+    :global UpdateConfig;
+    :global LoadPackage;
+    # env
+    :global EnvRSPMOwner;
+    # init
+    :local pkgStr "";
+    :local configPkgName "config.rspm.package";
+    :local configExtPkgName "config.rspm.package.ext";
+    :local config [$GetConfig $configPkgName];
+    :local configExt [$GetConfig $configExtPkgName];
+    # read opt
+    :local pkgUrl [$ReadOption $URL $TypeofStr];
+    # check params
+    :if ([$IsNil $pkgUrl]) do={
+        :error "rspm.action.installExt: require \$URL";
+    }
+    # install by url
+    :put "Get: $pkgUrl";
+    :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
+    # load meta info from package string
+    :local metaR [$ParseMetaSafe $pkgStr];
+    :local pkgName ($metaR->"name");
+    :local metaUrl ($metaR->"url");
+    # validate package
+    :local va {"type"="code";"url"=true};
+    :put "Validating package $pkgName...";
+    :local pkg [$NewArray ];
+    :set ($pkg->"metaInfo") $metaR;
+    :if (![$ValidatePackageContent $pkg $va]) do={
+        :error "rspm.action.installExt: package validate failed, check log for detail";
+    };
+    # set proxy url
+    :if ($metaUrl != $pkgUrl) do={
+        :set ($metaR->"proxyUrl") $pkgUrl;
+    }
+    # ensure package name not in config
+    :if ([$IsNum (($config->"packageMapping")->$pkgName)]) do={
+        :put "Same package name $pkgName found in package list.";
+        :put "Using \"rspm.install\" with package name $pkgName instead.";
+        :error "rspm.action.installExt: not an extension package.";
+    }
+    # update ext config
+    :put "Updating config.rspm.package.ext...";
+    :local pkgExtNum (($configExt->"packageMapping")->$pkgName);
+    :local pm ($configExt->"packageMapping");
+    :local pl ($configExt->"packageList");
+    :if ([$IsNothing $pkgExtNum]) do={
+        :set ($pm->$pkgName) [:len $pl];
+        :set ($pl->[:len $pl]) $metaR;
+    } else {
+        :set ($pl->$pkgExtNum) $metaR;
+    }
+    [$UpdateConfig $configExtPkgName $configExt];
+    :return $Nil;
+}
+
+
 # $reinstall
+# Reinstall the package by current state report.
 # kwargs: Report=<array->str>(<report>)     package report
 :local reinstall do={
     #DEFINE global
@@ -332,30 +334,40 @@
 
 
 # $downgrade
-# TODO: For development only. This is not a literally downgrade function.
+# Downgrade the package to a specific version.
+# kwargs: To=<str>                          target downgradable version
 # kwargs: Report=<array->str>(<report>)     package report
 :local downgrade do={
     #DEFINE global
     :global Nil;
     :global IsNil;
+    :global IsStrN;
     :global IsNothing;
+    :global TypeofStr;
     :global TypeofArray;
     :global Replace;
-    :global GetFunc;
     :global InValues;
+    :global GetFunc;
+    :global GetConfig;
     :global ReadOption;
     :global FindPackage;
     :global LoadPackage;
     :global GlobalCacheFuncRemovePrefix;
     # env
-    :global EnvRSPMBaseURL;
+    :global EnvRSPMVersionBaseURL;
     :global EnvRSPMOwner;
     # init
     :local pkgUrl "";
     :local pkgStr "";
     :local configPkgName "config.rspm.package";
+    :local config [$GetConfig $configPkgName];
     # read opt
+    :local version [$ReadOption $To $TypeofStr];
     :local report [$ReadOption $Report $TypeofArray];
+    # check env
+    :if (![$IsStrN $EnvRSPMVersionBaseURL]) do={
+        :error "rspm.action.downgrade: \$EnvRSPMVersionBaseURL is empty!";
+    }
     # check params
     :if ([$IsNil $report]) do={
         :error "rspm.action.downgrade: require \$Report";
@@ -366,22 +378,30 @@
     :if (![$InValues "downgrade" ($report->"actions")]) do={
         :error "rspm.action.downgrade: action not found.";
     }
-    # downgrade
+    # check is essential or not
+    :local epkgList ($config->"essentialPackageList");
+    :if ([$InValues $pkgName $epkgList]) do={
+        :put "Package $pkgName is an essential package for RSPM.";
+        :put "Downgrading this package may corrupt RSPM.";
+        :error "rspm.action.downgrade: target package is essential.";
+    }
+    # check is downgradable
     :local versionR (($report->"metaConfig")->"version");
     :local versionL (($report->"metaScript")->"version");
+    :if (($report->"configName") != $configPkgName) do={
+        :error "rspm.action.downgrade: only support core package now!";
+    }
+    :if ($version >= $versionR) do={
+        :error "rspm.action.downgrade: target version($version) is higher than the remote.";
+    }
+    if ($version = $versionL) do={
+        :error "rspm.action.downgrade: target version($version) is same with local";
+    }
     # determine pkg url
-    :if (($report->"configName") = $configPkgName) do={
-        :put "Downgrading core package $pkgName, latest version is $versionR(current: $versionL)";
-        :local pn [$Replace $pkgName "." "_"];
-        :set pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
-    } else {
-        :put "Downgrading extension package $pkgName, latest version is $versionR";
-        # if proxy url exists, use it instead of raw url
-        :set pkgUrl (($report->"metaConfig")->"proxyUrl");
-        :if ([$IsNothing $pkgUrl]) do={
-            :set pkgUrl (($report->"metaConfig")->"url");
-        }
-    };
+    :put "Downgrading core package $pkgName to $version(current version is $versionL)";
+    :local pn [$Replace $pkgName "." "_"];
+    :set pkgUrl ($EnvRSPMVersionBaseURL . "lib/$pn.rsc");
+    # downloading
     :put "Get: $pkgUrl";
     :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
     :put "Writing source into repository...";
@@ -429,7 +449,7 @@
     :if (![$InValues "remove" ($report->"actions")]) do={
         :error "rspm.action.remove: action not found.";
     }
-    # check removable or not
+    # check is essential or not
     :local epkgList ($config->"essentialPackageList");
     :if ([$InValues $pkgName $epkgList]) do={
         :put "Package $pkgName is an essential package for RSPM.";
@@ -454,8 +474,8 @@
 :local package {
     "metaInfo"=$metaInfo;
     "register"=$register;
-    "registerExt"=$registerExt;
     "install"=$install;
+    "installExt"=$installExt;
     "reinstall"=$reinstall;
     "upgrade"=$upgrade;
     "downgrade"=$downgrade;
