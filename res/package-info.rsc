@@ -151,12 +151,11 @@
     {
         "name"="global-functions.package";
         "description"="global functions for package operation";
-        "version"="0.3.1";
+        "version"="0.4.2";
         "global"=true;
         "global-functions"={
             "FindPackage";
             "ValidatePackageContent";
-            "ValidatePackage";
             "GetSource";
             "GetMeta";
             "ParseMetaSafe";
@@ -307,12 +306,12 @@
     {
         "name"="rspm";
         "description"="rspm entry";
-        "version"="0.4.1";
+        "version"="0.4.2";
     };
     {
         "name"="rspm.action";
         "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
-        "version"="0.4.1";
+        "version"="0.4.2";
     };
     {
         "name"="tool.http";
@@ -347,7 +346,7 @@
     {
         "name"="tool.file";
         "description"="file utility";
-        "version"="0.4.1";
+        "version"="0.4.2";
     };
 };
 

@@ -18,6 +18,7 @@ class BaseNode:
         cls_name = self.__class__.__name__
         return f'<{cls_name} >'
 
+
 class CMDNode(BaseNode):
     def __init__(self, start, end, is_global, value):
         super().__init__(start, end)
@@ -52,7 +53,7 @@ class VarNode(BaseNode):
 
     def __repr__(self):
         cls_name = self.__class__.__name__
-        brief = repr(self.value)[:30] if type(self.value) is str else self.value 
+        brief = repr(self.value)[:30] if type(self.value) is str else self.value
         return f'<{cls_name} name={self.name} value={brief}>'
 
 
@@ -210,7 +211,7 @@ class PackageParser:
         end = self.stream.tell()
         node = HeaderNode(start, end)
         self.append_node(node)
-            
+
     def skip_line(self):
         while True:
             ch = self.read()

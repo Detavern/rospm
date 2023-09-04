@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="rspm";
-    "version"="0.4.1";
+    "version"="0.4.2";
     "description"="rspm entry";
 };
 
@@ -160,8 +160,12 @@
         :local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
         # check pkg
         :local va {"type"="code";"name"=($meta->"name");"url"=true};
-        :if (![$ValidatePackageContent $pkgExt $va]) do={
-            :put "Error occured when loading remote resource of $extName, check log for detail";
+        :local vres [$ValidatePackageContent $pkgExt $va];
+        if (!($vres->"flag")) do={
+            :put "Error occured when loading remote resource of \"$extName\":";
+            :foreach reason in ($vres->"reasons") do={
+                :put "  $reason";
+            }
         } else {
             :local extVerR (($pkgExt->"metaInfo")->"version");
             :if ($extVerL < $extVerR) do={
@@ -389,4 +393,4 @@
     "upgrade"=$upgrade;
     "upgradeAll"=$upgradeAll;
 }
-:return $package;
+:return $package;

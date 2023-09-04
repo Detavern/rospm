@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="rspm.action";
-    "version"="0.4.1";
+    "version"="0.4.2";
     "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
 };
 
@@ -46,10 +46,9 @@
     }
     # register
     :local meta ($report->"metaScript");
-    :local ml ($configExt->"packageList");
-    :local mp ($configExt->"packageMapping");
-    :set ($mp->$pkgName) [:len $ml];
-    :set ($ml->[:len $ml]) $meta;
+    :local plen [:len ($configExt->"packageList")];
+    :set (($configExt->"packageMapping")->$pkgName) $plen;
+    :set (($configExt->"packageList")->$plen) $meta;
     :put "Updating extension package list...";
     [$UpdateConfig $configExtPkgName $configExt];
     # if global, load it
@@ -169,9 +168,14 @@
     :put "Validating package $pkgName...";
     :local pkg [$NewArray ];
     :set ($pkg->"metaInfo") $metaR;
-    :if (![$ValidatePackageContent $pkg $va]) do={
-        :error "rspm.action.installExt: package validate failed, check log for detail";
-    };
+    :local vres [$ValidatePackageContent $pkg $va];
+    if (!($vres->"flag")) do={
+        :put "There are some errors in the meta info, check it first!";
+        :foreach reason in ($vres->"reasons") do={
+            :put "  $reason";
+        }
+        :error "rspm.action.installExt: could not validate target package.";
+    }
     # set proxy url
     :if ($metaUrl != $pkgUrl) do={
         :set ($metaR->"proxyUrl") $pkgUrl;

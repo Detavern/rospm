@@ -5,18 +5,17 @@
 # ALL global functions follows upper camel case.
 # global functions for package operation
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.package";
-    "version"="0.3.1";
+    "version"="0.4.2";
     "description"="global functions for package operation";
     "global"=true;
     "global-functions"={
         "FindPackage";
         "ValidatePackageContent";
-        "ValidatePackage";
         "GetSource";
         "GetMeta";
         "ParseMetaSafe";
@@ -49,80 +48,74 @@
 
 
 # $ValidatePackageContent
-# args: <array->str>            package content array
-# args: <array->str>            validate array
-# return: <bool>                validate flag
+# va example:
+# {
+#     "name"=<target package name>;
+#     "type"=<code,config,env>;
+#     "url"=<>;
+# }
+# result example:
+# {
+#     "flag"=<bool>;
+#     "reasons"={"reason1";"reason2"};
+# }
+# args: <array->str>                package content array
+# args: <array->str>(<va>)          validate array
+# return: <array->str>(<result>)    validate result
 :global ValidatePackageContent do={
     :global InKeys;
     :global IsArray;
     :global ReadOption;
     :global TypeofStr;
-    # check meta
-    :local metaList ($1->"metaInfo");
-    :if (![$IsArray $metaList]) do={
-        :log warning "Global.Package.ValidatePackageContent: metaInfo not found in this package";
-        :return false;
-    }
+    :global NewArray;
     # check validate array
     :local va $2;
     :if (![$IsArray $va]) do={
-        :error "Global.Package.ValidatePackageContent: \$2 should be a validate array";
+        :error "Global.Package.ValidatePackageContent: \$2 should be a validate array.";
     }
+    # prepare result
+    :local res {
+        "flag"=false;
+        "reasons"=[$NewArray ];
+    }
+    # check meta
+    :local metaList ($1->"metaInfo");
+    :if (![$IsArray $metaList]) do={
+        :set (($res->"reasons")->[:len ($res->"reasons")]) "metaInfo not found in this package";
+        :return $res;
+    }
+
+    :local metaName ($metaList->"name");
     # va: check meta name
     :if ([$InKeys "name" $va]) do={
-        :if (($metaList->"name") != ($va->"name")) do={
-            :log warning "Global.Package.ValidatePackageContent: mismatch package name: $pkgName";
-            :return false;
+        :local vat ($va->"name");
+        :if ($metaName != $vat) do={
+            :set (($res->"reasons")->[:len ($res->"reasons")]) \
+                "mismatch package name, current $metaName, want $vat";
         }
     }
     # va: check meta type
     :if ([$InKeys "type" $va]) do={
         :local metaType [$ReadOption ($metaList->"type") $TypeofStr "code"];
+        :local vat ($va->"type");
         :if ($metaType != ($va->"type")) do={
-            :log warning "Global.Package.ValidatePackageContent: mismatch package type: $pkgName";
-            :return false;
+            :set (($res->"reasons")->[:len ($res->"reasons")]) \
+                "mismatch package type, current $metaType, want $vat";
         }
     }
     # va: check meta url
     :if ([$InKeys "url" $va]) do={
         :local metaUrl [$ReadOption ($metaList->"url") $TypeofStr ""];
         :if ($metaUrl = "") do={
-            :log warning "Global.Package.ValidatePackageContent: url not found in meta: $pkgName";
-            :return false;
+            :set (($res->"reasons")->[:len ($res->"reasons")]) \
+                "mismatch package url, should not be empty";
         }
     }
-    :return true;
-}
-
-
-# $ValidatePackage
-# args: <str>                   package name
-# args: <array->str>            validate array
-# return: <bool>                validate flag
-:global ValidatePackage do={
-    # global declare
-    :global Print;
-    :global IsArray;
-    :global IsEmpty;
-    :global Replace;
-    :global NewArray;
-    :global ReadOption;
-    :global TypeofArray;
-    :global ValidatePackageContent;
-    # local
-    :local pkgName $1;
-    :local va [$ReadOption $2 $TypeofArray [$NewArray]];
-    :local fileName [$Replace $pkgName "." "_"];
-    :local idList [/system/script/find name=$fileName];
-    :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.ValidatePackage: script \"$fileName\" not found"
+    # va: final
+    :if ([:len ($res->"reasons")] = 0) {
+        :set ($res->"flag") true;
     }
-    # parse code and get result;
-    :local pSource [:parse [/system/script/get ($idList->0) source]];
-    :local pkg [$pSource ];
-    :set ($va->"name") $pkgName;
-    :local vf [$ValidatePackageContent $pkg $va];
-    :return $vf;
+    :return $res;
 }
 
 
@@ -138,7 +131,7 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system/script/find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.GetSource: script \"$fileName\" not found"
+        :error "Global.Package.GetSource: script \"$fileName\" not found.";
     }
     # get source;
     :local pSource [/system/script/get ($idList->0) source];
@@ -147,6 +140,7 @@
 
 
 # $GetMeta
+# Get meta info by directly execute the entire source code.
 # args: <str>                   find by <package name>
 # opt kwargs: ID=<id>           find by id
 # opt kwargs: VA=<array->str>   validate array
@@ -165,13 +159,13 @@
     # check
     :local tID;
     :local pkgName [$ReadOption $1 $TypeofStr ""];
-    :local pID [$ReadOption $ID $TypeofID ];
-    :local pVA [$ReadOption $VA $TypeofArray ];
+    :local pID [$ReadOption $ID $TypeofID];
+    :local pVA [$ReadOption $VA $TypeofArray];
     :if ($pkgName != "") do={
         :local fileName [$Replace $pkgName "." "_"];
         :local idList [/system/script/find name=$fileName];
         :if ([$IsEmpty $idList]) do={
-            :error "Global.Package.GetMeta: script \"$fileName\" not found"
+            :error "Global.Package.GetMeta: script \"$fileName\" not found.";
         } else {
             :set tID ($idList->0);
         }
@@ -181,7 +175,7 @@
         :set pkgName [$Replace [/system/script/get $pID name] "_" "."];
     }
     :if ([$IsNothing $tID]) do={
-        :error "Global.Package.GetMeta: need either <name> or <id>";
+        :error "Global.Package.GetMeta: need either <name> or <id>.";
     }
     # parse code and get result;
     :local pSource [:parse [/system/script/get $tID source]];
@@ -192,15 +186,21 @@
             :set ($va->$k) $v;
         }
     }
-    if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.Package.GetMeta: could not validate target package";
+    # validate
+    :local vres [$ValidatePackageContent $pkg $va];
+    :if (!($vres->"flag")) do={
+        :put "There are some errors in the meta info, check it first!";
+        :foreach reason in ($vres->"reasons") do={
+            :put "  $reason";
+        }
+        :error "Global.Package.GetMeta: could not validate target package.";
     }
     :return ($pkg->"metaInfo");
 }
 
 
 # $ParseMetaSafe
-# cut off the code snippet of metaInfo, parse it and return
+# Cut off the code snippet of metaInfo from content, parse it and return.
 # args: <str>                   code string
 # return: <array->str>          meta named array 
 :global ParseMetaSafe do={
@@ -209,13 +209,13 @@
     :global IsStr;
     # local
     :if (![$IsStr $1]) do={
-        :error "Global.Package.ParseMetaSafe: \$1 should be string";
+        :error "Global.Package.ParseMetaSafe: \$1 should be string.";
     }
     :local source $1;
     :local pt ":local metaInfo {";
     :local start [:find $source $pt];
     :if ([$IsNil $start]) do={
-        :error "Global.Package.ParseMetaSafe: could not find metaInfo";
+        :error "Global.Package.ParseMetaSafe: could not find metaInfo.";
     }
     :local cursor ($start + [:len $pt]);
     :local count 1;
@@ -231,14 +231,14 @@
                 :set flagQuote false;
             }
             :if ($ch ~ "[\$]") do={
-                :error "Global.Package.ParseMetaSafe: pos: $cursor, unsafe char: $ch."
+                :error "Global.Package.ParseMetaSafe: pos: $cursor, unsafe char: $ch.";
             }
         } else {
             :if ($ch = "\"") do={
                 :set flagQuote true;
             }
             :if ($ch ~ "[][\$:]") do={
-                :error "Global.Package.ParseMetaSafe: pos: $cursor, unsafe char: $ch."
+                :error "Global.Package.ParseMetaSafe: pos: $cursor, unsafe char: $ch.";
             }
             :if ($ch = "{") do={
                 :set count ($count + 1);
@@ -257,7 +257,7 @@
 
 
 # $GetMetaSafe
-# get meta info by parsing the cutted code snippet of metaInfo
+# Get meta info by parsing the cutted code snippet.
 # args: <str>                   find by <package name>
 # opt kwargs: ID=<id>           find by id
 # opt kwargs: VA=<array->str>   validate array
@@ -278,13 +278,13 @@
     # check
     :local tID;
     :local pkgName [$ReadOption $1 $TypeofStr ""];
-    :local pID [$ReadOption $ID $TypeofID ];
-    :local pVA [$ReadOption $VA $TypeofArray ];
+    :local pID [$ReadOption $ID $TypeofID];
+    :local pVA [$ReadOption $VA $TypeofArray];
     :if ($pkgName != "") do={
         :local fileName [$Replace $pkgName "." "_"];
         :local idList [/system/script/find name=$fileName];
         :if ([$IsEmpty $idList]) do={
-            :error "Global.Package.GetMetaSafe: script \"$fileName\" not found"
+            :error "Global.Package.GetMetaSafe: script \"$fileName\" not found.";
         } else {
             :set tID ($idList->0);
         }
@@ -294,7 +294,7 @@
         :set pkgName [$Replace [/system/script/get $pID name] "_" "."];
     }
     :if ([$IsNothing $tID]) do={
-        :error "Global.Package.GetMetaSafe: need either <name> or <id>";
+        :error "Global.Package.GetMetaSafe: need either <name> or <id>.";
     }
     # manually parse code and get result;
     :local pkg [$NewArray ];
@@ -307,8 +307,13 @@
             :set ($va->$k) $v;
         }
     }
-    if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.Package.GetMetaSafe: could not validate target package";
+    :local vres [$ValidatePackageContent $pkg $va];
+    if (!($vres->"flag")) do={
+        :put "There are some errors in the meta info, check it first!";
+        :foreach reason in ($vres->"reasons") do={
+            :put "  $reason";
+        }
+        :error "Global.Package.GetMetaSafe: could not validate target package.";
     }
     :return ($pkg->"metaInfo");
 }
@@ -319,6 +324,7 @@
 # return: <array->var>          env named array      
 :global GetEnv do={
     # global declare
+    :global Nil;
     :global RSplit;
     :global Replace;
     :global IsEmpty;
@@ -328,15 +334,20 @@
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system/script/find name=$fileName];
     :if ([$IsEmpty $idList]) do={
-        :error "Global.Package.GetEnv: script \"$fileName\" not found"
-        :return "";
+        :error "Global.Package.GetEnv: script \"$fileName\" not found.";
+        :return $Nil;
     }
     # parse code and get result;
     :local pSource [:parse [/system/script/get ($idList->0) source]];
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="env"};
-    if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.Package.GetEnv: could not validate target package";
+    :local vres [$ValidatePackageContent $pkg $va];
+    if (!($vres->"flag")) do={
+        :put "There are some errors in the meta info, check it first!";
+        :foreach reason in ($vres->"reasons") do={
+            :put "  $reason";
+        }
+        :error "Global.Package.GetEnv: could not validate target package.";
     }
     :return $pkg;
 }
@@ -414,13 +425,20 @@
     :local funcName ($splitted->1);
     :local fileName [$Replace $pkgName "." "_"];
     :local idList [/system/script/find name=$fileName];
-    :if (![$IsArrayN $idList]) do={:error "Global.Package.GetFunc: script \"$fileName\" not found"};
+    :if (![$IsArrayN $idList]) do={
+        :error "Global.Package.GetFunc: script \"$fileName\" not found.";
+    }
     # parse code and get result
     :local pSource [:parse [/system/script/get ($idList->0) source]];
     :set pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="code"};
-    if (![$ValidatePackageContent $pkg $va]) do={
-        :error "Global.Package.GetFunc: could not validate target package";
+    :local vres [$ValidatePackageContent $pkg $va];
+    if (!($vres->"flag")) do={
+        :put "There are some errors in the meta info, check it first!";
+        :foreach reason in ($vres->"reasons") do={
+            :put "  $reason";
+        }
+        :error "Global.Package.GetFunc: could not validate target package.";
     }
     # get func from package
     :set func ($pkg->$funcName);
@@ -438,7 +456,7 @@
 
 
 # $DumpVar
-# dump a variable into string.
+# Dump a variable into string.
 # args: <str>                       <variable name>
 # args: <var>                       variable
 # opt kwargs: Indent=<str>          indent string
@@ -595,7 +613,7 @@
 
 
 # $LoadVar
-# load a string into variable.
+# Load a string into variable.
 # args: <str>                       <variable>
 :global LoadVar do={
     :local varFunc [:parse $1];
@@ -605,7 +623,7 @@
 
 
 # $SetGlobalVar
-# set global variables
+# Set global variables.
 # TODO: let it still work after reboot
 # args: <str>                       variable's name
 # args: <var>                       variable's value, not nil
@@ -627,18 +645,18 @@
     :global GetSDT;
     # check
     :if (![$IsStr $1]) do={
-        :error "Global.Package.SetGlobalVar: \$1 should be str";
+        :error "Global.Package.SetGlobalVar: \$1 should be str.";
     };
     :local name $1;
     :if ([$IsNothing $2] or [$IsNil $2]) do={
-        :error "Global.Package.SetGlobalVar: \$2 should be neither nothing nor nil";
+        :error "Global.Package.SetGlobalVar: \$2 should be neither nothing nor nil.";
     };
     # FIXME: :local value [$TypeRecovery $2];
     # [$TypeRecovery "0.1.0"] -> 0.0.0.1(ip)
     :local value $2;
     :local timeout [$ReadOption $Timeout $TypeofTime 0:0:0]
     :if ($timeout < 0:0:0) do={
-        :error "Global.Package.SetGlobalVar: \$Timeout should greater than 00:00:00";
+        :error "Global.Package.SetGlobalVar: \$Timeout should greater than 00:00:00.";
     };
     :local funcStr;
     :if ([:typeof $value] = $TypeofStr) do={
@@ -651,7 +669,7 @@
     [$func ];
     # timeout check
     :if ($timeout > 0:0:0 and $timeout < 0:1:0) do={
-        :error "Global.Package.SetGlobalVar: \$Timeout should longer than 1 minute";
+        :error "Global.Package.SetGlobalVar: \$Timeout should longer than 1 minute.";
     }
     # timeout
     :if ($timeout > 0:0:0) do={
@@ -678,7 +696,7 @@
 
 
 # $LoadGlobalVar
-# load global variables from environment, raise error if value is nil or nothing. 
+# Load global variables from environment, raise error if value is nil or nothing. 
 # args: <str>                       variable's name
 # return: <var>                     value, return nil if not found
 :global LoadGlobalVar do={
@@ -702,7 +720,7 @@
         :local func [:parse $funcStr];
         :local result [$func ];
         :if ([$IsNil $result] or [$IsNothing $result]) do={
-            :error "Global.Package.LoadGlobalVar: load a nil or nothing value";
+            :error "Global.Package.LoadGlobalVar: load a nil or nothing value.";
         };
         :return $result;
     }
@@ -710,14 +728,14 @@
 
 
 # $UnsetGlobalVar
-# unset a global variable
+# Unset a global variable.
 # args: <str>                       variable's name
 :global UnsetGlobalVar do={
     # global declare
     :global IsStrN;
     :global IsEmpty;
     # check
-    :if (![$IsStrN $1]) do={:error "Global.Package.UnsetGlobalVar: \$1 should be a string"};
+    :if (![$IsStrN $1]) do={:error "Global.Package.UnsetGlobalVar: \$1 should be a string."};
     :local varName $1;
     # from environment
     /system/script/environment/remove [/system/script/environment/find name=$varName];
