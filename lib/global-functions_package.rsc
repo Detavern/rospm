@@ -112,7 +112,7 @@
         }
     }
     # va: final
-    :if ([:len ($res->"reasons")] = 0) {
+    :if ([:len ($res->"reasons")] = 0) do={
         :set ($res->"flag") true;
     }
     :return $res;
