@@ -87,8 +87,8 @@
 :local find do={
     #DEFINE global
     :global IsNil;
-    :global IsEmpty;
     :global Replace;
+    :global NewArray;
     :global TypeofStr;
     :global ReadOption;
     # read opt
