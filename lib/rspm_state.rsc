@@ -186,7 +186,7 @@
         };
         :if (!$flagReadScript) do={
             :local ad {
-                "The package $Package has found in local repository but can't get meta from it.";
+                "The package $Package has found in local repository but could not validate its meta.";
                 "It occurrs if your local script contains illegal meta info, or is corrupted.";
                 "Using \"/system/script/remove [\$FindPackage $Package]\" to manually delete it.";
             }
@@ -335,4 +335,4 @@
     "checkState"=$checkState;
     "checkAllState"=$checkAllState;
 }
-:return $package;
+:return $package;
