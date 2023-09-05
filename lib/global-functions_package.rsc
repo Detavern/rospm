@@ -297,7 +297,8 @@
     :if ([$IsNothing $tID]) do={
         :error "Global.Package.GetMetaSafe: need either <name> or <id>.";
     }
-    # manually parse code and get result;
+    # manually parse code and get result
+    :local source [/system/script/get $tID source];
     :local metaList [$ParseMetaSafe $source];
     # va
     :local va {"name"=$pkgName};
