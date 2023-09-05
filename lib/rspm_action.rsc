@@ -48,12 +48,7 @@
     }
     # validate
     :local metaList ($report->"metaScript");
-    :local va {"type"="code"};
-    :if ([$IsNothing ($metaList->"url")]) do={
-        :set ($metaList->"local") true;
-    } else {
-        :set ($va->"extl") true;
-    }
+    :local va {"type"="code";"extl"=true};
     :local vres [$ValidateMetaInfo $metaList $va];
     :if (!($vres->"flag")) do={
         :put "There are some errors in the meta info, check it first!";
