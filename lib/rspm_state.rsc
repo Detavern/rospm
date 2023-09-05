@@ -175,7 +175,7 @@
     } else {
         :local va {"type"="code"};
         :if ($configName = $configExtPkgName) do={
-            :set ($va->"url") true;
+            :set ($va->"extl") true;
         };
         # suppress error when reading script meta
         :local flagReadScript true;

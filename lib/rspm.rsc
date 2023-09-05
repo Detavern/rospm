@@ -159,7 +159,7 @@
         :put "Get: $pkgURL";
         :local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
         # check pkg
-        :local va {"type"="code";"name"=($meta->"name");"url"=true};
+        :local va {"type"="code";"name"=($meta->"name");"ext"=true};
         :local vres [$ValidateMetaInfo ($pkgExt->"metaInfo") $va];
         if (!($vres->"flag")) do={
             :put "Error occured when loading remote resource of \"$extName\":";

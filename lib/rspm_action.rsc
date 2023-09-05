@@ -23,6 +23,7 @@
     #DEFINE global
     :global Nil;
     :global IsNil;
+    :global IsNothing;
     :global TypeofArray;
     :global GetConfig;
     :global InValues;
@@ -47,7 +48,12 @@
     }
     # validate
     :local metaList ($report->"metaScript");
-    :local va {"type"="code";"url"=true};
+    :local va {"type"="code"};
+    :if ([$IsNothing ($metaList->"url")]) do={
+        :set ($metaList->"local") true;
+    } else {
+        :set ($va->"extl") true;
+    }
     :local vres [$ValidateMetaInfo $metaList $va];
     :if (!($vres->"flag")) do={
         :put "There are some errors in the meta info, check it first!";
@@ -175,7 +181,7 @@
     :local pkgName ($metaR->"name");
     :local metaUrl ($metaR->"url");
     # validate package
-    :local va {"type"="code";"url"=true};
+    :local va {"type"="code";"ext"=true};
     :put "Validating meta info from package: $pkgName...";
     :local vres [$ValidateMetaInfo $metaR $va];
     if (!($vres->"flag")) do={

@@ -52,8 +52,10 @@
 # va example:
 # {
 #     "name"=<target package name>;
-#     "type"=<code,config,env>;
-#     "url"=<>;
+#     "type"=<choice: code,config,env>;
+#     "ext"=<bool>;
+#     "local"=<bool>;
+#     "extl"=<bool>;
 # }
 # result example:
 # {
@@ -68,7 +70,9 @@
     :global IsArray;
     :global ReadOption;
     :global TypeofStr;
+    :global TypeofBool;
     :global NewArray;
+    :global StartsWith;
     # check validate array
     :local va $2;
     :if (![$IsArray $va]) do={
@@ -104,12 +108,34 @@
                 "mismatch package type, current $metaType, want $vat";
         }
     }
-    # va: check meta url
-    :if ([$InKeys "url" $va]) do={
+    # va: check meta ext
+    :if ([$InKeys "ext" $va]) do={
         :local metaUrl [$ReadOption ($metaList->"url") $TypeofStr ""];
         :if ($metaUrl = "") do={
             :set (($res->"reasons")->[:len ($res->"reasons")]) \
-                "mismatch package url, should not be empty";
+                "mismatch package ext, url field should not be empty";
+        } else {
+            :if (![$StartsWith $metaUrl "http://"] and ![$StartsWith $metaUrl "https://"]) do={
+                :set (($res->"reasons")->[:len ($res->"reasons")]) \
+                    "mismatch package ext, url field should be an URL";
+            }
+        }
+    }
+    # va: check meta local
+    :if ([$InKeys "local" $va]) do={
+        :local metaLocal [$ReadOption ($metaList->"local") $TypeofBool false];
+        :if (!$metaLocal) do={
+            :set (($res->"reasons")->[:len ($res->"reasons")]) \
+                "mismatch package local, local flag should be setted";
+        }
+    }
+    # va: check meta ext loose, ext + local
+    :if ([$InKeys "extl" $va]) do={
+        :local metaUrl [$ReadOption ($metaList->"url") $TypeofStr ""];
+        :local metaLocal [$ReadOption ($metaList->"local") $TypeofBool false];
+        :if ($metaUrl = "" and !$metaLocal) do={
+            :set (($res->"reasons")->[:len ($res->"reasons")]) \
+                "mismatch package extl, url should not be empty or local flag should be setted";
         }
     }
     # va: final
@@ -749,4 +775,4 @@
 :local package {
     "metaInfo"=$metaInfo;
 }
-:return $package;
+:return $package;
