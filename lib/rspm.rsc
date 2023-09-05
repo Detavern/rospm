@@ -3,7 +3,7 @@
 # |       RSPM Packages      |   rspm
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rspm entry
+# RSPM entrypoints
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
     "name"="rspm";
     "version"="0.4.2";
-    "description"="rspm entry";
+    "description"="RSPM package entrypoints";
 };
 
 

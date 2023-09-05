@@ -3,15 +3,15 @@
 # |       RSPM Packages      |   rspm.state
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rspm package state tools
+# RSPM package state tools
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="rspm.state";
     "version"="0.4.2";
-    "description"="RSPM package state tools.";
+    "description"="RSPM package state tools";
 };
 
 
@@ -335,4 +335,4 @@
     "checkState"=$checkState;
     "checkAllState"=$checkAllState;
 }
-:return $package;
+:return $package;

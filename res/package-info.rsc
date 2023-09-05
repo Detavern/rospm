@@ -245,8 +245,8 @@
     };
     {
         "name"="rspm.state";
-        "description"="RSPM package state tools.";
-        "version"="0.4.1";
+        "description"="RSPM package state tools";
+        "version"="0.4.2";
     };
     {
         "name"="rspm.feature";
@@ -305,7 +305,7 @@
     };
     {
         "name"="rspm";
-        "description"="rspm entry";
+        "description"="RSPM package entrypoints";
         "version"="0.4.2";
     };
     {

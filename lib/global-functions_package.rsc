@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-functions.package
 # ===================================================================
 # ALL global functions follows upper camel case.
-# global functions for package operation
+# Global functions are vital for the package operation.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rspm/blob/master/LICENSE.md
@@ -749,4 +749,4 @@
 :local package {
     "metaInfo"=$metaInfo;
 }
-:return $package;
+:return $package;
