@@ -150,7 +150,7 @@
     };
     {
         "name"="global-functions.package";
-        "description"="global functions for package operation";
+        "description"="Global functions are vital for the package operation.";
         "version"="0.4.2";
         "global"=true;
         "global-functions"={
@@ -173,8 +173,8 @@
     };
     {
         "name"="global-functions.config";
-        "description"="global functions for configuration management";
-        "version"="0.4.0";
+        "description"="Global functions are vital for the configuration management.";
+        "version"="0.4.2";
         "global"=true;
         "global-functions"={
             "LoadGlobalEnv";

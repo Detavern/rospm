@@ -11,7 +11,7 @@
 :local metaInfo {
     "name"="global-functions.package";
     "version"="0.4.2";
-    "description"="global functions for package operation";
+    "description"="Global functions are vital for the package operation.";
     "global"=true;
     "global-functions"={
         "FindPackage";
@@ -382,12 +382,12 @@
         :local fileName [$Replace $pkgName "." "_"];
         :local idList [/system/script/find name=$fileName];
         :if ([$IsEmpty $idList]) do={
-            :error "Global.Package.LoadPackage: script \"$fileName\" not found"
+            :error "Global.Package.LoadPackage: script \"$fileName\" not found."
         } else {
             /system/script/run $idList;
         }
     } else {
-        :error "Global.Package.LoadPackage: \$1 is empty";
+        :error "Global.Package.LoadPackage: \$1 is empty.";
     }
 }
 
@@ -708,7 +708,7 @@
     :global IsNothing;
     # check
     :if (![$IsStr $1]) do={
-        :error "Global.Package.LoadGlobalVar: \$1 should be str";
+        :error "Global.Package.LoadGlobalVar: \$1 should be str.";
     };
     :local varName $1;
     # load
