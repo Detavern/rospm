@@ -387,7 +387,7 @@
     :put ("Version: " . $metaInfo->"version");
     :put ("Description: " . $metaInfo->"description");
     :put ("FunctionList: " . [:len ($metaInfo->"functionList")]);
-    foreach function in=($metaInfo->"functionList") do={
+    foreach function in ($metaInfo->"functionList") do={
         :put ("    " . $function);
     }
     :return "";

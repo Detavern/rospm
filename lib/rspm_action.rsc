@@ -451,11 +451,14 @@
     :global GetFunc;
     :global InValues;
     :global ReadOption;
+    :global NewArray;
     :global GetConfig;
+    :global UpdateConfig;
     :global FindPackage;
     :global GlobalCacheFuncRemovePrefix;
     # init
     :local configPkgName "config.rspm.package";
+    :local configExtPkgName "config.rspm.package.ext";
     :local config [$GetConfig $configPkgName];
     # read opt
     :local report [$ReadOption $Report $TypeofArray];
@@ -478,13 +481,32 @@
     }
     # remove
     :put "Removing the package $pkgName...";
-    /system/script/remove [$FindPackage $Package];
+    /system/script/remove [$FindPackage $pkgName];
     :put "Clean function cache...";
     [$GlobalCacheFuncRemovePrefix $pkgName];
     # if global, remove it
     :if ((($report->"metaScript")->"global")) do={
         :put "Removing global functions and variables from environment...";
         [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
+    }
+    # if local, remove it from ext
+    :if ((($report->"metaScript")->"local")) do={
+        :local configExt [$GetConfig $configExtPkgName];
+        :local npkgMap [$NewArray ];
+        :local npkgList [$NewArray ];
+        :local counter 0;
+        :foreach m in ($configExt->"packageList") do={
+            :local mn ($m->"name");
+            :if ($mn != $pkgName) do={
+                :set ($npkgList->$counter) $m;
+                :set ($npkgMap->$mn) $counter;
+                :set counter ($counter + 1);
+            }
+        }
+        :set ($configExt->"packageMapping") $npkgMap;
+        :set ($configExt->"packageList") $npkgList;
+        :put "Updating extension package list...";
+        [$UpdateConfig $configExtPkgName $configExt];
     }
     :put "The package has been removed.";
     :return $Nil;
