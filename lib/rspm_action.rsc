@@ -26,11 +26,14 @@
     :global IsNothing;
     :global TypeofArray;
     :global GetConfig;
+    :global Replace;
     :global InValues;
     :global ReadOption;
     :global LoadPackage;
     :global UpdateConfig;
     :global ValidateMetaInfo;
+    # env
+    :global EnvRSPMOwner;
     # init
     :local configExtPkgName "config.rspm.package.ext";
     :local configExt [$GetConfig $configExtPkgName];
@@ -63,6 +66,9 @@
     :set (($configExt->"packageList")->$plen) $metaList;
     :put "Updating extension package list...";
     [$UpdateConfig $configExtPkgName $configExt];
+    # reset owner
+    :local scriptName [$Replace $pkgName "." "_"];
+    /system/script/set [/system/script/find name=$scriptName] owner $EnvRSPMOwner;
     # if global, load it
     :if (($meta->"global")) do={
         :put "Loading global package...";

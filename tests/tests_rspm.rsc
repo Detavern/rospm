@@ -1,6 +1,6 @@
 # rspm
 
-## register
+## register local package
 
 ### register exists
 

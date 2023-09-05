@@ -78,11 +78,13 @@
 :local update do={
     #DEFINE global
     :global Nil;
-    :global IsNothing;
     :global NewArray;
     :global GetFunc;
     :global GetConfig;
     :global UpdateConfig;
+    :global ReadOption;
+    :global TypeofStr;
+    :global TypeofBool;
     :global InKeys;
     :global ValidateMetaInfo;
     # env
@@ -147,31 +149,31 @@
     :local counter 0;
     :put "Checking extension packages...";
     :foreach meta in ($newConfigExt->"packageList") do={
-        :local pkgURL;
-        :if ([$IsNothing ($meta->"proxyUrl")]) do={
-            :set pkgURL ($meta->"url");
-        } else {
-            :set pkgURL ($meta->"proxyUrl");
-        }
         :local extName ($meta->"name");
         :local extVerL ($meta->"version");
-        # load remote package check version
-        :put "Get: $pkgURL";
-        :local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
-        # check pkg
-        :local va {"type"="code";"name"=($meta->"name");"ext"=true};
-        :local vres [$ValidateMetaInfo ($pkgExt->"metaInfo") $va];
-        if (!($vres->"flag")) do={
-            :put "Error occured when loading remote resource of \"$extName\":";
-            :foreach reason in ($vres->"reasons") do={
-                :put "  $reason";
-            }
+        :local flagL [$ReadOption ($meta->"local") $TypeofBool false];
+        :if ($flagL) do={
+            :put "Package $extName:$extVerL is a local package, skipped.";
         } else {
-            :local extVerR (($pkgExt->"metaInfo")->"version");
-            :if ($extVerL < $extVerR) do={
-                :set counter ($counter+1);
-                :foreach k,v in ($pkgExt->"metaInfo") do={
-                    :set ($meta->$k) $v;
+            :local pkgURL [$ReadOption ($meta->"proxyUrl") $TypeofStr ($meta->"url")];
+            # load remote package check version
+            :put "Get: $pkgURL";
+            :local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
+            # check pkg
+            :local va {"type"="code";"name"=($meta->"name");"ext"=true};
+            :local vres [$ValidateMetaInfo ($pkgExt->"metaInfo") $va];
+            if (!($vres->"flag")) do={
+                :put "Error occured when loading remote resource of \"$extName\":";
+                :foreach reason in ($vres->"reasons") do={
+                    :put "  $reason";
+                }
+            } else {
+                :local extVerR (($pkgExt->"metaInfo")->"version");
+                :if ($extVerL < $extVerR) do={
+                    :set counter ($counter+1);
+                    :foreach k,v in ($pkgExt->"metaInfo") do={
+                        :set ($meta->$k) $v;
+                    }
                 }
             }
         }

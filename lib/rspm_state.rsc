@@ -68,17 +68,18 @@
 # | ----------------------- | ----------------------- | -----------------------
 # |     meta from script    |     meta from config    |    state & advice
 # | ----------------------- | ----------------------- | -----------------------
-# |       read error        |          exist          |   ERR, remove script file manually
-# |         exist           |        read error       |   ERR, config corrupted
-# |       not exist         |        not exist        |   ERR, update config
+# |        read error       |          exist          |   ERR, remove script file manually
+# |          exist          |        read error       |   ERR, config corrupted
+# |        not exist        |        not exist        |   ERR, update config
 # | ----------------------- | ----------------------- | -----------------------
 # |     meta from script    |     meta from config    |    state & action
 # | ----------------------- | ----------------------- | -----------------------
 # |  exist(higher version)  |          exist          |   LT,   remove;reinstall;downgrade
-# |   exist(same version)   |          exist          |   SAME, remove;reinstall;downgrade
-# |         exist           |  exist(higher version)  |   GT,   remove;upgrade;downgrade
-# |       not exist         |          exist          |   NES,  install
-# |         exist           |        not exist        |   NEC,  register
+# |  exist(same version)    |          exist          |   SAME, remove;reinstall;downgrade
+# |  exist(lower version)   |          exist          |   GT,   remove;upgrade;downgrade
+# |          exist          |    exist(local flag)    |   LOC,  remove
+# |        not exist        |          exist          |   NES,  install
+# |          exist          |        not exist        |   NEC,  register
 # | ----------------------- | ----------------------- | -----------------------
 # return example:
 # {
@@ -242,18 +243,26 @@
     :if ($flag) do={
         :local versionConfig ($metaConfig->"version");
         :local versionScript ($metaScript->"version");
+        :local flagLocal [$ReadOption ($metaConfig->"local") $TypeofBool false];
+        # local
+        :if ($flagLocal) do={
+            :set state "LOC";
+            :set ($actionList->[:len $actionList]) "remove";
+            :set ($adviceList->[:len $adviceList]) "Local package $Package can only be removed(version: $versionScript).";
+            :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
+        }
         # TODO: better version compare
-        :if ($versionConfig < $versionScript) do={
+        :if (!$flagLocal and $versionConfig < $versionScript) do={
             :set state "LT";
             :set ($actionList->[:len $actionList]) "remove";
             :set ($actionList->[:len $actionList]) "reinstall";
             :set ($actionList->[:len $actionList]) "downgrade";
-            :set ($adviceList->[:len $adviceList]) "The package $Package can be reinstall(version: $versionScript, latest: $versionConfig).";
+            :set ($adviceList->[:len $adviceList]) "The package $Package can be reinstalled(version: $versionScript, latest: $versionConfig).";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.remove\" to remove this package.";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.install\" to reinstall this package.";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.downgrade\" to downgrade this package.";
         }
-        :if ($versionConfig = $versionScript) do={
+        :if (!$flagLocal and $versionConfig = $versionScript) do={
             :set state "SAME";
             :set ($actionList->[:len $actionList]) "remove";
             :set ($actionList->[:len $actionList]) "reinstall";
@@ -263,7 +272,7 @@
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.install\" to reinstall this package.";
             :set ($adviceList->[:len $adviceList]) "Using \"rspm.downgrade\" to downgrade this package.";
         }
-        :if ($versionConfig > $versionScript) do={
+        :if (!$flagLocal and $versionConfig > $versionScript) do={
             :set state "GT";
             :set ($actionList->[:len $actionList]) "remove";
             :set ($actionList->[:len $actionList]) "upgrade";
