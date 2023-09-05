@@ -29,6 +29,7 @@
     :global ReadOption;
     :global LoadPackage;
     :global UpdateConfig;
+    :global ValidateMetaInfo;
     # init
     :local configExtPkgName "config.rspm.package.ext";
     :local configExt [$GetConfig $configExtPkgName];
@@ -44,11 +45,21 @@
     :if (![$InValues "register" ($report->"actions")]) do={
         :error "rspm.action.register: action not found.";
     }
+    # validate
+    :local metaList ($report->"metaScript");
+    :local va {"type"="code";"url"=true};
+    :local vres [$ValidateMetaInfo $metaList $va];
+    :if (!($vres->"flag")) do={
+        :put "There are some errors in the meta info, check it first!";
+        :foreach reason in ($vres->"reasons") do={
+            :put "  $reason";
+        }
+        :error "rspm.action.register: could not validate target package.";
+    }
     # register
-    :local meta ($report->"metaScript");
     :local plen [:len ($configExt->"packageList")];
     :set (($configExt->"packageMapping")->$pkgName) $plen;
-    :set (($configExt->"packageList")->$plen) $meta;
+    :set (($configExt->"packageList")->$plen) $metaList;
     :put "Updating extension package list...";
     [$UpdateConfig $configExtPkgName $configExt];
     # if global, load it
@@ -138,7 +149,7 @@
     :global InValues;
     :global ReadOption;
     :global ParseMetaSafe;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     :global GetConfig;
     :global UpdateConfig;
     :global LoadPackage;
@@ -165,10 +176,8 @@
     :local metaUrl ($metaR->"url");
     # validate package
     :local va {"type"="code";"url"=true};
-    :put "Validating package $pkgName...";
-    :local pkg [$NewArray ];
-    :set ($pkg->"metaInfo") $metaR;
-    :local vres [$ValidatePackageContent $pkg $va];
+    :put "Validating meta info from package: $pkgName...";
+    :local vres [$ValidateMetaInfo $metaR $va];
     if (!($vres->"flag")) do={
         :put "There are some errors in the meta info, check it first!";
         :foreach reason in ($vres->"reasons") do={

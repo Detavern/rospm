@@ -154,7 +154,7 @@
     # global declare
     :global FindPackage;
     :global IsArrayN;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     # local
     :local pkgName $1;
     :local idList [$FindPackage $pkgName];
@@ -165,7 +165,7 @@
     :local pSource [:parse [/system/script/get ($idList->0) source]];
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="config"};
-    :local vres [$ValidatePackageContent $pkg $va];
+    :local vres [$ValidateMetaInfo ($pkg->"metaInfo") $va];
     :if (!($vres->"flag")) do={
         :put "There are some errors in the meta info, check it first!";
         :foreach reason in ($vres->"reasons") do={

@@ -15,7 +15,7 @@
     "global"=true;
     "global-functions"={
         "FindPackage";
-        "ValidatePackageContent";
+        "ValidateMetaInfo";
         "GetSource";
         "GetMeta";
         "ParseMetaSafe";
@@ -47,7 +47,8 @@
 }
 
 
-# $ValidatePackageContent
+# $ValidateMetaInfo
+# Validate the meta info by a validate array, return a specific result contains flag & reason.
 # va example:
 # {
 #     "name"=<target package name>;
@@ -62,7 +63,7 @@
 # args: <array->str>                package content array
 # args: <array->str>(<va>)          validate array
 # return: <array->str>(<result>)    validate result
-:global ValidatePackageContent do={
+:global ValidateMetaInfo do={
     :global InKeys;
     :global IsArray;
     :global ReadOption;
@@ -71,7 +72,7 @@
     # check validate array
     :local va $2;
     :if (![$IsArray $va]) do={
-        :error "Global.Package.ValidatePackageContent: \$2 should be a validate array.";
+        :error "Global.Package.ValidateMetaInfo: \$2 should be a validate array.";
     }
     # prepare result
     :local res {
@@ -79,7 +80,7 @@
         "reasons"=[$NewArray ];
     }
     # check meta
-    :local metaList ($1->"metaInfo");
+    :local metaList $1;
     :if (![$IsArray $metaList]) do={
         :set (($res->"reasons")->[:len ($res->"reasons")]) "metaInfo not found in this package";
         :return $res;
@@ -155,7 +156,7 @@
     :global TypeofID;
     :global TypeofStr;
     :global TypeofArray;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     # check
     :local tID;
     :local pkgName [$ReadOption $1 $TypeofStr ""];
@@ -187,7 +188,7 @@
         }
     }
     # validate
-    :local vres [$ValidatePackageContent $pkg $va];
+    :local vres [$ValidateMetaInfo ($pkg->"metaInfo") $va];
     :if (!($vres->"flag")) do={
         :put "There are some errors in the meta info, check it first!";
         :foreach reason in ($vres->"reasons") do={
@@ -274,7 +275,7 @@
     :global TypeofArray;
     :global ParseMetaSafe;
     :global NewArray;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     # check
     :local tID;
     :local pkgName [$ReadOption $1 $TypeofStr ""];
@@ -297,9 +298,7 @@
         :error "Global.Package.GetMetaSafe: need either <name> or <id>.";
     }
     # manually parse code and get result;
-    :local pkg [$NewArray ];
-    :local source [/system/script/get $tID source];
-    :set ($pkg->"metaInfo") [$ParseMetaSafe $source];
+    :local metaList [$ParseMetaSafe $source];
     # va
     :local va {"name"=$pkgName};
     :if (![$IsNil $pVA]) do={
@@ -307,7 +306,7 @@
             :set ($va->$k) $v;
         }
     }
-    :local vres [$ValidatePackageContent $pkg $va];
+    :local vres [$ValidateMetaInfo $metaList $va];
     if (!($vres->"flag")) do={
         :put "There are some errors in the meta info, check it first!";
         :foreach reason in ($vres->"reasons") do={
@@ -315,7 +314,7 @@
         }
         :error "Global.Package.GetMetaSafe: could not validate target package.";
     }
-    :return ($pkg->"metaInfo");
+    :return $metaList;
 }
 
 
@@ -328,7 +327,7 @@
     :global RSplit;
     :global Replace;
     :global IsEmpty;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     # replace
     :local pkgName $1;
     :local fileName [$Replace $pkgName "." "_"];
@@ -341,7 +340,7 @@
     :local pSource [:parse [/system/script/get ($idList->0) source]];
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="env"};
-    :local vres [$ValidatePackageContent $pkg $va];
+    :local vres [$ValidateMetaInfo ($pkg->"metaInfo") $va];
     if (!($vres->"flag")) do={
         :put "There are some errors in the meta info, check it first!";
         :foreach reason in ($vres->"reasons") do={
@@ -406,7 +405,7 @@
     :global FindPackage;
     :global GlobalCacheFuncGet;
     :global GlobalCacheFuncPut;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     # env
     :global EnvGlobalCacheFuncEnabled;
     # local
@@ -432,7 +431,7 @@
     :local pSource [:parse [/system/script/get ($idList->0) source]];
     :set pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="code"};
-    :local vres [$ValidatePackageContent $pkg $va];
+    :local vres [$ValidateMetaInfo ($pkg->"metaInfo") $va];
     if (!($vres->"flag")) do={
         :put "There are some errors in the meta info, check it first!";
         :foreach reason in ($vres->"reasons") do={

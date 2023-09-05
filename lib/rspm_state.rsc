@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="rspm.state";
-    "version"="0.4.1";
+    "version"="0.4.2";
     "description"="RSPM package state tools.";
 };
 
@@ -34,8 +34,12 @@
     :global EnvRSPMVersion;
     :global EnvRSPMBaseURL;
     # check
-    :if ([$IsNothing $GlobalEnvInfo]) do={:error "rspm.state.checkVersion: \$GlobalEnvInfo is nothing!"};
-    :if ([$IsNothing $EnvRSPMVersion]) do={:error "rspm.state.checkVersion: \$EnvRSPMVersion is nothing!"};
+    :if ([$IsNothing $GlobalEnvInfo]) do={
+        :error "rspm.state.checkVersion: \$GlobalEnvInfo is nothing!";
+    }
+    :if ([$IsNothing $EnvRSPMVersion]) do={
+        :error "rspm.state.checkVersion: \$EnvRSPMVersion is nothing!";
+    }
     # local
     :local forceUpdate [$ReadOption $ForceUpdate $TypeofBool false];
     :local configPkgName "config.rspm.package";
@@ -183,7 +187,7 @@
         :if (!$flagReadScript) do={
             :local ad {
                 "The package $Package has found in local repository but can't get meta from it.";
-                "It occurred when your local script is not a valid package, or corrupted.";
+                "It occurrs if your local script contains illegal meta info, or is corrupted.";
                 "Using \"/system/script/remove [\$FindPackage $Package]\" to manually delete it.";
             }
             :if ($flagSuppress) do={

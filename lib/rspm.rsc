@@ -84,7 +84,7 @@
     :global GetConfig;
     :global UpdateConfig;
     :global InKeys;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     # env
     :global EnvRSPMBaseURL;
     :global EnvRSPMVersion;
@@ -160,7 +160,7 @@
         :local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
         # check pkg
         :local va {"type"="code";"name"=($meta->"name");"url"=true};
-        :local vres [$ValidatePackageContent $pkgExt $va];
+        :local vres [$ValidateMetaInfo ($pkgExt->"metaInfo") $va];
         if (!($vres->"flag")) do={
             :put "Error occured when loading remote resource of \"$extName\":";
             :foreach reason in ($vres->"reasons") do={
@@ -393,4 +393,4 @@
     "upgrade"=$upgrade;
     "upgradeAll"=$upgradeAll;
 }
-:return $package;
+:return $package;

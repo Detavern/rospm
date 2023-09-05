@@ -155,7 +155,7 @@
         "global"=true;
         "global-functions"={
             "FindPackage";
-            "ValidatePackageContent";
+            "ValidateMetaInfo";
             "GetSource";
             "GetMeta";
             "ParseMetaSafe";
