@@ -5,7 +5,7 @@
     {
         "name"="global-variables";
         "description"="global variable package";
-        "version"="0.3.1";
+        "version"="0.5.0";
         "global"=true;
         "global-variables"={
             "Nothing";
@@ -39,7 +39,7 @@
     {
         "name"="global-functions";
         "description"="global function package";
-        "version"="0.4.1";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "IsNil";
@@ -62,10 +62,10 @@
             "Print";
             "PrintK";
             "GetGlobal";
+            "TypeRecovery";
             "ReadOption";
             "InKeys";
             "InValues";
-            "TypeRecovery";
             "Input";
             "InputV";
         };
@@ -73,7 +73,7 @@
     {
         "name"="global-functions.array";
         "description"="global functions for array related operation";
-        "version"="0.3.1";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "Append";
@@ -87,7 +87,7 @@
     {
         "name"="global-functions.string";
         "description"="global functions for string related operation";
-        "version"="0.3.1";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "Replace";
@@ -106,7 +106,7 @@
     {
         "name"="global-functions.random";
         "description"="global functions for random related operation";
-        "version"="0.3.1";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "Random20CharHex";
@@ -117,7 +117,7 @@
     {
         "name"="global-functions.cache";
         "description"="global functions for cache operation";
-        "version"="0.4.0";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "GlobalCacheFuncGet";
@@ -131,7 +131,7 @@
     {
         "name"="global-functions.datetime";
         "description"="global functions for datetime operation";
-        "version"="0.4.1";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "IsSDT";
@@ -153,7 +153,7 @@
     {
         "name"="global-functions.package";
         "description"="Global functions are vital for the package operation.";
-        "version"="0.4.2";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "FindPackage";
@@ -176,7 +176,7 @@
     {
         "name"="global-functions.config";
         "description"="Global functions are vital for the configuration management.";
-        "version"="0.4.2";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "LoadGlobalEnv";
@@ -191,7 +191,7 @@
     {
         "name"="global-functions.unicode";
         "description"="Global Package for unicode related operation";
-        "version"="0.3.1";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "ByteToChar";
@@ -206,7 +206,7 @@
     {
         "name"="global-functions.misc";
         "description"="global functions for miscellaneous collection";
-        "version"="0.4.0";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "UniqueArray";
@@ -215,7 +215,7 @@
     {
         "name"="global-helpers";
         "description"="global helper package";
-        "version"="0.4.0";
+        "version"="0.5.0";
         "global"=true;
         "global-functions"={
             "helperEnsureOneEnabled";
@@ -233,122 +233,122 @@
     {
         "name"="ip.address";
         "description"="";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="routing.rule";
         "description"="routing rule tools";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="tool.remote";
         "description"="remote script load tools";
-        "version"="0.3.1";
+        "version"="0.5.0";
     };
     {
         "name"="interface.list";
         "description"="interface list related functions.";
-        "version"="0.4.1";
+        "version"="0.5.0";
     };
     {
         "name"="rospm";
         "description"="ROSPM package entrypoints";
-        "version"="0.4.2";
+        "version"="0.5.0";
     };
     {
         "name"="rospm.state";
         "description"="ROSPM package state tools";
-        "version"="0.4.2";
+        "version"="0.5.0";
     };
     {
         "name"="tool.json";
         "description"="json loads and dumps";
-        "version"="0.3.1";
+        "version"="0.5.0";
     };
     {
         "name"="rospm.reset";
         "description"="rospm configuration reset tools";
-        "version"="0.3.1";
+        "version"="0.5.0";
     };
     {
         "name"="cidr";
         "description"="collections of special CIDRs";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="ip.firewall.raw";
         "description"="";
-        "version"="0.3.1";
+        "version"="0.5.0";
     };
     {
         "name"="interface.ethernet";
         "description"="";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="ddns";
         "description"="ddns schedule framework";
-        "version"="0.3.1";
+        "version"="0.5.0";
     };
     {
         "name"="rospm.config";
         "description"="rospm configuration tools";
-        "version"="0.4.1";
+        "version"="0.5.0";
     };
     {
         "name"="routing.table";
         "description"="";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="ddns.getter";
         "description"="ddns ip getter";
-        "version"="0.3.1";
+        "version"="0.5.0";
     };
     {
         "name"="ddns.provider.cloudflare";
         "description"="ddns provider functions for cloudflare";
-        "version"="0.3.1";
+        "version"="0.5.0";
     };
     {
         "name"="tool.http";
         "description"="http utility";
-        "version"="0.3.1";
+        "version"="0.5.0";
     };
     {
         "name"="rospm.feature";
         "description"="rospm feature tools";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="ip.firewall.address.watcher";
         "description"="watch and store address on specific interface";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="ip.firewall.address";
         "description"="";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="rospm.action";
         "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
-        "version"="0.4.2";
+        "version"="0.5.0";
     };
     {
         "name"="tool.template";
         "description"="A simple template utility.";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="ip.route";
         "description"="";
-        "version"="0.4.0";
+        "version"="0.5.0";
     };
     {
         "name"="tool.file";
         "description"="file utility";
-        "version"="0.4.2";
+        "version"="0.5.0";
     };
 };
 
