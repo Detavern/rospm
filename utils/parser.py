@@ -1,8 +1,8 @@
 import io
 import os
-from re import S
 
-from yaml.events import NodeEvent
+from .stream import StreamReader
+from .utils import get_package_name
 
 
 class TokenError(Exception):
@@ -73,8 +73,6 @@ class ReturnNode(BaseNode):
 
 
 class PackageParser:
-    BUFFERING = 512
-
     TOKEN_HEADER_END = "# Copyright (c)"
     TOKEN_COMMENT = "#"
     TOKEN_LOCAL = ":local "
@@ -108,65 +106,38 @@ class PackageParser:
         'f': '\xff',
     }
 
-    def __init__(self, name):
+    def __init__(self, name: str, reader: StreamReader):
         self.name = name
+        self.reader = reader
         self._nodes = []
         self._nodes_mapping = {}
-        self._stream = None
 
     @classmethod
     def from_file(cls, path):
-        _, file_name = os.path.split(path)
-        pkg_name, _ = os.path.splitext(file_name)
-        pkg_name = pkg_name.replace("_", ".")
-        inst = cls(pkg_name)
-        f = open(path, 'rb', buffering=cls.BUFFERING)
-        inst(f)
+        inst = cls(get_package_name(path), StreamReader.from_file(path))
+        inst()
         return inst
 
     @classmethod
-    def from_string(cls, text):
-        inst = cls()
-        with io.StringIO(text) as f:
-            inst(f)
+    def from_string(cls, name, text):
+        inst = cls(name, io.StringIO(text))
+        inst()
         return inst
-
-    @property
-    def stream(self):
-        return self._stream
-
-    def peek(self, num=1):
-        buffered = self.stream.peek().decode()
-        if buffered:
-            return buffered[0:num]
-        return ""
-
-    def peek_all(self):
-        buffered = self.stream.peek().decode()
-        if len(buffered) < 100:
-            pos = self.stream.tell()
-            self.stream.read(512)
-            self.stream.seek(pos)
-        return buffered
-
-    def read(self, num=1):
-        return self.stream.read(num).decode()
 
     def append_node(self, node):
         self._nodes.append(node)
         if hasattr(node, "name"):
             self._nodes_mapping[node.name] = node
 
-    def __call__(self, stream: io.BufferedReader):
-        self._stream = stream
+    def __call__(self):
         # peek
-        self.peek()
+        self.reader.peek()
         # parse header
         self.parse_header()
         # parse others
         while True:
-            ch = self.peek()
-            buffered = self.peek_all()
+            ch = self.reader.peek()
+            buffered = self.reader.peek_all()
             if not ch:
                 break
             # handle
@@ -187,19 +158,19 @@ class PackageParser:
                 raise ValueError(f"package: {self.name} unexpected token, {repr(buffered)}")
 
     def parse_header(self):
-        start = self.stream.tell()
-        ch = self.peek()
+        start = self.reader.tell()
+        ch = self.reader.peek()
         if ch in {"\n", "\r", "\t", " "}:
             self.skip_whitespace()
         while True:
-            ch = self.peek()
-            buffered = self.peek_all()
+            ch = self.reader.peek()
+            buffered = self.reader.peek_all()
             if buffered.startswith(self.TOKEN_HEADER_END):
-                # sjip copyright
+                # skip copyright
                 self.parse_comment()
                 # skip url
                 self.parse_comment()
-                # skip empty
+                # skip emptyß
                 self.parse_comment()
                 self.skip_whitespace()
                 break
@@ -208,30 +179,30 @@ class PackageParser:
             else:
                 break
         self.skip_whitespace()
-        end = self.stream.tell()
+        end = self.reader.tell()
         node = HeaderNode(start, end)
         self.append_node(node)
 
     def skip_line(self):
         while True:
-            ch = self.read()
+            ch = self.reader.read()
             if ch == '' or ch == '\n':
                 break
 
     def skip_delimiter(self):
-        if self.peek() == self.TOKEN_DELIMITER:
-            self.read()
+        if self.reader.peek() == self.TOKEN_DELIMITER:
+            self.reader.read()
 
     def skip_token(self, token):
-        self.read(len(token))
+        self.reader.read(len(token))
 
     def skip_whitespace_line(self):
         while True:
-            ch = self.peek()
+            ch = self.reader.peek()
             if ch == '':
                 break
             if ch in {"\n", "\r", "\t", " "}:
-                self.read()
+                self.reader.read()
                 if ch == '\n':
                     break
             else:
@@ -239,27 +210,27 @@ class PackageParser:
 
     def skip_whitespace_inline(self):
         while True:
-            ch = self.peek()
+            ch = self.reader.peek()
             if ch in {"\r", "\t", " "}:
-                self.read()
+                self.reader.read()
             else:
                 break
 
     def skip_whitespace(self):
         while True:
-            ch = self.peek()
+            ch = self.reader.peek()
             if ch in {"\n", "\r", "\t", " "}:
-                self.read()
+                self.reader.read()
             else:
                 break
 
     def skip_quote(self):
         while True:
-            ch = self.read()
+            ch = self.reader.read()
             if ch == '':
                 raise TokenError("unexpected end")
             elif ch == '\\':
-                self.read()
+                self.reader.read()
             elif ch == '"':
                 break
             else:
@@ -270,7 +241,7 @@ class PackageParser:
         while True:
             if count == 0:
                 break
-            ch = self.read()
+            ch = self.reader.read()
             if ch == '':
                 raise TokenError("unexpected end")
             elif ch == '"':
@@ -283,18 +254,18 @@ class PackageParser:
                 continue
 
     def parse_comment(self):
-        self.stream.read(len(self.TOKEN_COMMENT))
+        self.reader.read(len(self.TOKEN_COMMENT))
         self.skip_line()
 
     def parse_var_name(self):
         name = ''
         while True:
-            ch = self.peek()
+            ch = self.reader.peek()
             if ch == '':
                 return name
             cho = ord(ch)
             if (48 <= cho <= 57) or (65 <= cho <= 122):
-                self.read()
+                self.reader.read()
                 name = f'{name}{ch}'
             elif ch in {"\n", "\r", "\t", " ", self.TOKEN_DELIMITER}:
                 return name
@@ -302,22 +273,22 @@ class PackageParser:
                 raise TokenError(f"variable name error, got: {ch}")
 
     def parse_local(self):
-        start = self.stream.tell()
+        start = self.reader.tell()
         self.skip_token(self.TOKEN_LOCAL)
         name = self.parse_var_name()
         self.skip_whitespace()
-        buffered = self.peek_all()
+        buffered = self.reader.peek_all()
         if buffered.startswith(self.TOKEN_FUNC):
             self.parse_func(name, start)
         else:
             self.parse_var(name, start)
 
     def parse_global(self):
-        start = self.stream.tell()
+        start = self.reader.tell()
         self.skip_token(self.TOKEN_GLOBAL)
         name = self.parse_var_name()
         self.skip_whitespace()
-        buffered = self.peek_all()
+        buffered = self.reader.peek_all()
         if buffered.startswith(self.TOKEN_FUNC):
             self.parse_func(name, start, True)
         else:
@@ -325,14 +296,14 @@ class PackageParser:
 
     def parse_cmd(self):
         s = ':'
-        start = self.stream.tell()
+        start = self.reader.tell()
         self.skip_token(self.TOKEN_CMD)
         while True:
-            ch = self.read()
+            ch = self.reader.read()
             s = f'{s}{ch}'
             if ch in {self.TOKEN_DELIMITER, '\n'}:
                 break
-        end = self.stream.tell()
+        end = self.reader.tell()
         node = CMDNode(start, end, True, s)
         self.append_node(node)
 
@@ -344,7 +315,7 @@ class PackageParser:
         self.skip_brace()
         self.skip_delimiter()
         self.skip_whitespace_line()
-        end = self.stream.tell()
+        end = self.reader.tell()
         node = FuncNode(name, start, end, is_global, "TODO: ")
         self.append_node(node)
 
@@ -355,12 +326,12 @@ class PackageParser:
         result = self.parse_var_switch()
         self.skip_delimiter()
         self.skip_whitespace_line()
-        end = self.stream.tell()
+        end = self.reader.tell()
         node = VarNode(name, start, end, is_global, result)
         self.append_node(node)
 
     def parse_var_switch(self):
-        buffered = self.peek_all()
+        buffered = self.reader.peek_all()
         ch = buffered[0]
         if '0' <= ch <= '9':
             res = self.parse_var_num()
@@ -398,7 +369,7 @@ class PackageParser:
         count = 1
         self.skip_token(self.TOKEN_VAR_CMD)
         while True:
-            ch = self.read()
+            ch = self.reader.read()
             s = f'{s}{ch}'
             if ch == "[":
                 count += 1
@@ -409,56 +380,56 @@ class PackageParser:
 
     def parse_var_ambiguous(self, ):
         """TODO:"""
-        pos = self.stream.tell()
-        buffered = self.peek_all()
+        pos = self.reader.tell()
+        buffered = self.reader.peek_all()
         raise NotImplementedError(f"pos: {pos}, buffer: {buffered}")
 
     def parse_var_num(self):
         v = ''
         while True:
-            ch = self.peek()
+            ch = self.reader.peek()
             if '0' <= ch <= '9':
                 v = f'{v}{ch}'
-                self.read()
+                self.reader.read()
             elif ch in {self.TOKEN_DELIMITER, self.TOKEN_VAR_ARRAY_END}:
                 return int(v)
             elif ch in {'\n', '\r'}:
                 return int(v)
             else:
-                pos = self.stream.tell()
-                buffered = self.peek_all()
+                pos = self.reader.tell()
+                buffered = self.reader.peek_all()
                 raise NotImplementedError(f"pos: {pos}, buffer: {buffered}")
 
     def parse_var_str(self):
         s = ''
         # skip beginning double quote
-        self.read()
+        self.reader.read()
         # parse
         while True:
-            ch = self.peek()
+            ch = self.reader.peek()
             if ch == "\\":
                 before_escape = self.parse_var_str_escaped()
                 s = f'{s}{before_escape}'
             elif ch == '"':
-                self.read()
+                self.reader.read()
                 return s
             else:
-                self.read()
+                self.reader.read()
                 s = f'{s}{ch}'
 
     def parse_var_str_escaped(self):
         # skip beginning backslash
-        s = self.read()
+        s = self.reader.read()
         # parse
         while True:
-            chs = self.peek(2)
+            chs = self.reader.peek(2)
             if chs[0] in self.TOKEN_VAR_STR_ESCAPE_MAP:
-                self.read()
+                self.reader.read()
                 return f'{s}{chs[0]}'
             else:
                 # hex value
                 int(f'0x{chs}', 16)
-                self.read(2)
+                self.reader.read(2)
                 return f'{s}{chs}'
 
     def parse_var_quote(self):
@@ -475,7 +446,7 @@ class PackageParser:
         count = 1
         self.skip_token(self.TOKEN_VAR_BRACKET)
         while True:
-            ch = self.read()
+            ch = self.reader.read()
             s = f'{s}{ch}'
             if ch == self.TOKEN_VAR_BRACKET:
                 count += 1
@@ -487,19 +458,19 @@ class PackageParser:
     def parse_var_array(self):
         result = []
         is_dict = None
-        self.stream.read(len(self.TOKEN_VAR_ARRAY))
+        self.reader.read(len(self.TOKEN_VAR_ARRAY))
         while True:
             self.skip_whitespace()
             # break
-            ch = self.peek()
+            ch = self.reader.peek()
             if ch == self.TOKEN_VAR_ARRAY_END:
-                self.read()
+                self.reader.read()
                 break
             # get k or v
             k = self.parse_var_switch()
-            ch = self.peek()
+            ch = self.reader.peek()
             if ch == "=":
-                self.read()
+                self.reader.read()
                 if is_dict is None:
                     is_dict = True
                 if is_dict is False:
@@ -513,9 +484,9 @@ class PackageParser:
                     raise TokenError("ambiguous array not support")
                 result.append(k)
             # delimiter after item
-            ch = self.peek()
+            ch = self.reader.peek()
             if ch == self.TOKEN_DELIMITER:
-                self.read()
+                self.reader.read()
             elif ch == self.TOKEN_VAR_ARRAY_END:
                 continue
             else:
@@ -527,13 +498,13 @@ class PackageParser:
         return result
 
     def parse_return(self):
-        start = self.stream.tell()
+        start = self.reader.tell()
         self.skip_token(self.TOKEN_RETURN)
         self.skip_whitespace_inline()
         result = self.parse_var_switch()
         self.skip_delimiter()
         self.skip_whitespace_line()
-        end = self.stream.tell()
+        end = self.reader.tell()
         node = ReturnNode(start, end, result)
         self.append_node(node)
 

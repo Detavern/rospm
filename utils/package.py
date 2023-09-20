@@ -1,22 +1,14 @@
 import os
-import re
-import io
 from collections import OrderedDict
 
 import yaml
-import jinja2
 
 from .parser import PackageParser
+from .utils import TMPL_ENV
 
 with open(os.path.join("utils", "config.yml")) as f:
     config = yaml.safe_load(f)
 
-TMPL_ENV = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.join("utils", "templates")),
-    autoescape=jinja2.select_autoescape(),
-    trim_blocks=True,
-    lstrip_blocks=True,
-)
 
 VERSION = config['version']
 
