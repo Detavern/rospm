@@ -71,8 +71,7 @@ def generate(src, dst, exclude):
 @quote.command(help="Quote a single script file into importable file.")
 @click.option('--src', help='src file path of target file')
 @click.option('--dst', help='dst file path of target file')
-@click.option('--owner', default='rspm', help='which user to be the owner of script.')
-def as_import(src, dst, owner):
+def as_import(src, dst):
     src = os.path.abspath(src)
     if dst is None:
         directory = os.path.dirname(src)
@@ -80,7 +79,7 @@ def as_import(src, dst, owner):
         dst = os.path.join(directory, f"{fn}.quoted{ext}")
     dst = os.path.abspath(dst)
     sqg = ScriptQuoteGenerator.from_file(src)
-    sqg.to_importable_file(dst, get_package_name(src), owner)
+    sqg.to_importable_file(dst, get_package_name(src))
 
 
 if __name__ == "__main__":

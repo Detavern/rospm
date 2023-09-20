@@ -26,13 +26,12 @@ class ScriptQuoteGenerator:
         with open(path, 'w') as f:
             f.write(snip)
 
-    def to_importable_file(self, path: os.PathLike, name: str, owner: str):
+    def to_importable_file(self, path: os.PathLike, name: str):
         tmpl = TMPL_ENV.get_template("importable.rsc.j2")
         snip = self.generate_multiple_line('\r\n')
         text = tmpl.render(
             package_name=name,
             script_name=name.replace('.', '_'),
-            owner=owner,
             source=snip,
         )
         with open(path, 'w') as f:
