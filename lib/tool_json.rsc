@@ -5,7 +5,7 @@
 # ALL package level functions follows lower camel case.
 # json loads and dumps
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # For loading json string
@@ -20,7 +20,7 @@
 #
 :local metaInfo {
     "name"="tool.json";
-    "version"="0.3.1";
+    "version"="0.5.0";
     "description"="json loads and dumps";
 };
 

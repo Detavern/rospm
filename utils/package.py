@@ -182,10 +182,14 @@ class PackageMetainfoModifier:
             cur = node.end
         # add tail content
         if cur < len(content):
-            ct += content[cur:-1]
+            ct += content[cur:]
+        # ensure tailing newline
+        if not ct.endswith(b'\r\n'):
+            ct += b'\r\n'
         # save
         with open(path, 'wb') as f:
             f.write(ct)
+        self._updates = []
 
     def update_version(self, metainfo):
         metainfo['version'] = VERSION
@@ -229,7 +233,8 @@ class PackageMetainfoModifier:
 
     def update_metainfo(self, path, ignore_exec_check: list):
         print(f'Parsing library file from folder: {path}')
-        for p in os.listdir(path):
+        for p in sorted(os.listdir(path)):
+            print(p)
             if p.startswith("#"):
                 continue
             if not p.endswith(".rsc"):

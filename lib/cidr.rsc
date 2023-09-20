@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="cidr";
-    "version"="0.4.0";
+    "version"="0.5.0";
     "description"="collections of special CIDRs";
 };
 
@@ -73,4 +73,4 @@
     "metaInfo"=$metaInfo;
     "ensureReserved"=$ensureReserved;
 }
-:return $package
+:return $package;

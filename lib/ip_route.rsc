@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="ip.route";
-    "version"="0.4.0";
+    "version"="0.5.0";
     "description"="";
 };
 

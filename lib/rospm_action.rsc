@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="rospm.action";
-    "version"="0.4.2";
+    "version"="0.5.0";
     "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
 };
 
@@ -523,4 +523,4 @@
     "downgrade"=$downgrade;
     "remove"=$remove;
 }
-:return $package
+:return $package;

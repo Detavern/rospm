@@ -3,14 +3,14 @@
 # |     Global Functions     |   global-functions.config
 # ===================================================================
 # ALL global functions follows upper camel case.
-# Global functions for configuration management.
+# Global functions are vital for the configuration management.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.config";
-    "version"="0.4.2";
+    "version"="0.5.0";
     "description"="Global functions are vital for the configuration management.";
     "global"=true;
     "global-functions"={

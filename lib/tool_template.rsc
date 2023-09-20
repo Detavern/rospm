@@ -14,7 +14,7 @@
 #
 :local metaInfo {
     "name"="tool.template";
-    "version"="0.4.0";
+    "version"="0.5.0";
     "description"="A simple template utility.";
 };
 
@@ -308,4 +308,4 @@
     "parseVariable"=$parseVariable;
     "render"=$render;
 }
-:return $package
+:return $package;

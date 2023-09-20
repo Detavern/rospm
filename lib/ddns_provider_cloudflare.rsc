@@ -3,15 +3,15 @@
 # |       ROSPM Packages      |   ddns.provider.cloudflare
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# ddns cloudflare utils
+# ddns provider functions for cloudflare
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # Use cloudflare v4 api
 :local metaInfo {
     "name"="ddns.provider.cloudflare";
-    "version"="0.3.1";
+    "version"="0.5.0";
     "description"="ddns provider functions for cloudflare";
 };
 

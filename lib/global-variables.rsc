@@ -5,12 +5,12 @@
 # ALL global functions follows upper camel case.
 # global variable package
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-variables";
-    "version"="0.3.1";
+    "version"="0.5.0";
     "description"="global variable package";
     "global"=true;
     "global-variables"={

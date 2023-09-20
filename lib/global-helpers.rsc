@@ -17,7 +17,7 @@
 # USE if you known CLEARLY what you are doing.
 :local metaInfo {
     "name"="global-helpers";
-    "version"="0.4.0";
+    "version"="0.5.0";
     "description"="global helper package";
     "global"=true;
     "global-functions"={

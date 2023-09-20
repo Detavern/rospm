@@ -5,12 +5,12 @@
 # ALL package level functions follows lower camel case.
 # file utility
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="tool.file";
-    "version"="0.4.2";
+    "version"="0.5.0";
     "description"="file utility";
 };
 

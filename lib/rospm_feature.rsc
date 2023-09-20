@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="rospm.feature";
-    "version"="0.4.0";
+    "version"="0.5.0";
     "description"="rospm feature tools";
 };
 
@@ -65,4 +65,4 @@
     "globalCacheFuncOn"=$globalCacheFuncOn;
     "globalCacheFuncOff"=$globalCacheFuncOff;
 }
-:return $package
+:return $package;
