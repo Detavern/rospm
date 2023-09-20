@@ -31,7 +31,7 @@ class ScriptQuoteGenerator:
         snip = self.generate_multiple_line('\r\n')
         text = tmpl.render(
             package_name=name,
-            script_name=name.replace('_', '.'),
+            script_name=name.replace('.', '_'),
             owner=owner,
             source=snip,
         )
