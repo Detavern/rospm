@@ -42,15 +42,15 @@
 }
 
 # installation
-:put "=======================================================";
-:put "|                                                     |";
-:put "|    RRRRRR      SSSSSS     PPPPPP      MM    MM      |";
-:put "|    RR   RR    SS          PP   PP     MMM  MMM      |";
-:put "|    RRRRR       SSSSSS     PPPPPP     MM  MM  MM     |";
-:put "|    RR   RR          SS    PP         MM      MM     |";
-:put "|    RR    RR   SSSSSSS     PP        MM        MM    |";
-:put "|                                                     |";
-:put "=======================================================";
+:put "============================================================";
+:put "|                                                          |";
+:put "|    RRRRRR      OOOOO     SSSSSS   PPPPPP    MM    MM     |";
+:put "|    RR   RR   OOO   OOO  SS        PP   PP   MMM  MMM     |";
+:put "|    RRRRR    OOO     OOO  SSSSSS   PPPPPP   MM  MM  MM    |";
+:put "|    RR   RR   OOO   OOO        SS  PP       MM      MM    |";
+:put "|    RR    RR    OOOOO    SSSSSSS   PP      MM        MM   |";
+:put "|                                                          |";
+:put "============================================================";
 :put "Installer initializing ...";
 :local devMark "develop";
 :if ([:pick ($ROSPMInstallerConfig->"ROSPMBranch") 0 [:len $devMark]] = $devMark) do={
