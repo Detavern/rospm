@@ -6,7 +6,7 @@
 # global functions for datetime operation
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # New structure
 # <SDT> array (system datetime)

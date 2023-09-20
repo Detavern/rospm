@@ -32,14 +32,14 @@
 
 {
     # name should be a complete file name with extension
-    :local fn "rspm-installer.rsc";
+    :local fn "rospm-installer.rsc";
     :local nameList [[$GetFunc "tool.file.find"] Name=$fn];
     :put $nameList;
 }
 
 {
     # partial name won't work
-    :local fn "rspm-installer";
+    :local fn "rospm-installer";
     :local nameList [[$GetFunc "tool.file.find"] Name=$fn];
     :put $nameList;
 }

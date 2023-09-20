@@ -1,17 +1,17 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   rspm.reset
+# |       ROSPM Packages      |   rospm.reset
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rspm configuration reset tools
+# rospm configuration reset tools
 #
 # Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
-    "name"="rspm.reset";
+    "name"="rospm.reset";
     "version"="0.3.1";
-    "description"="rspm configuration reset tools";
+    "description"="rospm configuration reset tools";
 };
 
 
@@ -28,7 +28,7 @@
     :global IsDict;
     # check
     :if (![$IsDict $MetaInfo]) do={
-        :error "rspm.reset.removeGlobal: \$MetaInfo shoud be a dict-like array";
+        :error "rospm.reset.removeGlobal: \$MetaInfo shoud be a dict-like array";
     }
     # local
     :local funcList ($MetaInfo->"global-functions");

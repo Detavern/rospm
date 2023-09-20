@@ -1,12 +1,12 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   ddns.provider.cloudflare
+# |       ROSPM Packages      |   ddns.provider.cloudflare
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # ddns cloudflare utils
 #
 # Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # Use cloudflare v4 api
 :local metaInfo {

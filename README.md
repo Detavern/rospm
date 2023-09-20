@@ -2,14 +2,14 @@
 
 ## alpha version *(for test only, no warranty)*
 
-RSPM is a package manager for RouterOS script.
-You can use RSPM to install and share script packages.
+ROSPM is a package manager for RouterOS script.
+You can use ROSPM to install and share script packages.
 
-AS A PLUS, RSPM also provide many useful script packages for RouterOS,
-which support RSPM itself and fulfill the missing
+AS A PLUS, ROSPM also provide many useful script packages for RouterOS,
+which support ROSPM itself and fulfill the missing
 `string` operation, `datetime` operation and so on.
 
-All RSPM packages and configurations will store locally
+All ROSPM packages and configurations will store locally
 in you script repository(`/system script`) and keep working after reboot.
 
 The main propose of this project is
@@ -707,7 +707,7 @@ When you use `months` key in `timedelta`, do realize that it may cause the chang
 ### Array Operations
 ### JSON Operations
 
-RSPM add the limited support of JSON serialization and deserialization(support utf-8).
+ROSPM add the limited support of JSON serialization and deserialization(support utf-8).
 
 You need to install the JSON package first.
 ```
@@ -765,7 +765,7 @@ Value : {"a": {"aa": true, "ab": false, "ac": null, "b": [1, 2, 3, 4, {"ccc": "d
 
 ## License
 
-This program(RSPM) is free software: you can redistribute it and/or modify
+This program(ROSPM) is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.

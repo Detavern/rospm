@@ -1,15 +1,15 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   rspm.action
+# |       ROSPM Packages      |   rospm.action
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
-    "name"="rspm.action";
+    "name"="rospm.action";
     "version"="0.4.2";
     "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
 };
@@ -33,21 +33,21 @@
     :global UpdateConfig;
     :global ValidateMetaInfo;
     # env
-    :global EnvRSPMOwner;
+    :global EnvROSPMOwner;
     # init
-    :local configExtPkgName "config.rspm.package.ext";
+    :local configExtPkgName "config.rospm.package.ext";
     :local configExt [$GetConfig $configExtPkgName];
     # read opt
     :local report [$ReadOption $Report $TypeofArray];
     # check params
     :if ([$IsNil $report]) do={
-        :error "rspm.action.register: require \$Report";
+        :error "rospm.action.register: require \$Report";
     }
     # report
     :local pkgName ($report->"package");
     :local state ($report->"state");
     :if (![$InValues "register" ($report->"actions")]) do={
-        :error "rspm.action.register: action not found.";
+        :error "rospm.action.register: action not found.";
     }
     # validate
     :local metaList ($report->"metaScript");
@@ -58,7 +58,7 @@
         :foreach reason in ($vres->"reasons") do={
             :put "  $reason";
         }
-        :error "rspm.action.register: could not validate target package.";
+        :error "rospm.action.register: could not validate target package.";
     }
     # register
     :local plen [:len ($configExt->"packageList")];
@@ -68,7 +68,7 @@
     [$UpdateConfig $configExtPkgName $configExt];
     # reset owner
     :local scriptName [$Replace $pkgName "." "_"];
-    /system/script/set [/system/script/find name=$scriptName] owner $EnvRSPMOwner;
+    /system/script/set [/system/script/find name=$scriptName] owner $EnvROSPMOwner;
     # if global, load it
     :if (($meta->"global")) do={
         :put "Loading global package...";
@@ -94,23 +94,23 @@
     :global ReadOption;
     :global LoadPackage;
     # env
-    :global EnvRSPMBaseURL;
-    :global EnvRSPMOwner;
+    :global EnvROSPMBaseURL;
+    :global EnvROSPMOwner;
     # init
     :local pkgUrl "";
     :local pkgStr "";
-    :local configPkgName "config.rspm.package";
+    :local configPkgName "config.rospm.package";
     # read opt
     :local report [$ReadOption $Report $TypeofArray];
     # check params
     :if ([$IsNil $report]) do={
-        :error "rspm.action.install: require \$Report";
+        :error "rospm.action.install: require \$Report";
     }
     # report
     :local pkgName ($report->"package");
     :local state ($report->"state");
     :if (![$InValues "install" ($report->"actions")]) do={
-        :error "rspm.action.install: action not found.";
+        :error "rospm.action.install: action not found.";
     }
     # install
     :local versionR (($report->"metaConfig")->"version");
@@ -118,7 +118,7 @@
     :if (($report->"configName") = $configPkgName) do={
         :put "Installing core package $pkgName, latest version is $versionR";
         :local pn [$Replace $pkgName "." "_"];
-        :set pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
+        :set pkgUrl ($EnvROSPMBaseURL . "lib/$pn.rsc")
     } else {
         :put "Installing extension package $pkgName, latest version is $versionR";
         # if proxy url exists, use it instead of raw url
@@ -131,7 +131,7 @@
     :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
     :put "Writing source into repository...";
     :local fileName [$Replace $pkgName "." "_"];
-    /system/script/add name=$fileName source=$pkgStr owner=$EnvRSPMOwner;
+    /system/script/add name=$fileName source=$pkgStr owner=$EnvROSPMOwner;
     # if global, load it
     :if ((($report->"metaConfig")->"global")) do={
         :put "Loading global package...";
@@ -161,18 +161,18 @@
     :global UpdateConfig;
     :global LoadPackage;
     # env
-    :global EnvRSPMOwner;
+    :global EnvROSPMOwner;
     # init
     :local pkgStr "";
-    :local configPkgName "config.rspm.package";
-    :local configExtPkgName "config.rspm.package.ext";
+    :local configPkgName "config.rospm.package";
+    :local configExtPkgName "config.rospm.package.ext";
     :local config [$GetConfig $configPkgName];
     :local configExt [$GetConfig $configExtPkgName];
     # read opt
     :local pkgUrl [$ReadOption $URL $TypeofStr];
     # check params
     :if ([$IsNil $pkgUrl]) do={
-        :error "rspm.action.installExt: require \$URL";
+        :error "rospm.action.installExt: require \$URL";
     }
     # install by url
     :put "Get: $pkgUrl";
@@ -190,7 +190,7 @@
         :foreach reason in ($vres->"reasons") do={
             :put "  $reason";
         }
-        :error "rspm.action.installExt: could not validate target package.";
+        :error "rospm.action.installExt: could not validate target package.";
     }
     # set proxy url
     :if ($metaUrl != $pkgUrl) do={
@@ -199,11 +199,11 @@
     # ensure package name not in config
     :if ([$IsNum (($config->"packageMapping")->$pkgName)]) do={
         :put "Same package name $pkgName found in package list.";
-        :put "Using \"rspm.install\" with package name $pkgName instead.";
-        :error "rspm.action.installExt: not an extension package.";
+        :put "Using \"rospm.install\" with package name $pkgName instead.";
+        :error "rospm.action.installExt: not an extension package.";
     }
     # update ext config
-    :put "Updating config.rspm.package.ext...";
+    :put "Updating config.rospm.package.ext...";
     :local pkgExtNum (($configExt->"packageMapping")->$pkgName);
     :local pm ($configExt->"packageMapping");
     :local pl ($configExt->"packageList");
@@ -235,23 +235,23 @@
     :global LoadPackage;
     :global GlobalCacheFuncRemovePrefix;
     # env
-    :global EnvRSPMBaseURL;
-    :global EnvRSPMOwner;
+    :global EnvROSPMBaseURL;
+    :global EnvROSPMOwner;
     # init
     :local pkgUrl "";
     :local pkgStr "";
-    :local configPkgName "config.rspm.package";
+    :local configPkgName "config.rospm.package";
     # read opt
     :local report [$ReadOption $Report $TypeofArray];
     # check params
     :if ([$IsNil $report]) do={
-        :error "rspm.action.reinstall: require \$Report";
+        :error "rospm.action.reinstall: require \$Report";
     }
     # report
     :local pkgName ($report->"package");
     :local state ($report->"state");
     :if (![$InValues "reinstall" ($report->"actions")]) do={
-        :error "rspm.action.reinstall: action not found.";
+        :error "rospm.action.reinstall: action not found.";
     }
     # reinstall
     :local versionR (($report->"metaConfig")->"version");
@@ -259,7 +259,7 @@
     :if (($report->"configName") = $configPkgName) do={
         :put "Reinstalling core package $pkgName, latest version is $versionR";
         :local pn [$Replace $pkgName "." "_"];
-        :set pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
+        :set pkgUrl ($EnvROSPMBaseURL . "lib/$pn.rsc")
     } else {
         :put "Reinstalling extension package $pkgName, latest version is $versionR";
         # if proxy url exists, use it instead of raw url
@@ -271,13 +271,13 @@
     :put "Get: $pkgUrl";
     :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
     :put "Writing source into repository...";
-    /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
+    /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvROSPMOwner;
     :put "Clean function cache...";
     [$GlobalCacheFuncRemovePrefix $pkgName];
     # if global, load it
     :if ((($report->"metaConfig")->"global")) do={
         :put "Loading global package...";
-        [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
+        [[$GetFunc "rospm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
         [$LoadPackage $pkgName];
     }
     :put "The package has been reinstalled.";
@@ -302,23 +302,23 @@
     :global LoadPackage;
     :global GlobalCacheFuncRemovePrefix;
     # env
-    :global EnvRSPMBaseURL;
-    :global EnvRSPMOwner;
+    :global EnvROSPMBaseURL;
+    :global EnvROSPMOwner;
     # init
     :local pkgUrl "";
     :local pkgStr "";
-    :local configPkgName "config.rspm.package";
+    :local configPkgName "config.rospm.package";
     # read opt
     :local report [$ReadOption $Report $TypeofArray];
     # check params
     :if ([$IsNil $report]) do={
-        :error "rspm.action.upgrade: require \$Report";
+        :error "rospm.action.upgrade: require \$Report";
     }
     # report
     :local pkgName ($report->"package");
     :local state ($report->"state");
     :if (![$InValues "upgrade" ($report->"actions")]) do={
-        :error "rspm.action.upgrade: action not found.";
+        :error "rospm.action.upgrade: action not found.";
     }
     # upgrade
     :local versionR (($report->"metaConfig")->"version");
@@ -327,7 +327,7 @@
     :if (($report->"configName") = $configPkgName) do={
         :put "Upgrading core package $pkgName, latest version is $versionR(current: $versionL)";
         :local pn [$Replace $pkgName "." "_"];
-        :set pkgUrl ($EnvRSPMBaseURL . "lib/$pn.rsc")
+        :set pkgUrl ($EnvROSPMBaseURL . "lib/$pn.rsc")
     } else {
         :put "Upgrading extension package $pkgName, latest version is $versionR";
         # if proxy url exists, use it instead of raw url
@@ -339,13 +339,13 @@
     :put "Get: $pkgUrl";
     :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
     :put "Writing source into repository...";
-    /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
+    /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvROSPMOwner;
     :put "Clean function cache...";
     [$GlobalCacheFuncRemovePrefix $pkgName];
     # if global, load it
     :if ((($report->"metaConfig")->"global")) do={
         :put "Loading global package...";
-        [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
+        [[$GetFunc "rospm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
         [$LoadPackage $pkgName];
     }
     :put "The package has been upgraded.";
@@ -374,64 +374,64 @@
     :global LoadPackage;
     :global GlobalCacheFuncRemovePrefix;
     # env
-    :global EnvRSPMVersionBaseURL;
-    :global EnvRSPMOwner;
+    :global EnvROSPMVersionBaseURL;
+    :global EnvROSPMOwner;
     # init
     :local pkgUrl "";
     :local pkgStr "";
-    :local configPkgName "config.rspm.package";
+    :local configPkgName "config.rospm.package";
     :local config [$GetConfig $configPkgName];
     # read opt
     :local version [$ReadOption $To $TypeofStr];
     :local report [$ReadOption $Report $TypeofArray];
     # check env
-    :if (![$IsStrN $EnvRSPMVersionBaseURL]) do={
-        :error "rspm.action.downgrade: \$EnvRSPMVersionBaseURL is empty!";
+    :if (![$IsStrN $EnvROSPMVersionBaseURL]) do={
+        :error "rospm.action.downgrade: \$EnvROSPMVersionBaseURL is empty!";
     }
     # check params
     :if ([$IsNil $report]) do={
-        :error "rspm.action.downgrade: require \$Report";
+        :error "rospm.action.downgrade: require \$Report";
     }
     # report
     :local pkgName ($report->"package");
     :local state ($report->"state");
     :if (![$InValues "downgrade" ($report->"actions")]) do={
-        :error "rspm.action.downgrade: action not found.";
+        :error "rospm.action.downgrade: action not found.";
     }
     # check is essential or not
     :local epkgList ($config->"essentialPackageList");
     :if ([$InValues $pkgName $epkgList]) do={
-        :put "Package $pkgName is an essential package for RSPM.";
-        :put "Downgrading this package may corrupt RSPM.";
-        :error "rspm.action.downgrade: target package is essential.";
+        :put "Package $pkgName is an essential package for ROSPM.";
+        :put "Downgrading this package may corrupt ROSPM.";
+        :error "rospm.action.downgrade: target package is essential.";
     }
     # check is downgradable
     :local versionR (($report->"metaConfig")->"version");
     :local versionL (($report->"metaScript")->"version");
     :if (($report->"configName") != $configPkgName) do={
-        :error "rspm.action.downgrade: only support core package now!";
+        :error "rospm.action.downgrade: only support core package now!";
     }
     :if ($version >= $versionR) do={
-        :error "rspm.action.downgrade: target version($version) is higher than the remote.";
+        :error "rospm.action.downgrade: target version($version) is higher than the remote.";
     }
     if ($version = $versionL) do={
-        :error "rspm.action.downgrade: target version($version) is same with local";
+        :error "rospm.action.downgrade: target version($version) is same with local";
     }
     # determine pkg url
     :put "Downgrading core package $pkgName to $version(current version is $versionL)";
     :local pn [$Replace $pkgName "." "_"];
-    :set pkgUrl ($EnvRSPMVersionBaseURL . "lib/$pn.rsc");
+    :set pkgUrl ($EnvROSPMVersionBaseURL . "lib/$pn.rsc");
     # downloading
     :put "Get: $pkgUrl";
     :set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
     :put "Writing source into repository...";
-    /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvRSPMOwner;
+    /system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvROSPMOwner;
     :put "Clean function cache...";
     [$GlobalCacheFuncRemovePrefix $pkgName];
     # if global, load it
     :if ((($report->"metaConfig")->"global")) do={
         :put "Loading global package...";
-        [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
+        [[$GetFunc "rospm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
         [$LoadPackage $pkgName];
     }
     :put "The package has been downgraded.";
@@ -457,27 +457,27 @@
     :global FindPackage;
     :global GlobalCacheFuncRemovePrefix;
     # init
-    :local configPkgName "config.rspm.package";
-    :local configExtPkgName "config.rspm.package.ext";
+    :local configPkgName "config.rospm.package";
+    :local configExtPkgName "config.rospm.package.ext";
     :local config [$GetConfig $configPkgName];
     # read opt
     :local report [$ReadOption $Report $TypeofArray];
     # check params
     :if ([$IsNil $report]) do={
-        :error "rspm.action.remove: require \$Report";
+        :error "rospm.action.remove: require \$Report";
     }
     # report
     :local pkgName ($report->"package");
     :local state ($report->"state");
     :if (![$InValues "remove" ($report->"actions")]) do={
-        :error "rspm.action.remove: action not found.";
+        :error "rospm.action.remove: action not found.";
     }
     # check is essential or not
     :local epkgList ($config->"essentialPackageList");
     :if ([$InValues $pkgName $epkgList]) do={
-        :put "Package $pkgName is an essential package for RSPM.";
-        :put "Removing this package will corrupt RSPM.";
-        :error "rspm.action.remove: target package is essential.";
+        :put "Package $pkgName is an essential package for ROSPM.";
+        :put "Removing this package will corrupt ROSPM.";
+        :error "rospm.action.remove: target package is essential.";
     }
     # remove
     :put "Removing the package $pkgName...";
@@ -487,7 +487,7 @@
     # if global, remove it
     :if ((($report->"metaScript")->"global")) do={
         :put "Removing global functions and variables from environment...";
-        [[$GetFunc "rspm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
+        [[$GetFunc "rospm.reset.removeGlobal"] MetaInfo=($report->"metaScript")];
     }
     # if local, remove it from ext
     :if ((($report->"metaScript")->"local")) do={

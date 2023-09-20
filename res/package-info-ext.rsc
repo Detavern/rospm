@@ -3,17 +3,17 @@
 # extension package meta list
 :local packageList {
     {
-        "name"="rspm.hello-world";
-        "author"="rspm";
+        "name"="rospm.hello-world";
+        "author"="rospm";
         "description"="";
         "version"="1.0.0";
-        "url"="https://raw.githubusercontent.com/Detavern/rspm-pkg-hello-world/master/hello-world.rsc";
+        "url"="https://raw.githubusercontent.com/Detavern/rospm-pkg-hello-world/master/hello-world.rsc";
     };
 };
 
 # extension package meta mapping, use with list.
 :local packageMapping {
-    "rspm.hello-world"=0;
+    "rospm.hello-world"=0;
 }
 
 :local packageInfo {

@@ -25,11 +25,11 @@ class PackageResourceGenerator:
         self.parsed = False
         self.meta_mapping = None
         self.meta_ext_mapping = {
-            "rspm.hello-world": {
-                "name": "rspm.hello-world",
+            "rospm.hello-world": {
+                "name": "rospm.hello-world",
                 "version": "1.0.0",
-                "author": "rspm",
-                "url": "https://raw.githubusercontent.com/Detavern/rspm-pkg-hello-world/master/hello-world.rsc",
+                "author": "rospm",
+                "url": "https://raw.githubusercontent.com/Detavern/rospm-pkg-hello-world/master/hello-world.rsc",
             }
         }
 

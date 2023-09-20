@@ -246,19 +246,19 @@
         "version"="0.3.1";
     };
     {
-        "name"="rspm.state";
-        "description"="RSPM package state tools";
-        "version"="0.4.2";
-    };
-    {
-        "name"="rspm.feature";
-        "description"="rspm feature tools";
-        "version"="0.4.0";
-    };
-    {
         "name"="interface.list";
         "description"="interface list related functions.";
         "version"="0.4.1";
+    };
+    {
+        "name"="rospm";
+        "description"="ROSPM package entrypoints";
+        "version"="0.4.2";
+    };
+    {
+        "name"="rospm.state";
+        "description"="ROSPM package state tools";
+        "version"="0.4.2";
     };
     {
         "name"="tool.json";
@@ -266,14 +266,14 @@
         "version"="0.3.1";
     };
     {
+        "name"="rospm.reset";
+        "description"="rospm configuration reset tools";
+        "version"="0.3.1";
+    };
+    {
         "name"="cidr";
         "description"="collections of special CIDRs";
         "version"="0.4.0";
-    };
-    {
-        "name"="rspm.config";
-        "description"="rspm configuration tools";
-        "version"="0.4.1";
     };
     {
         "name"="ip.firewall.raw";
@@ -291,6 +291,11 @@
         "version"="0.3.1";
     };
     {
+        "name"="rospm.config";
+        "description"="rospm configuration tools";
+        "version"="0.4.1";
+    };
+    {
         "name"="routing.table";
         "description"="";
         "version"="0.4.0";
@@ -306,24 +311,14 @@
         "version"="0.3.1";
     };
     {
-        "name"="rspm";
-        "description"="RSPM package entrypoints";
-        "version"="0.4.2";
-    };
-    {
-        "name"="rspm.action";
-        "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
-        "version"="0.4.2";
-    };
-    {
         "name"="tool.http";
         "description"="http utility";
         "version"="0.3.1";
     };
     {
-        "name"="rspm.reset";
-        "description"="rspm configuration reset tools";
-        "version"="0.3.1";
+        "name"="rospm.feature";
+        "description"="rospm feature tools";
+        "version"="0.4.0";
     };
     {
         "name"="ip.firewall.address.watcher";
@@ -334,6 +329,11 @@
         "name"="ip.firewall.address";
         "description"="";
         "version"="0.4.0";
+    };
+    {
+        "name"="rospm.action";
+        "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
+        "version"="0.4.2";
     };
     {
         "name"="tool.template";
@@ -369,30 +369,30 @@
     "ip.address"=12;
     "routing.rule"=13;
     "tool.remote"=14;
-    "rspm.state"=15;
-    "rspm.feature"=16;
-    "interface.list"=17;
+    "interface.list"=15;
+    "rospm"=16;
+    "rospm.state"=17;
     "tool.json"=18;
-    "cidr"=19;
-    "rspm.config"=20;
+    "rospm.reset"=19;
+    "cidr"=20;
     "ip.firewall.raw"=21;
     "interface.ethernet"=22;
     "ddns"=23;
-    "routing.table"=24;
-    "ddns.getter"=25;
-    "ddns.provider.cloudflare"=26;
-    "rspm"=27;
-    "rspm.action"=28;
-    "tool.http"=29;
-    "rspm.reset"=30;
-    "ip.firewall.address.watcher"=31;
-    "ip.firewall.address"=32;
+    "rospm.config"=24;
+    "routing.table"=25;
+    "ddns.getter"=26;
+    "ddns.provider.cloudflare"=27;
+    "tool.http"=28;
+    "rospm.feature"=29;
+    "ip.firewall.address.watcher"=30;
+    "ip.firewall.address"=31;
+    "rospm.action"=32;
     "tool.template"=33;
     "ip.route"=34;
     "tool.file"=35;
 }
 
-# the minimum requirement packages of rspm
+# the minimum requirement packages of rospm
 :local essentialPackageList {
     "global-variables";
     "global-functions";
@@ -406,11 +406,11 @@
     "global-functions.misc";
     "tool.http";
     "tool.remote";
-    "rspm.feature";
-    "rspm.state";
-    "rspm.action";
-    "rspm.reset";
-    "rspm";
+    "rospm.feature";
+    "rospm.state";
+    "rospm.action";
+    "rospm.reset";
+    "rospm";
 }
 
 :local packageInfo {

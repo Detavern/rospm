@@ -6,7 +6,7 @@
 # Global functions are vital for the package operation.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.package";
@@ -471,7 +471,7 @@
     :if ([$IsNothing $func]) do={
         :error "Global.Package.GetFunc: function $funcName not found in package.";
     } else {
-        :local idList [$FindPackage "config.rspm"];
+        :local idList [$FindPackage "config.rospm"];
         :if ($EnvGlobalCacheFuncEnabled and [$IsArrayN $idList]) do={
             # put into global cache
             [$GlobalCacheFuncPut $1 $func];
@@ -704,7 +704,7 @@
         :local sdt [$GetSDT $tdt];
         :local startTime ($sdt->"time");
         :local startDate ($sdt->"date");
-        :local scheduleName "RSPM_SetGlobalVar_$name_Timeout";
+        :local scheduleName "ROSPM_SetGlobalVar_$name_Timeout";
         :local idList [/system/scheduler/find name=$scheduleName];
         :if ([$IsEmpty $idList]) do={
             :local eventStrList {
@@ -766,7 +766,7 @@
     # from environment
     /system/script/environment/remove [/system/script/environment/find name=$varName];
     # from scheduler
-    :local scheduleName "RSPM_SetGlobalVar_$varName_Timeout";
+    :local scheduleName "ROSPM_SetGlobalVar_$varName_Timeout";
     /system/scheduler/remove [/system/scheduler/find name=$scheduleName];
 }
 

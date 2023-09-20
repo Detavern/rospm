@@ -6,7 +6,7 @@
 # global functions for random related operation
 #
 # Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # Reference from [GPLv3]https://github.dev/eworm-de/routeros-scripts/global-functions
 :local metaInfo {

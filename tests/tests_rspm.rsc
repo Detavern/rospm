@@ -1,10 +1,10 @@
-# rspm
+# rospm
 
 ## register local package
 
 ### register exists
 
 {
-    :local pkg "rspm";
-    [[$GetFunc "rspm.register"] Package=$pkg];
+    :local pkg "rospm";
+    [[$GetFunc "rospm.register"] Package=$pkg];
 }

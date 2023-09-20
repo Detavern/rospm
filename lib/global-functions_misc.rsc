@@ -6,7 +6,7 @@
 # global functions for miscellaneous collection
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.misc";
@@ -49,4 +49,4 @@
 :local package {
     "metaInfo"=$metaInfo;
 }
-:return $package;
+:return $package;

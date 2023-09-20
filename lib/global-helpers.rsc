@@ -6,7 +6,7 @@
 # global helper package
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # Helpers are some functions which can greatly help 
 # the construction of a certain number of other functions
@@ -290,4 +290,4 @@
 :local package {
     "metaInfo"=$metaInfo;
 }
-:return $package;
+:return $package;

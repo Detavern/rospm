@@ -1,12 +1,12 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   ip.address
+# |       ROSPM Packages      |   ip.address
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # 
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="ip.address";

@@ -6,7 +6,7 @@
 # Global functions for configuration management.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.config";
@@ -292,7 +292,7 @@
     :if (![$IsArrayN $idList]) do={:return 0};
     # register
     :local config [$GetConfig $pkgName];
-    :local baseConfigName "config.rspm";
+    :local baseConfigName "config.rospm";
     # register into base config
     :if (($baseConfigName != $pkgName) and [$IsArrayN [$FindPackage $baseConfigName]]) do={
         :local baseConfig [$GetConfig $baseConfigName];
@@ -347,7 +347,7 @@
     # local
     :local pkgName $1;
     :local config $2;
-    :local baseConfigName "config.rspm";
+    :local baseConfigName "config.rospm";
     :local fileName [$Replace $pkgName "." "_"];
     :local pOwner [$ReadOption $Owner $TypeofStr ""];
     :local pDescription [$ReadOption $Description $TypeofStr "NO DESCRIPTION"];
@@ -450,17 +450,17 @@
     # check
     :if (![$IsStrN $1]) do={:error "Global.Package.RemoveConfig: \$1 should be a string"}
     # const
-    :local baseConfigName "config.rspm";
+    :local baseConfigName "config.rospm";
     :local notAllowed {
-        "config.rspm"=1;
-        "config.rspm.package"=1;
-        "config.rspm.package.ext"=1;
+        "config.rospm"=1;
+        "config.rospm.package"=1;
+        "config.rospm.package.ext"=1;
     }
     # local
     :local pkgName $1;
     :if (![$IsNothing ($notAllowed->$pkgName)]) do={
         :put "$pkgName is an essential configuration."
-        :put "You can reset it with [[\$GetFunc \"rspm.reset.resetConfig\"]], but you should not remove it."
+        :put "You can reset it with [[\$GetFunc \"rospm.reset.resetConfig\"]], but you should not remove it."
         :error "Global.Config.RemoveConfig: not allowed to remove."
     }
     # remove config

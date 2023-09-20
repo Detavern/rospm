@@ -6,7 +6,7 @@
 # Global Package for unicode related operation
 #
 # Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.unicode";
