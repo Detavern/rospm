@@ -372,7 +372,7 @@
 
 
 # $NumToHex
-# convert number to hex string
+# Convert number to hex string.
 # args: <num>                   num
 # return: <str>                 hex string (0x12abdc)
 :global NumToHex do={
@@ -396,7 +396,7 @@
 
 
 # $HexToNum
-# convert hex string to number
+# Convert hex string to number.
 # args: <str>                   hex string (0x12abdc)
 # return: <num>                 number
 :global HexToNum do={
@@ -411,6 +411,41 @@
         :set c ($c * 16);
     }
     :return $v;
+}
+
+
+# $QuoteRegexMeta
+# Quote regex meta in string.
+# args: <str>                   string may contains regex meta
+# return: <str>                 escaped string
+:global QuoteRegexMeta do={
+    # global
+    :global IsNil;
+    :global IsNothing;
+    # local
+    :local s [:tostr $1];
+    :local m "\\.+*\?()|[]{}^\$";
+    :local mm {
+        " "="\_";
+    }
+    # escape
+    :local ch "";
+    :local escaped "";
+    :for i from=0 to=([:len $s] - 1) do={
+        :set ch [:pick $s $i];
+        # meta
+        :if (![$IsNil [:find $m $ch]]) do={
+            :set ch ("\\" . $ch);
+        } else {
+            # special meta
+            :if (![$IsNothing ($mm->$ch)]) do={
+                :set ch ($mm->$ch);
+            }
+        }
+        # concat
+        :set escaped ($escaped . $ch);
+    }
+    :return $escaped;
 }
 
 
