@@ -1,4 +1,4 @@
-version: 0.4.1
+version: 0.5.0
 
 load_order:
     - "global-variables"
@@ -27,8 +27,8 @@ essential_package_list:
     - "global-functions.misc"
     - "tool.http"
     - "tool.remote"
-    - "rspm.feature"
-    - "rspm.state"
-    - "rspm.action"
-    - "rspm.reset"
-    - "rspm"
+    - "rospm.feature"
+    - "rospm.state"
+    - "rospm.action"
+    - "rospm.reset"
+    - "rospm"

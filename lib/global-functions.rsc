@@ -5,12 +5,12 @@
 # ALL global functions follows upper camel case.
 # global function package
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions";
-    "version"="0.4.1";
+    "version"="0.5.0";
     "description"="global function package";
     "global"=true;
     "global-functions"={
@@ -34,10 +34,10 @@
         "Print";
         "PrintK";
         "GetGlobal";
+        "TypeRecovery";
         "ReadOption";
         "InKeys";
         "InValues";
-        "TypeRecovery";
         "Input";
         "InputV";
     };

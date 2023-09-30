@@ -1,16 +1,16 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   ip.firewall.address.watcher
+# |       ROSPM Packages      |   ip.firewall.address.watcher
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# 
+# watch and store address on specific interface
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="ip.firewall.address.watcher";
-    "version"="0.4.0";
+    "version"="0.5.0";
     "description"="watch and store address on specific interface";
 };
 
@@ -29,9 +29,9 @@
     :global ReadOption;
     :global GetFunc;
     # env
-    :global EnvRSPMBaseURL;
+    :global EnvROSPMBaseURL;
     # read opt
-    :if (![$IsStrN $EnvRSPMBaseURL]) do={:error "ip.firewall.address.watcher: \$EnvRSPMBaseURL is empty!"};
+    :if (![$IsStrN $EnvROSPMBaseURL]) do={:error "ip.firewall.address.watcher: \$EnvROSPMBaseURL is empty!"};
     :if ([$IsNil $Name]) do={:error "ip.firewall.address.watcher: require \$Name"};
     :if ([$IsNil $InterfaceList]) do={:error "ip.firewall.address.watcher: require \$InterfaceList"};
     :local pName [$ReadOption $Name $TypeofStr];
@@ -41,7 +41,7 @@
     :local placeholder {"127.1.1.1"};
     [[$GetFunc "ip.firewall.address.ensureAddressList"] List=$pName AddressList=$placeholder];
     # get remote resource
-    :local resURL ($EnvRSPMBaseURL . "templates/schedule_ip_firewall_address_watcher.rsc");
+    :local resURL ($EnvROSPMBaseURL . "templates/schedule_ip_firewall_address_watcher.rsc");
     :local scriptTemplate [[$GetFunc "tool.remote.loadRemoteSource"] URL=$resURL Normalize=true];
     # render
     :local v {
@@ -50,8 +50,8 @@
     };
     :local scriptStr [[$GetFunc "tool.template.render"] Template=$scriptTemplate Variables=$v];
     # add schedule
-    :local scheduleName ("RSPM_WATCHER_" . $pInterfaceList);
-    :local scheduleComment ("rspm: watch ip change on interface list " . $pInterfaceList)
+    :local scheduleName ("ROSPM_WATCHER_" . $pInterfaceList);
+    :local scheduleComment ("rospm: watch ip change on interface list " . $pInterfaceList)
 
     /system/scheduler/remove [/system/scheduler/find name=$scheduleName];
     :put "Adding $scheduleName schedule...";
@@ -73,7 +73,7 @@
     :if ([$IsNil $InterfaceList]) do={:error "ip.firewall.address.watcher: require \$InterfaceList"};
     :local pInterfaceList [$ReadOption $InterfaceList $TypeofStr];
     # delete
-    :local scheduleName ("RSPM_WATCHER_" . $pInterfaceList);
+    :local scheduleName ("ROSPM_WATCHER_" . $pInterfaceList);
     /system/scheduler/remove [/system/scheduler/find name=$scheduleName];
 }
 

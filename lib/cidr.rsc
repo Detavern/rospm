@@ -1,16 +1,16 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   cidr
+# |       ROSPM Packages      |   cidr
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # collections of special CIDRs
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="cidr";
-    "version"="0.4.0";
+    "version"="0.5.0";
     "description"="collections of special CIDRs";
 };
 
@@ -73,4 +73,4 @@
     "metaInfo"=$metaInfo;
     "ensureReserved"=$ensureReserved;
 }
-:return $package
+:return $package;

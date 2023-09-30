@@ -3,4 +3,4 @@ config
 
 # specific
 test.rsc
-rspm-installer-test.rsc
+rospm-installer-test.rsc

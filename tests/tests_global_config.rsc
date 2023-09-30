@@ -1,5 +1,5 @@
 ## GetConfig
-$Print [$GetConfig "config.rspm"];
+$Print [$GetConfig "config.rospm"];
 
 ## create config, check env
 

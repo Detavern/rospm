@@ -3,15 +3,15 @@
 # |     Global Functions     |   global-functions.config
 # ===================================================================
 # ALL global functions follows upper camel case.
-# global functions for configuration management
+# Global functions are vital for the configuration management.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="global-functions.config";
-    "version"="0.4.0";
-    "description"="global functions for configuration management";
+    "version"="0.5.0";
+    "description"="Global functions are vital for the configuration management.";
     "global"=true;
     "global-functions"={
         "LoadGlobalEnv";
@@ -41,8 +41,8 @@
     :global NewArray;
     :global GetCurrentDatetime;
     # check
-    :if (![$IsStrN $1]) do={:error "Global.Config.LoadGlobalEnv: \$1 should be a string"}
-    :if (![$IsArray $2]) do={:error "Global.Config.LoadGlobalEnv: \$2 should be an array"}
+    :if (![$IsStrN $1]) do={:error "Global.Config.LoadGlobalEnv: \$1 should be a string."}
+    :if (![$IsArray $2]) do={:error "Global.Config.LoadGlobalEnv: \$2 should be an array."}
     # init global
     :if ([$IsNothing $GlobalEnvInfo]) do={
         :set GlobalEnvInfo {
@@ -154,16 +154,25 @@
     # global declare
     :global FindPackage;
     :global IsArrayN;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     # local
     :local pkgName $1;
     :local idList [$FindPackage $pkgName];
-    :if (![$IsArrayN $idList]) do={:error "Global.Package.GetConfig: config \"$pkgName\" not found"}
+    :if (![$IsArrayN $idList]) do={
+        :error "Global.Package.GetConfig: config \"$pkgName\" not found.";
+    }
     # parse code and get result;
     :local pSource [:parse [/system/script/get ($idList->0) source]];
     :local pkg [$pSource ];
     :local va {"name"=$pkgName;"type"="config"};
-    if (![$ValidatePackageContent $pkg $va]) do={:error "Global.Package.GetConfig: could not validate target package"}
+    :local vres [$ValidateMetaInfo ($pkg->"metaInfo") $va];
+    :if (!($vres->"flag")) do={
+        :put "There are some errors in the meta info, check it first!";
+        :foreach reason in ($vres->"reasons") do={
+            :put "  $reason";
+        }
+        :error "Global.Package.GetConfig: could not validate target package.";
+    }
     :return $pkg;
 }
 
@@ -283,7 +292,7 @@
     :if (![$IsArrayN $idList]) do={:return 0};
     # register
     :local config [$GetConfig $pkgName];
-    :local baseConfigName "config.rspm";
+    :local baseConfigName "config.rospm";
     # register into base config
     :if (($baseConfigName != $pkgName) and [$IsArrayN [$FindPackage $baseConfigName]]) do={
         :local baseConfig [$GetConfig $baseConfigName];
@@ -338,7 +347,7 @@
     # local
     :local pkgName $1;
     :local config $2;
-    :local baseConfigName "config.rspm";
+    :local baseConfigName "config.rospm";
     :local fileName [$Replace $pkgName "." "_"];
     :local pOwner [$ReadOption $Owner $TypeofStr ""];
     :local pDescription [$ReadOption $Description $TypeofStr "NO DESCRIPTION"];
@@ -441,17 +450,17 @@
     # check
     :if (![$IsStrN $1]) do={:error "Global.Package.RemoveConfig: \$1 should be a string"}
     # const
-    :local baseConfigName "config.rspm";
+    :local baseConfigName "config.rospm";
     :local notAllowed {
-        "config.rspm"=1;
-        "config.rspm.package"=1;
-        "config.rspm.package.ext"=1;
+        "config.rospm"=1;
+        "config.rospm.package"=1;
+        "config.rospm.package.ext"=1;
     }
     # local
     :local pkgName $1;
     :if (![$IsNothing ($notAllowed->$pkgName)]) do={
         :put "$pkgName is an essential configuration."
-        :put "You can reset it with [[\$GetFunc \"rspm.reset.resetConfig\"]], but you should not remove it."
+        :put "You can reset it with [[\$GetFunc \"rospm.reset.resetConfig\"]], but you should not remove it."
         :error "Global.Config.RemoveConfig: not allowed to remove."
     }
     # remove config
@@ -485,4 +494,4 @@
 :local package {
     "metaInfo"=$metaInfo;
 }
-:return $package;
+:return $package;

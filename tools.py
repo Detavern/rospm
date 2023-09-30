@@ -4,6 +4,8 @@ import os
 import click
 
 from utils.package import PackageResourceGenerator, PackageMetainfoModifier
+from utils.quote import ScriptQuoteGenerator
+from utils.utils import get_package_name
 
 
 @click.group()
@@ -18,6 +20,11 @@ def lib():
 
 @cli.group(help="Resource related operations.")
 def res():
+    pass
+
+
+@cli.group(help="Quote script file.")
+def quote():
     pass
 
 
@@ -59,6 +66,20 @@ def generate(src, dst, exclude):
     prg = PackageResourceGenerator()
     prg.parse_folder(abs_src)
     prg.generate_all(abs_dst, exclude_list=exclude)
+
+
+@quote.command(help="Quote a single script file into importable file.")
+@click.option('--src', help='src file path of target file')
+@click.option('--dst', help='dst file path of target file')
+def as_import(src, dst):
+    src = os.path.abspath(src)
+    if dst is None:
+        directory = os.path.dirname(src)
+        fn, ext = os.path.splitext(os.path.basename(src))
+        dst = os.path.join(directory, f"{fn}.quoted{ext}")
+    dst = os.path.abspath(dst)
+    sqg = ScriptQuoteGenerator.from_file(src)
+    sqg.to_importable_file(dst, get_package_name(src))
 
 
 if __name__ == "__main__":

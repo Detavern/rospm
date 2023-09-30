@@ -1,22 +1,22 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   tool.file
+# |       ROSPM Packages      |   tool.file
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # file utility
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="tool.file";
-    "version"="0.4.1";
+    "version"="0.5.0";
     "description"="file utility";
 };
 
 
 # $create
-# currently only support create *.txt file
+# Only support create *.txt file.
 # kwargs: Name=<str>                    file name
 # return: <num>                         time cost
 :local create do={
@@ -53,9 +53,9 @@
 
 
 # $createDir
-# create directory via fetch http://127.0.0.1/favicon.png into file
-# this function DOES NOT depends on whether /ip service www is enabled or not
-# this function will not raise error when folder already exist
+# Create directory via fetch http://127.0.0.1/favicon.png into file.
+# This function DOES NOT depends on whether /ip service www is enabled or not.
+# This function will not raise error when folder already exist.
 # kwargs: Name=<str>                    file name
 :local createDir do={
     #DEFINE global
@@ -79,9 +79,54 @@
 }
 
 
+# $findFile
+# Find files by name or regex.
+# opt kwargs: Name=<str>                    file name
+# opt kwargs: Regexp=<str>                  file regexp
+# return: <array->str>                      file internal id array
+:local find do={
+    #DEFINE global
+    :global IsNil;
+    :global Replace;
+    :global NewArray;
+    :global TypeofStr;
+    :global ReadOption;
+    # read opt
+    :local pName [$ReadOption $Name $TypeofStr];
+    :local pRegexp [$ReadOption $Regexp $TypeofStr];
+    # check
+    :if ([$IsNil $pName] and [$IsNil $pRegexp]) do={
+        :error "tool.file.find: need \$Name or \$Regexp";
+    }
+    # generate regex from name
+    :if (![$IsNil $pName]) do={
+        # check name, \_ represents whitespace
+        :if (!($Name ~ "^([A-Za-z0-9_-]|\_)+(\\.[A-Za-z0-9]+)*\$")) do={
+            :error "tool.file.find: \$Name should not contains special characters.";
+        }
+        # do escape
+        :local escapeMap {
+            "."=("\\.");
+        };
+        :local escaped $pName;
+        :foreach k,v in $escapeMap do={
+            :set escaped [$Replace $escaped $k $v];
+        }
+        :set pRegexp "^([^/]+/)*?$escaped\$";
+    }
+    :local idList [/file/find name~$pRegexp];
+    :local nameList [$NewArray ];
+    :foreach v in $idList do={
+        :set ($nameList->[:len $nameList]) [/file/get $v name];
+    }
+    :return $nameList;
+}
+
+
 :local package {
     "metaInfo"=$metaInfo;
     "create"=$create;
     "createDir"=$createDir;
+    "find"=$find;
 }
 :return $package;

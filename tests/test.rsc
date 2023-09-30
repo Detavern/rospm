@@ -661,31 +661,31 @@ $Print [$LoadGlobalVar "Nothing"];
 # tool
 
 ## http
-:put [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rspm/master/rspm-installer.rsc"];
-$Print [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rspm/master/res/package-info.rsc"];
+:put [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rospm/master/rospm-installer.rsc"];
+$Print [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rospm/master/res/package-info.rsc"];
 
-# rspm config
-$Print [$GetFunc "rspm.install" $a];
+# rospm config
+$Print [$GetFunc "rospm.install" $a];
 
 ## loadRemoteScript
 {
-    :local url "https://raw.githubusercontent.com/Detavern/rspm/master/res/startup.rsc";
+    :local url "https://raw.githubusercontent.com/Detavern/rospm/master/res/startup.rsc";
     :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$url Normalize=true];
-    /system scheduler remove [/system scheduler find name="rspm-startup"];
-    /system scheduler add name="rspm-startup" start-time=startup on-event=$scriptStr;
+    /system scheduler remove [/system scheduler find name="rospm-startup"];
+    /system scheduler add name="rospm-startup" start-time=startup on-event=$scriptStr;
 }
 
 ## firstRun
 {
     :local config {
-        "baseURL"="https://raw.githubusercontent.com/Detavern/rspm/master/";
-        "owner"="rspm";
+        "baseURL"="https://raw.githubusercontent.com/Detavern/rospm/master/";
+        "owner"="rospm";
     }
-    [[$GetFunc "rspm.firstRun"] Context=$config];
+    [[$GetFunc "rospm.firstRun"] Context=$config];
 }
 
 ## check package status
-$Print [[$GetFunc "rspm.checkPackageStatus"] ];
+$Print [[$GetFunc "rospm.checkPackageStatus"] ];
 
 {
     :local a {
@@ -696,7 +696,7 @@ $Print [[$GetFunc "rspm.checkPackageStatus"] ];
 }
 
 ## update
-[[$GetFunc "rspm.update"]];
+[[$GetFunc "rospm.update"]];
 
 
 ## config update
@@ -704,19 +704,19 @@ $Print [[$GetFunc "rspm.checkPackageStatus"] ];
     :local a {
         "test"="test";
     };
-    [$UpdateConfig "config.rspm.package.ext" $a];
+    [$UpdateConfig "config.rospm.package.ext" $a];
 }
 
 ## upgrade
-[[$GetFunc "rspm.upgrade"] Package="rspm"];
-[[$GetFunc "rspm.upgrade"] Package="rspm.hello-world"];
+[[$GetFunc "rospm.upgrade"] Package="rospm"];
+[[$GetFunc "rospm.upgrade"] Package="rospm.hello-world"];
 
-# rspm.state
+# rospm.state
 
 ## check version
-[[$GetFunc "rspm.state.checkVersion"] ForceUpdate=true];
+[[$GetFunc "rospm.state.checkVersion"] ForceUpdate=true];
 
 
 ## checkState
-$Print [[$GetFunc "rspm.state.checkState"] Package="rspm"];
-$Print [[$GetFunc "rspm.state.checkState"] Package="notexist"];
+$Print [[$GetFunc "rospm.state.checkState"] Package="rospm"];
+$Print [[$GetFunc "rospm.state.checkState"] Package="notexist"];

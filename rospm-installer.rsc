@@ -1,10 +1,10 @@
-:global RSPMInstallerBaseURL "https://raw.githubusercontent.com/Detavern/rspm/master/";
-:global RSPMInstallerConfig {
-    "RSPMRepoName"="Detavern/rspm";
-    "RSPMBranch"="master";
-    "RSPMOwner"="rspm";
+:global ROSPMInstallerBaseURL "https://raw.githubusercontent.com/Detavern/rospm/master/";
+:global ROSPMInstallerConfig {
+    "ROSPMRepoName"="Detavern/rospm";
+    "ROSPMBranch"="master";
+    "ROSPMOwner"="rospm";
 };
-:global RSPMInstallerInput do={
+:global ROSPMInstallerInput do={
     :terminal style escaped;
     :put $1;
     :return;
@@ -12,12 +12,12 @@
 
 # args: <str>           name of package
 :local installPackage do={
-    :global RSPMInstallerBaseURL;
-    :global RSPMInstallerConfig;
-    :global RSPMInstallerInput;
+    :global ROSPMInstallerBaseURL;
+    :global ROSPMInstallerConfig;
+    :global ROSPMInstallerInput;
     :local pkgName $1;
-    :local URL ($RSPMInstallerBaseURL . "lib/" . $pkgName . ".rsc");
-    :local Owner ($RSPMInstallerConfig->"RSPMOwner");
+    :local URL ($ROSPMInstallerBaseURL . "lib/" . $pkgName . ".rsc");
+    :local Owner ($ROSPMInstallerConfig->"ROSPMOwner");
     :put "Downloading file $pkgName...";
     :local result [/tool/fetch url=$URL output="user" as-value];
     :local scriptStr ($result->"data");
@@ -27,7 +27,7 @@
         :local scriptOwner [/system/script get ($idList->0) owner];
         :if ($scriptOwner != $Owner) do={
             :put "Same script name \"$pkgName\" with owner \"$scriptOwner\" found in repository.";
-            :local answer [$RSPMInstallerInput "Press y to replace it (y/N)"];
+            :local answer [$ROSPMInstallerInput "Press y to replace it (y/N)"];
             :if ($answer != "y") do={
                 :put "Abort";
                 :return "";
@@ -42,22 +42,22 @@
 }
 
 # installation
-:put "=======================================================";
-:put "|                                                     |";
-:put "|    RRRRRR      SSSSSS     PPPPPP      MM    MM      |";
-:put "|    RR   RR    SS          PP   PP     MMM  MMM      |";
-:put "|    RRRRR       SSSSSS     PPPPPP     MM  MM  MM     |";
-:put "|    RR   RR          SS    PP         MM      MM     |";
-:put "|    RR    RR   SSSSSSS     PP        MM        MM    |";
-:put "|                                                     |";
-:put "=======================================================";
+:put "============================================================";
+:put "|                                                          |";
+:put "|    RRRRRR      OOOOO     SSSSSS   PPPPPP    MM    MM     |";
+:put "|    RR   RR   OOO   OOO  SS        PP   PP   MMM  MMM     |";
+:put "|    RRRRR    OOO     OOO  SSSSSS   PPPPPP   MM  MM  MM    |";
+:put "|    RR   RR   OOO   OOO        SS  PP       MM      MM    |";
+:put "|    RR    RR    OOOOO    SSSSSSS   PP      MM        MM   |";
+:put "|                                                          |";
+:put "============================================================";
 :put "Installer initializing ...";
 :local devMark "develop";
-:if ([:pick ($RSPMInstallerConfig->"RSPMBranch") 0 [:len $devMark]] = $devMark) do={
-    :local answer [$RSPMInstallerInput "WARNING: this is a DEVELOPMENT version, FOR DEVELOPER ONLY (y/N)"];
+:if ([:pick ($ROSPMInstallerConfig->"ROSPMBranch") 0 [:len $devMark]] = $devMark) do={
+    :local answer [$ROSPMInstallerInput "WARNING: this is a DEVELOPMENT version, FOR DEVELOPER ONLY (y/N)"];
     :if ($answer != "y" and $answer != "yes") do={
         :put "Installation abort, use";
-        :put "/import rspm-installer.rsc";
+        :put "/import rospm-installer.rsc";
         :put "to run again.";
         :return "";
     }
@@ -82,19 +82,19 @@
     [$cmdFunc ];
 };
 
-# install rspm
+# install rospm
 [$installPackage "tool_http"];
 [$installPackage "tool_remote"];
-[$installPackage "rspm_config"];
-[$installPackage "rspm_state"];
-[$installPackage "rspm_action"];
-[$installPackage "rspm_reset"];
-[$installPackage "rspm"];
-# invoke rspm.firstRun to complete the installation
+[$installPackage "rospm_config"];
+[$installPackage "rospm_state"];
+[$installPackage "rospm_action"];
+[$installPackage "rospm_reset"];
+[$installPackage "rospm"];
+# invoke rospm.firstRun to complete the installation
 :global GetFunc;
-[[$GetFunc "rspm.firstRun"] Context=$RSPMInstallerConfig];
+[[$GetFunc "rospm.firstRun"] Context=$ROSPMInstallerConfig];
 
-# remove RSPM global envs
-:local removeList [/system/script/environment/find name~"RSPMInstaller"];
+# remove ROSPM global envs
+:local removeList [/system/script/environment/find name~"ROSPMInstaller"];
 /system/script/environment/remove numbers=$removeList;
-:put "RSPM setup finished, enjoy!";
+:put "ROSPM setup finished, enjoy!";

@@ -1,16 +1,16 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   interface.list
+# |       ROSPM Packages      |   interface.list
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # interface list related functions.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="interface.list";
-    "version"="0.4.1";
+    "version"="0.5.0";
     "description"="interface list related functions.";
 };
 
@@ -290,4 +290,4 @@
     "setMembersAttrs"=$setMembersAttrs;
     "findMembers"=$findMembers;
 }
-:return $package;
+:return $package;

@@ -1,16 +1,16 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   tool.http
+# |       ROSPM Packages      |   tool.http
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # http utility
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="tool.http";
-    "version"="0.3.1";
+    "version"="0.5.0";
     "description"="http utility";
 };
 
@@ -44,7 +44,7 @@
     # local
     # TODO: add version info
     :local headers {
-        "User-Agent"="Mikrotik/RSPM";
+        "User-Agent"="Mikrotik/ROSPM";
     }
     :if (![$IsNil $Headers]) do={
         :foreach k,v in $Headers do={

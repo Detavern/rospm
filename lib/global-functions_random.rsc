@@ -5,13 +5,13 @@
 # ALL global functions follows upper camel case.
 # global functions for random related operation
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # Reference from [GPLv3]https://github.dev/eworm-de/routeros-scripts/global-functions
 :local metaInfo {
     "name"="global-functions.random";
-    "version"="0.3.1";
+    "version"="0.5.0";
     "description"="global functions for random related operation";
     "global"=true;
     "global-functions"={

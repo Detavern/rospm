@@ -1,16 +1,16 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   ddns
+# |       ROSPM Packages      |   ddns
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # ddns schedule framework
 #
-# Copyright (c) 2020-2021 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="ddns";
-    "version"="0.3.1";
+    "version"="0.5.0";
     "description"="ddns schedule framework";
 };
 
@@ -41,7 +41,7 @@
     :local pInterval [$ReadOption $Interval $TypeofTime 00:03:00];
     # const
     :local tmplName "schedule_ddns.rsc";
-    :local rspmConfigName "config.rspm.package";
+    :local rospmConfigName "config.rospm.package";
     :local configOwner "ddns";
     :local skdComment "managed by ddns";
     :local skdName "ddns_updater_$Name";
@@ -57,8 +57,8 @@
     }
     [$CreateConfig $configName $config Owner=$configOwner Force=true];
     # load remote template
-    :local rspm [$GetConfig "config.rspm.package"];
-    :local tmplUrl (($rspm->"baseURL") . "templates/$tmplName");
+    :local rospm [$GetConfig "config.rospm.package"];
+    :local tmplUrl (($rospm->"baseURL") . "templates/$tmplName");
     :local content [[$GetFunc "tool.remote.loadRemoteSource"] URL=$tmplUrl Normalize=true];
     # TODO: maybe a template engine in the future?
     :set content [$Replace $content "{{ configName }}" $configName];

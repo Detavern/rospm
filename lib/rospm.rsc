@@ -1,17 +1,17 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   rspm
+# |       ROSPM Packages      |   rospm
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rspm entry
+# ROSPM package entrypoints
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
-    "name"="rspm";
-    "version"="0.4.1";
-    "description"="rspm entry";
+    "name"="rospm";
+    "version"="0.5.0";
+    "description"="ROSPM package entrypoints";
 };
 
 
@@ -28,14 +28,14 @@
     # check
     :local context [$ReadOption $Context $TypeofArray];
     # init config
-    [[$GetFunc "rspm.config.generateConfig"]];
-    :set context [[$GetFunc "rspm.config.generatePackageConfig"] Context=$context];
-    [[$GetFunc "rspm.config.generatePackageExtConfig"]];
+    [[$GetFunc "rospm.config.generateConfig"]];
+    :set context [[$GetFunc "rospm.config.generatePackageConfig"] Context=$context];
+    [[$GetFunc "rospm.config.generatePackageExtConfig"]];
     # local
-    :local baseURL ($context->"RSPMBaseURL");
+    :local baseURL ($context->"ROSPMBaseURL");
     # check current installation
     # compare current with packagelist, and make install/upgrade advice
-    :local reportList [[$GetFunc "rspm.state.checkAllState"] CheckExt=false CheckVersion=false];
+    :local reportList [[$GetFunc "rospm.state.checkAllState"] CheckExt=false CheckVersion=false];
     :foreach report in $reportList do={
         :local state ($report->"state");
         # remote version lt local, warn it and let user determine
@@ -43,24 +43,24 @@
             :put "Local version is higher than the remote. This might be due to some local modifications.";
             :local answer [$InputV ("Enter yes to reinstall.") Default=no];
             :if ($answer) do={
-                [[$GetFunc "rspm.action.reinstall"] Report=$report];
+                [[$GetFunc "rospm.action.reinstall"] Report=$report];
             }
         };
         # remote version gt local, let user know it will be updated
         :if ($state = "GT") do={
-            [[$GetFunc "rspm.action.upgrade"] Report=$report];
+            [[$GetFunc "rospm.action.upgrade"] Report=$report];
         };
         # not exist in local repository, use config to install it
         :if ($state = "NES") do={
             :local pn (($report->"metaConfig")->"name");
             :local epkgList ($packageInfo->"essentialPackageList");
             :if ([$InValues $pn $epkgList]) do={
-                [[$GetFunc "rspm.action.install"] Report=$report];
+                [[$GetFunc "rospm.action.install"] Report=$report];
             }
         };
     }
     # register startup
-    :local startupName "RSPM_STARTUP";
+    :local startupName "ROSPM_STARTUP";
     :local startupResURL ($baseURL . "res/startup.rsc");
     :put "Get: $startupResURL";
     :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
@@ -78,48 +78,50 @@
 :local update do={
     #DEFINE global
     :global Nil;
-    :global IsNothing;
     :global NewArray;
     :global GetFunc;
     :global GetConfig;
     :global UpdateConfig;
+    :global ReadOption;
+    :global TypeofStr;
+    :global TypeofBool;
     :global InKeys;
-    :global ValidatePackageContent;
+    :global ValidateMetaInfo;
     # env
-    :global EnvRSPMBaseURL;
-    :global EnvRSPMVersion;
+    :global EnvROSPMBaseURL;
+    :global EnvROSPMVersion;
     # local
-    :local configPkgName "config.rspm.package";
-    :local configExtPkgName "config.rspm.package.ext";
+    :local configPkgName "config.rospm.package";
+    :local configExtPkgName "config.rospm.package.ext";
     :put "Loading local configuration: $configPkgName...";
     :local config [$GetConfig $configPkgName];
     :put "Loading local configuration: $configExtPkgName...";
     :local configExt [$GetConfig $configExtPkgName];
-    :local version $EnvRSPMVersion;
+    :local version $EnvROSPMVersion;
     :local newConfigExt;
     # add resource version
-    :local resVersionURL ($EnvRSPMBaseURL . "res/version.rsc");
+    :local resVersionURL ($EnvROSPMBaseURL . "res/version.rsc");
     :put "Get: $resVersionURL";
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
     # check core
     :put "Checking core packages...";
     :if ($version >= $resVersion) do={
-        :put "RSPM packages already up-to-date";
+        :put "ROSPM packages already up-to-date";
         :set newConfigExt $configExt;
     } else {
         :put "Latest version is $resVersion, your current version is $version";
         # update package-info
-        :local packageInfoURL ($EnvRSPMBaseURL . "res/package-info.rsc");
+        :local packageInfoURL ($EnvROSPMBaseURL . "res/package-info.rsc");
         :put "Get: $packageInfoURL";
         :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
         :put "Updating local configuration: $configPkgName...";
         :foreach k,v in $packageInfo do={
             :set ($config->$k) $v;
         }
-        :set (($config->"environment")->"RSPMVersion") $resVersion;
+        :set (($config->"environment")->"ROSPMVersion") $resVersion;
         [$UpdateConfig $configPkgName $config];
         # update package-info-ext
-        :local packageInfoExtURL ($EnvRSPMBaseURL . "res/package-info-ext.rsc");
+        :local packageInfoExtURL ($EnvROSPMBaseURL . "res/package-info-ext.rsc");
         :put "Get: $packageInfoExtURL";
         :local packageInfoExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoExtURL];
         :set newConfigExt $packageInfoExt;
@@ -134,12 +136,12 @@
             }
         }
         # update startup scheduler
-        :local startupName "RSPM_STARTUP";
-        :local startupResURL ($EnvRSPMBaseURL . "res/startup.rsc");
+        :local startupName "ROSPM_STARTUP";
+        :local startupResURL ($EnvROSPMBaseURL . "res/startup.rsc");
         :put "Get: $startupResURL";
         :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
         /system/scheduler/remove [/system/scheduler/find name=$startupName];
-        :put "Adding rspm-startup schedule...";
+        :put "Adding rospm-startup schedule...";
         # add scheduler use default policy
         /system/scheduler/add name=$startupName start-time=startup on-event=$scriptStr;
     }
@@ -147,27 +149,31 @@
     :local counter 0;
     :put "Checking extension packages...";
     :foreach meta in ($newConfigExt->"packageList") do={
-        :local pkgURL;
-        :if ([$IsNothing ($meta->"proxyUrl")]) do={
-            :set pkgURL ($meta->"url");
-        } else {
-            :set pkgURL ($meta->"proxyUrl");
-        }
         :local extName ($meta->"name");
         :local extVerL ($meta->"version");
-        # load remote package check version
-        :put "Get: $pkgURL";
-        :local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
-        # check pkg
-        :local va {"type"="code";"name"=($meta->"name");"url"=true};
-        :if (![$ValidatePackageContent $pkgExt $va]) do={
-            :put "Error occured when loading remote resource of $extName, check log for detail";
+        :local flagL [$ReadOption ($meta->"local") $TypeofBool false];
+        :if ($flagL) do={
+            :put "Package $extName:$extVerL is a local package, skipped.";
         } else {
-            :local extVerR (($pkgExt->"metaInfo")->"version");
-            :if ($extVerL < $extVerR) do={
-                :set counter ($counter+1);
-                :foreach k,v in ($pkgExt->"metaInfo") do={
-                    :set ($meta->$k) $v;
+            :local pkgURL [$ReadOption ($meta->"proxyUrl") $TypeofStr ($meta->"url")];
+            # load remote package check version
+            :put "Get: $pkgURL";
+            :local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
+            # check pkg
+            :local va {"type"="code";"name"=($meta->"name");"ext"=true};
+            :local vres [$ValidateMetaInfo ($pkgExt->"metaInfo") $va];
+            if (!($vres->"flag")) do={
+                :put "Error occured when loading remote resource of \"$extName\":";
+                :foreach reason in ($vres->"reasons") do={
+                    :put "  $reason";
+                }
+            } else {
+                :local extVerR (($pkgExt->"metaInfo")->"version");
+                :if ($extVerL < $extVerR) do={
+                    :set counter ($counter+1);
+                    :foreach k,v in ($pkgExt->"metaInfo") do={
+                        :set ($meta->$k) $v;
+                    }
                 }
             }
         }
@@ -191,18 +197,18 @@
     :local pkgName $Package;
     # generate report
     :put "Check package $pkgName state...";
-    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
+    :local report [[$GetFunc "rospm.state.checkState"] Package=$pkgName];
     :local state ($report->"state");
     # register
     :if ($state = "NEC") do={
-        [[$GetFunc "rspm.action.register"] Report=$report];
+        [[$GetFunc "rospm.action.register"] Report=$report];
         :return $Nil;
     }
     # fallback
     :foreach ad in ($report->"advice") do={
         :put $ad;
     }
-    :error "rspm.register: state not match.";
+    :error "rospm.register: state not match.";
 }
 
 
@@ -223,21 +229,21 @@
     :local pURL [$ReadOption $URL $TypeofStr ""];
     :local pSuggestion [$ReadOption $Suggestion $TypeofBool yes];
     # TODO: use specific version
-    :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
+    :local isLatest [[$GetFunc "rospm.state.checkVersion"] ];
     :if (!$isLatest) do={
-        :error "rspm.install: local package list is out of date, please update first.";
+        :error "rospm.install: local package list is out of date, please update first.";
     }
     # install ext package by url
     :if ($pURL != "") do={
-        [[$GetFunc "rspm.action.installExt"] URL=$pURL];
+        [[$GetFunc "rospm.action.installExt"] URL=$pURL];
     }
     # generate report
     :put "Check package $pkgName state...";
-    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
+    :local report [[$GetFunc "rospm.state.checkState"] Package=$pkgName];
     :local state ($report->"state");
     # install
     :if ($state = "NES") do={
-        [[$GetFunc "rspm.action.install"] Report=$report];
+        [[$GetFunc "rospm.action.install"] Report=$report];
         :return $Nil;
     }
     # suggest reinstalling the package
@@ -246,7 +252,7 @@
             :put "Local version is higher than the remote. This might be due to some local modifications.";
             :local answer [$InputV ("Enter yes to reinstall.") Default=yes];
             :if ($answer) do={
-                [[$GetFunc "rspm.action.reinstall"] Report=$report];
+                [[$GetFunc "rospm.action.reinstall"] Report=$report];
                 :return $Nil;
             }
         }
@@ -259,7 +265,7 @@
             :put "Local version is equal to the remote.";
             :local answer [$InputV ("Enter yes to reinstall.") Default=no];
             :if ($answer) do={
-                [[$GetFunc "rspm.action.reinstall"] Report=$report];
+                [[$GetFunc "rospm.action.reinstall"] Report=$report];
                 :return $Nil;
             }
         }
@@ -270,7 +276,7 @@
     :foreach ad in ($report->"advice") do={
         :put $ad;
     }
-    :error "rspm.install: state not match.";
+    :error "rospm.install: state not match.";
 }
 
 
@@ -282,27 +288,27 @@
     :global GetFunc;
     :global GetConfig;
     # local
-    :local configPkgName "config.rspm.package";
+    :local configPkgName "config.rospm.package";
     :put "Loading local configuration: $configPkgName...";
     :local config [$GetConfig $configPkgName];
     # opt
     :local pkgName $Package;
     # generate report
     :put "Check package $pkgName state...";
-    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
+    :local report [[$GetFunc "rospm.state.checkState"] Package=$pkgName];
     :local state ($report->"state");
     # comment if not installed
     :if ($state = "NES") do={
         :put "Package $pkgName has not yet installed.";
-        :error "rspm.remove: state not match.";
+        :error "rospm.remove: state not match.";
     }
     # comment to register it first
     :if ($state = "NEC") do={
         :put "Package $pkgName found, but it is an orphaned one. You should register it first.";
-        :error "rspm.remove: state not match.";
+        :error "rospm.remove: state not match.";
     }
     # remove
-    [[$GetFunc "rspm.action.remove"] Report=$report];
+    [[$GetFunc "rospm.action.remove"] Report=$report];
     :return $Nil;
 }
 
@@ -317,18 +323,18 @@
     :local pkgName $Package;
     # generate report
     :put "Check package $pkgName state...";
-    :local report [[$GetFunc "rspm.state.checkState"] Package=$pkgName];
+    :local report [[$GetFunc "rospm.state.checkState"] Package=$pkgName];
     :local state ($report->"state");
     # upgrade
     :if ($state = "GT") do={
-        [[$GetFunc "rspm.action.upgrade"] Report=$report];
+        [[$GetFunc "rospm.action.upgrade"] Report=$report];
         :return $Nil;
     }
     # fallback
     :foreach ad in ($report->"advice") do={
         :put $ad;
     }
-    :error "rspm.upgrade: state not match.";
+    :error "rospm.upgrade: state not match.";
 }
 
 
@@ -345,23 +351,23 @@
     :global LoadPackage;
     :global GlobalCacheFuncFlush;
     # env
-    :global EnvRSPMBaseURL;
-    :global EnvRSPMOwner;
+    :global EnvROSPMBaseURL;
+    :global EnvROSPMOwner;
     # local
-    :local configPkgName "config.rspm.package";
-    :local configExtPkgName "config.rspm.package.ext";
+    :local configPkgName "config.rospm.package";
+    :local configExtPkgName "config.rospm.package.ext";
     :put "Loading local configuration: $configPkgName...";
     :local config [$GetConfig $configPkgName];
     :put "Loading local configuration: $configExtPkgName...";
     :local configExt [$GetConfig $configExtPkgName];
     # check latest
-    :local isLatest [[$GetFunc "rspm.state.checkVersion"] ];
+    :local isLatest [[$GetFunc "rospm.state.checkVersion"] ];
     :if (!$isLatest) do={
         # TODO: interactive to update
-        :error "rspm.upgradeAll: local package list is out of date, please update first.";
+        :error "rospm.upgradeAll: local package list is out of date, please update first.";
     }
     # generate upgrade list
-    :local reportList [[$GetFunc "rspm.state.checkAllState"] ];
+    :local reportList [[$GetFunc "rospm.state.checkAllState"] ];
     :local upgradeList [$NewArray ];
     :foreach report in $reportList do={
         :if (($report->"state") = "GT") do={
@@ -372,7 +378,7 @@
     :local lenUpradeList [:len $upgradeList];
     :put "$lenUpradeList packages need upgrade.";
     :foreach report in $upgradeList do={
-        [[$GetFunc "rspm.action.upgrade"] Report=$report];
+        [[$GetFunc "rospm.action.upgrade"] Report=$report];
     };
     :put "$lenUpradeList packages have been upgraded.";
     :return $Nil;

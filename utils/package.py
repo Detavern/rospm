@@ -1,22 +1,14 @@
 import os
-import re
-import io
 from collections import OrderedDict
 
 import yaml
-import jinja2
 
 from .parser import PackageParser
+from .utils import TMPL_ENV
 
 with open(os.path.join("utils", "config.yml")) as f:
     config = yaml.safe_load(f)
 
-TMPL_ENV = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.join("utils", "templates")),
-    autoescape=jinja2.select_autoescape(),
-    trim_blocks=True,
-    lstrip_blocks=True,
-)
 
 VERSION = config['version']
 
@@ -33,11 +25,11 @@ class PackageResourceGenerator:
         self.parsed = False
         self.meta_mapping = None
         self.meta_ext_mapping = {
-            "rspm.hello-world": {
-                "name": "rspm.hello-world",
+            "rospm.hello-world": {
+                "name": "rospm.hello-world",
                 "version": "1.0.0",
-                "author": "rspm",
-                "url": "https://raw.githubusercontent.com/Detavern/rspm-pkg-hello-world/master/hello-world.rsc",
+                "author": "rospm",
+                "url": "https://raw.githubusercontent.com/Detavern/rospm-pkg-hello-world/master/hello-world.rsc",
             }
         }
 
@@ -190,10 +182,14 @@ class PackageMetainfoModifier:
             cur = node.end
         # add tail content
         if cur < len(content):
-            ct += content[cur:-1]
+            ct += content[cur:]
+        # ensure tailing newline
+        if not ct.endswith(b'\r\n'):
+            ct += b'\r\n'
         # save
         with open(path, 'wb') as f:
             f.write(ct)
+        self._updates = []
 
     def update_version(self, metainfo):
         metainfo['version'] = VERSION
@@ -237,7 +233,8 @@ class PackageMetainfoModifier:
 
     def update_metainfo(self, path, ignore_exec_check: list):
         print(f'Parsing library file from folder: {path}')
-        for p in os.listdir(path):
+        for p in sorted(os.listdir(path)):
+            print(p)
             if p.startswith("#"):
                 continue
             if not p.endswith(".rsc"):

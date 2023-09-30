@@ -1,17 +1,17 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   rspm.feature
+# |       ROSPM Packages      |   rospm.feature
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rspm feature tools
+# rospm feature tools
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
-    "name"="rspm.feature";
-    "version"="0.4.0";
-    "description"="rspm feature tools";
+    "name"="rospm.feature";
+    "version"="0.5.0";
+    "description"="rospm feature tools";
 };
 
 # $globalCacheFuncOn
@@ -24,7 +24,7 @@
     # env
     :global EnvGlobalCacheFuncEnabled;
     # local
-    :local configName "config.rspm";
+    :local configName "config.rospm";
     # enable
     :if (!$EnvGlobalCacheFuncEnabled) do={
         # update config and reload
@@ -46,7 +46,7 @@
     # env
     :global EnvGlobalCacheFuncEnabled;
     # local
-    :local configName "config.rspm";
+    :local configName "config.rospm";
     # disable
     :if ($EnvGlobalCacheFuncEnabled) do={
         # update config and reload
@@ -65,4 +65,4 @@
     "globalCacheFuncOn"=$globalCacheFuncOn;
     "globalCacheFuncOff"=$globalCacheFuncOff;
 }
-:return $package
+:return $package;

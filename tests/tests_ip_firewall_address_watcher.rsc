@@ -1,12 +1,12 @@
 # prerequisite
 
 {
-    [[$GetFunc "rspm.install"] Package="global-helpers"];
-    [[$GetFunc "rspm.install"] Package="interface.list"];
-    [[$GetFunc "rspm.install"] Package="ip.address"];
-    [[$GetFunc "rspm.install"] Package="ip.firewall.address"];
-    [[$GetFunc "rspm.install"] Package="tool.remote"];
-    [[$GetFunc "rspm.install"] Package="tool.template"];
+    [[$GetFunc "rospm.install"] Package="global-helpers"];
+    [[$GetFunc "rospm.install"] Package="interface.list"];
+    [[$GetFunc "rospm.install"] Package="ip.address"];
+    [[$GetFunc "rospm.install"] Package="ip.firewall.address"];
+    [[$GetFunc "rospm.install"] Package="tool.remote"];
+    [[$GetFunc "rospm.install"] Package="tool.template"];
 }
 
 # add

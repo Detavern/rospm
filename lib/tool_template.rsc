@@ -1,12 +1,12 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       RSPM Packages      |   tool.template
+# |       ROSPM Packages      |   tool.template
 # ===================================================================
 # ALL package level functions follows lower camel case.
 # A simple template utility.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
-# https://github.com/Detavern/rspm/blob/master/LICENSE.md
+# https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # This is a simple template utility.
 # Use {{ foo }} in the template to define a template variable,
@@ -14,7 +14,7 @@
 #
 :local metaInfo {
     "name"="tool.template";
-    "version"="0.4.0";
+    "version"="0.5.0";
     "description"="A simple template utility.";
 };
 
@@ -308,4 +308,4 @@
     "parseVariable"=$parseVariable;
     "render"=$render;
 }
-:return $package
+:return $package;
