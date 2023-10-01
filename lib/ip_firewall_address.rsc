@@ -23,6 +23,7 @@
     #DEFINE global
     :global IsNil;
     :global IsIP;
+    :global IsIPPrefix;
     :global IsStr;
     :global IsEmpty;
     #DEFINE helper
@@ -32,7 +33,7 @@
         :error "ensureAddress: require \$List";
     }
     :local pAddress;
-    :if ([$IsIP $Address] or [$IsStr $Address]) do={
+    :if ([$IsIP $Address] or [$IsIPPrefix $Address] or [$IsStr $Address]) do={
         :set pAddress [:tostr $Address];
     } else {
         :error "ensureAddress: require \$Address";
