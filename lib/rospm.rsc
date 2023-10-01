@@ -199,6 +199,10 @@
     :put "Check package $pkgName state...";
     :local report [[$GetFunc "rospm.state.checkState"] Package=$pkgName];
     :local state ($report->"state");
+    # do nothing if same
+    :if ($state = "SAME") do={
+        :return $Nil;
+    }
     # register
     :if ($state = "NEC") do={
         [[$GetFunc "rospm.action.register"] Report=$report];
