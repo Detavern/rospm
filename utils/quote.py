@@ -15,6 +15,11 @@ class ScriptQuoteGenerator:
         self.reader = reader
         self._lines = []
 
+    @staticmethod
+    def get_quoted_filename(filename: str):
+        fn, ext = os.path.splitext(os.path.basename(filename))
+        return f"{fn}.quoted{ext}"
+
     @classmethod
     def from_file(cls, path):
         inst = cls(StreamReader.from_file(path))
@@ -26,12 +31,12 @@ class ScriptQuoteGenerator:
         with open(path, 'w') as f:
             f.write(snip)
 
-    def to_importable_file(self, path: os.PathLike, name: str):
+    def to_importable_file(self, path: os.PathLike, package_name: str):
         tmpl = TMPL_ENV.get_template("importable.rsc.j2")
         snip = self.generate_multiple_line('\r\n')
         text = tmpl.render(
-            package_name=name,
-            script_name=name.replace('.', '_'),
+            package_name=package_name,
+            script_name=package_name.replace('.', '_'),
             source=snip,
         )
         with open(path, 'w') as f:
