@@ -1,0 +1,18 @@
+:local metaInfo {
+    "type"="config";
+    "name"="{{ package_name }}";
+    "description"="{{ package_desc }}";
+    "created_at"="{{ created_at }}";
+    "last_modify"="{{ last_modify }}";
+}
+
+:global Nil;
+:global InputV;
+
+:local deployment {{ content }};
+
+:local config {
+    "json"=$json;
+    "metaInfo"=$metaInfo;
+}
+:return $config;
