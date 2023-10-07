@@ -16,8 +16,8 @@
 
 
 # $ensureAddress
-# kwargs: List=<str>                    address list name
-# kwargs: Address=<str>|<ip>            ip or cidr or FQDN
+# kwargs: List=<str>                        address list name
+# kwargs: Address=<str>|<ip>|<ip-prefix>    ip or ip-prefix or FQDN
 # return: <id>
 :local ensureAddress do={
     #DEFINE global
