@@ -1,11 +1,50 @@
 #!/usr/bin/env python3
 import os
+import sys
 
 import click
 
 from utils.package import PackageResourceGenerator, PackageMetainfoModifier
 from utils.quote import ScriptQuoteGenerator
 from utils.utils import get_package_name
+
+
+def generate_targets(params: dict, abspath=False, filename_handler=None) -> list:
+    if filename_handler is None:
+        filename_handler = os.path.basename
+
+    targets = []
+    src = params['src']
+    dst = params['dst']
+    src_dir = params['src_dir']
+    dst_dir = params['dst_dir']
+
+    # generate targets
+    if src is not None:
+        if dst is not None:
+            targets.append((src, dst))
+        else:
+            filename = os.path.basename(src)
+            targets.append((src, os.path.join(dst_dir, filename_handler(filename))))
+
+    if src_dir is not None and dst_dir is not None:
+        for filename in sorted(os.listdir(src_dir)):
+            if filename.startswith("#"):
+                continue
+            if not filename.endswith(".rsc"):
+                continue
+            targets.append((
+                os.path.join(src_dir, filename),
+                os.path.join(dst_dir, filename_handler(filename)),
+            ))
+
+    # abs
+    if abspath:
+        notabs, targets = targets, []
+        for t in notabs:
+            targets.append((os.path.abspath(t[0]), os.path.abspath(t[1])))
+
+    return targets
 
 
 @click.group()
@@ -23,9 +62,33 @@ def res():
     pass
 
 
-@cli.group(help="Quote script file.")
-def quote():
-    pass
+@cli.group(help="Quote script files or diectories")
+@click.option('--src', help='source path of target file')
+@click.option('--dst', help='destination path of target file')
+@click.option('--src-dir', help='source path of target folder')
+@click.option('--dst-dir', help='destination path of target folder')
+@click.pass_context
+def quote(ctx, *_, **kwargs):
+    # check
+    if ctx.params['src'] is None and ctx.params['src_dir'] is None:
+        print("need either --src or --src-dir")
+        sys.exit(1)
+
+    if ctx.params['dst'] is None and ctx.params['dst_dir'] is None:
+        print("need either --dst or --dst-dir")
+        sys.exit(1)
+
+    # generate
+    targets = generate_targets(
+        ctx.params, filename_handler=ScriptQuoteGenerator.get_quoted_filename)
+    if len(targets) == 0:
+        print("no valid target!")
+        sys.exit(1)
+    ctx.params["targets"] = targets
+
+    # echo
+    for t in targets:
+        print(f'{t[0]} ==> {t[1]}')
 
 
 @lib.command(help="Change version number of all files in lib folder.")
@@ -68,18 +131,13 @@ def generate(src, dst, exclude):
     prg.generate_all(abs_dst, exclude_list=exclude)
 
 
-@quote.command(help="Quote a single script file into importable file.")
-@click.option('--src', help='src file path of target file')
-@click.option('--dst', help='dst file path of target file')
-def as_import(src, dst):
-    src = os.path.abspath(src)
-    if dst is None:
-        directory = os.path.dirname(src)
-        fn, ext = os.path.splitext(os.path.basename(src))
-        dst = os.path.join(directory, f"{fn}.quoted{ext}")
-    dst = os.path.abspath(dst)
-    sqg = ScriptQuoteGenerator.from_file(src)
-    sqg.to_importable_file(dst, get_package_name(src))
+@quote.command(help="Quote targets into importable files.")
+@click.pass_context
+def as_import(ctx):
+    targets = ctx.parent.params['targets']
+    for target in targets:
+        sqg = ScriptQuoteGenerator.from_file(target[0])
+        sqg.to_importable_file(target[1], get_package_name(target[0]))
 
 
 if __name__ == "__main__":

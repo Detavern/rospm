@@ -11,13 +11,13 @@ TMPL_ENV = jinja2.Environment(
 
 
 def get_package_name(path: os.PathLike) -> str:
-    _, file_name = os.path.split(path)
+    file_name = os.path.basename(path)
     script_name, _ = os.path.splitext(file_name)
     pkg_name = script_name.replace("_", ".")
     return pkg_name
 
 
 def get_script_name(path: os.PathLike) -> str:
-    _, file_name = os.path.split(path)
+    file_name = os.path.basename(path)
     script_name, _ = os.path.splitext(file_name)
     return script_name
