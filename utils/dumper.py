@@ -11,6 +11,7 @@ class ObjectDumper:
     TOKEN_TRUE = "true"
     TOKEN_FALSE = "false"
     TOKEN_EMPTY_ARRAY = "{}"
+    TOKEN_STR_NEED_PAREN = {'$'}
     TOKEN_STR_ESCAPE_MAP = {
         '"': '\\"',
         '\\': '\\\\',
@@ -63,18 +64,19 @@ class ObjectDumper:
 
     def format_str(self, obj):
         v = ''
-        has_space = False
+        need_paren = False
         for ch in obj:
             if ord(ch) > 127:
-                raise ValueError("only support ascii currently")
-            if ch == ' ' and has_space is False:
-                has_space = True
+                # TODO: add unicode support
+                raise ValueError("only support ASCII currently")
+            if ch in self.TOKEN_STR_NEED_PAREN and not need_paren:
+                need_paren = True
             if ch in self.TOKEN_STR_ESCAPE_MAP:
                 v = f'{v}{self.TOKEN_STR_ESCAPE_MAP[ch]}'
             else:
                 v = f'{v}{ch}'
 
-        if has_space:
+        if need_paren:
             return f'("{v}")'
         return f'"{v}"'
 
@@ -107,8 +109,9 @@ class ObjectDumper:
         return result
 
     def to_configuration(self, dst, package_name, package_desc=None):
-        tmpl = TMPL_ENV.get_template("json.rsc.j2")
+        tmpl = TMPL_ENV.get_template("config.rsc.j2")
         ctn = self.dumps()
+        data = {"deployment": ctn}
         desc = package_desc if package_desc else package_name
         now = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
         text = tmpl.render(
@@ -116,7 +119,7 @@ class ObjectDumper:
             package_desc=desc,
             created_at=now,
             last_modify=now,
-            content=ctn,
+            data=data,
         )
         with open(dst, 'w') as f:
             f.write(text)

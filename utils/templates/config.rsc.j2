@@ -9,10 +9,14 @@
 :global Nil;
 :global InputV;
 
-:local deployment {{ content }};
+{% for k, v in data.items() %}
+:local {{ k }} {{ v }};
+{% endfor %}
 
 :local config {
-    "json"=$json;
+    {% for k in data %}
+    "{{ k }}"=${{ k }};
+    {% endfor %}
     "metaInfo"=$metaInfo;
 }
 :return $config;
