@@ -1,4 +1,5 @@
 import json
+import yaml
 import datetime
 
 from .utils import TMPL_ENV
@@ -32,6 +33,12 @@ class ObjectDumper:
     def from_json_file(cls, fp, indent=0):
         with open(fp) as f:
             obj = json.load(f)
+            return cls(obj, indent)
+
+    @classmethod
+    def from_yaml(cls, fp, indent=0):
+        with open(fp) as f:
+            obj = yaml.safe_load(f)
             return cls(obj, indent)
 
     def dumps(self):
