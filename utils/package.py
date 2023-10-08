@@ -4,9 +4,9 @@ from collections import OrderedDict
 import yaml
 
 from .parser import PackageParser
-from .utils import TMPL_ENV
+from .utils import BASE_PATH, TMPL_ENV
 
-with open(os.path.join("utils", "config.yml")) as f:
+with open(os.path.join(BASE_PATH, "config.yml")) as f:
     config = yaml.safe_load(f)
 
 
