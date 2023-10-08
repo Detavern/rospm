@@ -49,6 +49,14 @@ def filter_json_file(filename) -> bool:
     return True
 
 
+def filter_yaml_file(filename) -> bool:
+    if filename.startswith("#"):
+        return False
+    if not filename.endswith(".yaml") and not filename.endswith(".yml"):
+        return False
+    return True
+
+
 def generate_targets(params: dict, abspath=False, filename_filter=None, filename_handler=None) -> list:
     if filename_filter is None:
         filename_filter = filter_script_file
@@ -201,6 +209,30 @@ def from_json(ctx: click.Context, *_, **kwargs):
 
     for target in ctx.params['targets']:
         dumper = ObjectDumper.from_json_file(target[0], 4)
+        pkg_name = package_name if package_name else get_package_name(target[0])
+        dumper.to_configuration(target[1], pkg_name)
+
+
+@config.command(help="Generate configurations from yaml files.")
+@click.option('--src', help='source path of target file')
+@click.option('--dst', help='destination path of target file')
+@click.option('--src-dir', help='source path of target folder')
+@click.option('--dst-dir', help='destination path of target folder')
+@click.option('--name', help='configuration package name')
+@click.pass_context
+def from_yaml(ctx: click.Context, *_, **kwargs):
+    package_name = ctx.params['name']
+    if package_name is None:
+        package_name = "test"
+
+    def handler(filename):
+        name, _ = os.path.splitext(filename)
+        return f'{name}.cfg.rsc'
+
+    parse_ctx_src_dst(ctx, filename_filter=filter_yaml_file, filename_handler=handler)
+
+    for target in ctx.params['targets']:
+        dumper = ObjectDumper.from_yaml(target[0], 4)
         pkg_name = package_name if package_name else get_package_name(target[0])
         dumper.to_configuration(target[1], pkg_name)
 
