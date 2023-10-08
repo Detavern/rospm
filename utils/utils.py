@@ -10,10 +10,16 @@ TMPL_ENV = jinja2.Environment(
     lstrip_blocks=True,
 )
 
+SPECIAL_PACKAGE_SUFFIX = ['.cfg']
+
 
 def get_package_name(path: os.PathLike) -> str:
     file_name = os.path.basename(path)
     script_name, _ = os.path.splitext(file_name)
+    # special suffix
+    for suffix in SPECIAL_PACKAGE_SUFFIX:
+        if script_name.endswith(suffix):
+            script_name = script_name[:-len(suffix)]
     pkg_name = script_name.replace("_", ".")
     return pkg_name
 
