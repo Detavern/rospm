@@ -668,7 +668,7 @@
     :global TypeRecovery;
     :global GetCurrentDatetime;
     :global ShiftDatetime;
-    :global GetSDT;
+    :global ToSDT;
     # check
     :if (![$IsStr $1]) do={
         :error "Global.Package.SetGlobalVar: \$1 should be str.";
@@ -694,15 +694,17 @@
     :local func [:parse $funcStr];
     [$func ];
     # timeout check
-    :if ($timeout > 0:0:0 and $timeout < 0:1:0) do={
-        :error "Global.Package.SetGlobalVar: \$Timeout should longer than 1 minute.";
+    :if ($timeout > 0:0:0 and $timeout < 0:0:30) do={
+        :error "Global.Package.SetGlobalVar: \$Timeout should longer than 30 seconds.";
     }
     # timeout
     :if ($timeout > 0:0:0) do={
         :local cdt [$GetCurrentDatetime ];
         :local tdt [$ShiftDatetime $cdt $timeout];
-        :local sdt [$GetSDT $tdt];
-        :local startTime ($sdt->"time");
+        :local sdt [$ToSDT $tdt];
+        :local startTime [:tostr ($sdt->"time")];
+        :log info "===========";
+        :log info "$startTime";
         :local startDate ($sdt->"date");
         :local scheduleName "ROSPM_SetGlobalVar_$name_Timeout";
         :local idList [/system/scheduler/find name=$scheduleName];
