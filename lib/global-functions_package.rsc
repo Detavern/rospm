@@ -702,9 +702,7 @@
         :local cdt [$GetCurrentDatetime ];
         :local tdt [$ShiftDatetime $cdt $timeout];
         :local sdt [$ToSDT $tdt];
-        :local startTime [:tostr ($sdt->"time")];
-        :log info "===========";
-        :log info "$startTime";
+        :local startTime ($sdt->"time");
         :local startDate ($sdt->"date");
         :local scheduleName "ROSPM_SetGlobalVar_$name_Timeout";
         :local idList [/system/scheduler/find name=$scheduleName];
