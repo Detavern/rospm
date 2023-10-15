@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="global-functions.config";
-    "version"="0.5.0";
+    "version"="0.5.1";
     "description"="Global functions are vital for the configuration management.";
     "global"=true;
     "global-functions"={
@@ -21,6 +21,7 @@
         "RegisterConfig";
         "CreateConfig";
         "RemoveConfig";
+        "ListAllGlobals";
     };
 };
 
@@ -114,7 +115,7 @@
 
 
 # $PrintGlobalEnv
-# Print out GlobalEnvInfo
+# Print out GlobalEnvInfo.
 :global PrintGlobalEnv do={
     # global declare
     :global IsNothing;
@@ -149,7 +150,7 @@
 
 # $GetConfig
 # args: <str>                   <package name>
-# return: <array->var>          config named array      
+# return: <array->var>          config named array
 :global GetConfig do={
     # global declare
     :global FindPackage;
@@ -178,7 +179,7 @@
 
 
 # $UpdateConfig
-# update the configure script file with its name and target array.
+# Update the configure script file with its name and target array.
 # args: <str>                   <config package name>
 # args: <array>                 config array
 # opt kwargs: Output=<str>      output format: file(default), str, array
@@ -435,7 +436,7 @@
 
 
 # $RemoveConfig
-# remove existing configuration package.
+# Remove existing configuration package.
 # args: <str>                       <config package name>
 :global RemoveConfig do={
     # global declare
@@ -487,6 +488,62 @@
         :set ($baseConfig->"configMapping") $configMapping;
         [$UpdateConfig $baseConfigName $baseConfig];
     }
+}
+
+
+# $ListAllGlobals
+# List all existing global variables & global functions.
+:global ListAllGlobals do={
+    # global declare
+    :global IsNil;
+    :global IsNothing;
+    :global NewArray;
+    :global LoadGlobalEnv;
+    :global GetConfig;
+    # const
+    :local pkgConfigName "config.rospm.package";
+    :local pkgExtConfigName "config.rospm.package.ext";
+    :local pkgConfig [$GetConfig $pkgConfigName];
+    :local pkgExtConfig [$GetConfig $pkgExtConfigName];
+    # local
+    :local globals [$NewArray ];
+    # environment
+    :foreach env in ([$GetConfig "config.rospm"]->"environment") do={
+        :set ($globals->[:len $globals]) $env;
+    }
+    :foreach env in ($pkgConfig->"environment") do={
+        :set ($globals->[:len $globals]) $env;
+    }
+    :foreach env in ($pkgExtConfig->"environment") do={
+        :set ($globals->[:len $globals]) $env;
+    }
+    # package
+    :foreach meta in ($pkgConfig->"packageList") do={
+        :foreach gvn in ($meta->"global-variables") do={
+            :set ($globals->[:len $globals]) $gvn;
+        }
+        :foreach gfn in ($meta->"global-functions") do={
+            :set ($globals->[:len $globals]) $gfn;
+        }
+    }
+    # package ext
+    :foreach meta in ($pkgExtConfig->"packageList") do={
+        :foreach gvn in ($meta->"global-variables") do={
+            :set ($globals->[:len $globals]) $gvn;
+        }
+        :foreach gfn in ($meta->"global-functions") do={
+            :set ($globals->[:len $globals]) $gfn;
+        }
+    }
+    :return $globals;
+    # remove all environments
+    :foreach pkg in $globals do={
+        /system/script/environment/remove [/system/script/environment/find name=$pkg];
+    }
+    # remove config
+    /system/script/remove [$FindPackage $pkgName];
+    # unregister env
+    [$LoadGlobalEnv $pkgName [$NewArray ]];
 }
 
 

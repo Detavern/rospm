@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="global-functions.array";
-    "version"="0.5.0";
+    "version"="0.5.1";
     "description"="global functions for array related operation";
     "global"=true;
     "global-functions"={
@@ -22,7 +22,6 @@
         "Reverse";
     };
 };
-
 
 
 # $Append
@@ -39,7 +38,7 @@
 
 
 # $Appends
-# Append variable for array without keys(num key)
+# DEPRECATED Append variable for array without keys(num key)
 # source array will change
 # args: <array>                 source array
 # args: <var>                   var to append
