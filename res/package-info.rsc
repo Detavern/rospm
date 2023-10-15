@@ -73,7 +73,7 @@
     {
         "name"="global-functions.array";
         "description"="global functions for array related operation";
-        "version"="0.5.0";
+        "version"="0.5.1";
         "global"=true;
         "global-functions"={
             "Append";
@@ -176,7 +176,7 @@
     {
         "name"="global-functions.config";
         "description"="Global functions are vital for the configuration management.";
-        "version"="0.5.0";
+        "version"="0.5.1";
         "global"=true;
         "global-functions"={
             "LoadGlobalEnv";
@@ -186,6 +186,7 @@
             "RegisterConfig";
             "CreateConfig";
             "RemoveConfig";
+            "ListAllGlobals";
         };
     };
     {
