@@ -153,7 +153,7 @@
     {
         "name"="global-functions.package";
         "description"="Global functions are vital for the package operation.";
-        "version"="0.5.0";
+        "version"="0.5.1";
         "global"=true;
         "global-functions"={
             "FindPackage";
