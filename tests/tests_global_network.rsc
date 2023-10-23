@@ -21,3 +21,9 @@
     $Print [$ParseCIDR "1.1.1.1/31"]; 
     $Print [$ParseCIDR "1.1.1.1"]; 
 }
+
+
+## GetPool
+{
+    :put [$GetIPPool [$ParseCIDR "1.1.1.1/24"] 100 199];
+}
