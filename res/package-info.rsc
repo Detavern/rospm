@@ -414,7 +414,6 @@
     "global-functions";
     "global-functions.array";
     "global-functions.string";
-    "global-functions.network";
     "global-functions.cache";
     "global-functions.datetime";
     "global-functions.package";

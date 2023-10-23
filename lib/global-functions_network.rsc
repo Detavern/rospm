@@ -36,6 +36,7 @@
     };
 };
 
+
 # $ToIPPrefix
 # Convert string to ip-prefix. Return nil if not ip-prefix.
 :global ToIPPrefix do={
@@ -68,6 +69,7 @@
     :return $result;
 } 
 
+
 # $IsCIDR
 # args: <var>                   <CIDR>
 # return: <bool>                flag
@@ -87,6 +89,7 @@
     }
     :return [$IsSubset $validator [$GetKeys $1]];
 }
+
 
 # $ParseCIDR
 # Parse a string, ipv4, ipv4 prefix into CIDR. Return nil if not CIDR.
@@ -131,6 +134,42 @@
     :set ($result->"usable") (($result->"last") - ($result->"first") + 1);
     :return $result;
 }
+
+
+# $GetPool
+# Return a valid ip pool notation by specify a first offset & a last offset.
+# args: <CIDR>                  cidr
+# args: <num>                   first offset
+# args: <num>                   last offset
+# return: <str>                 ip pool notation like 192.168.0.100-192.168.0.199
+:global GetPool do={
+    # global declare
+    :global IsNil;
+    :global IsCIDR;
+    # check
+    :if (![$IsCIDR $1]) do={
+        :error "Global.network.GetPool: \$1 should be a CIDR array!";
+    };
+    :local offsetF [:tonum $2];
+    :local offsetL [:tonum $3];
+    :if (($1->"prefix") > 24) do={
+        :error "Global.network.GetPool: CIDR prefix larger than /24!";
+    }
+    :if ($offsetF < 0 or $offsetL < 0) do={
+        :error "Global.network.GetPool: both \$2 and \$3 must be positive!";
+    }
+    :if ($offsetF >= $offsetL) do={
+        :error "Global.network.GetPool: \$3 should larger than \$2!";
+    }
+    :if (($offsetL - $offsetF) >= ($1->"usable")) do={
+        :error "Global.network.GetPool: not enough usable ips!";
+    }
+    # do
+    :local ipF ($1->"network") + $offsetF;
+    :local ipL ($1->"network") + $offsetL;
+    :return "$ipF-$ipL";
+}
+
 
 # package info
 :local package {

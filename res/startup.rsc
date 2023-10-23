@@ -7,7 +7,6 @@
     "global-functions";
     "global-functions_array";
     "global-functions_string";
-    "global-functions_network";
     "global-functions_cache";
     "global-functions_datetime";
     "global-functions_package";
