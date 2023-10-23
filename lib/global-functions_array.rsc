@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-functions.array
 # ===================================================================
 # ALL global functions follows upper camel case.
-# global functions for array related operation
+# Global functions are designed to perform array related operation.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -15,11 +15,12 @@
     "global"=true;
     "global-functions"={
         "Append";
-        "Appends";
         "Prepend";
         "Insert";
         "Extend";
         "Reverse";
+        "IsSubset";
+        "IsSuperset";
     };
 };
 
