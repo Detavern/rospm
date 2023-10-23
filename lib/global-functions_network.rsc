@@ -33,6 +33,7 @@
         "ToIPPrefix";
         "IsCIDR";
         "ParseCIDR";
+        "GetPool";
     };
 };
 
