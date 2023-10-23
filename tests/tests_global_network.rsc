@@ -23,7 +23,7 @@
 }
 
 
-## GetPool
+## GetAddressPool
 {
-    :put [$GetIPPool [$ParseCIDR "1.1.1.1/24"] 100 199];
+    :put [$GetAddressPool [$ParseCIDR "1.1.1.1/24"] 100 199];
 }
