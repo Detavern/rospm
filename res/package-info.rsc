@@ -112,6 +112,7 @@
         "global"=true;
         "global-functions"={
             "ToIPPrefix";
+            "IsCIDR";
             "ParseCIDR";
         };
     };
