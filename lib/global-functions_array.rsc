@@ -19,6 +19,7 @@
         "Insert";
         "Extend";
         "Reverse";
+        "GetKeys";
         "IsSubset";
         "IsSuperset";
     };
@@ -102,7 +103,7 @@
 # $Reverse
 # Return a new reversed array.
 # args: <array>                 target array
-# return: <str>                 array
+# return: <array>               new array
 :global Reverse do={
     # global declare
     :global NewArray;
@@ -112,6 +113,22 @@
         :set ($result->[:len $result]) ($1->$i);
     }
     :return $result;
+}
+
+
+# $GetKeys
+# Return a new numeric key array by extracting the keys of an arbitrary array.
+# args: <array>                 target array
+# return: <array>               new array
+:global GetKeys do={
+    # global declare
+    :global NewArray;
+    # local
+    :local keys [$NewArray ];
+    :foreach k,v in $1 do={
+        :set ($keys->[:len $keys]) $k;
+    }
+    :return $keys;
 }
 
 

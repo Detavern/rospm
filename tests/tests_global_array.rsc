@@ -18,6 +18,16 @@
     :put ("new: " . [:tostr $b]);
 }
 
+## GetKeys
+{
+    :local a {"a"="foo"; "b"="bar"; "c"="foobar"};
+    :put [$GetKeys $a];
+}
+{
+    :local a {1;2;3;4};
+    :put [$GetKeys $a];
+}
+
 ## IsSubset
 
 ### positive
