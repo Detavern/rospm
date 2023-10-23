@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-functions.network
 # ===================================================================
 # ALL global functions follows upper camel case.
-# Global functions aim at network calcuation.
+# Global functions are designed to perform network calcuation.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -31,6 +31,7 @@
     "global"=true;
     "global-functions"={
         "ToIPPrefix";
+        "IsCIDR";
         "ParseCIDR";
     };
 };
@@ -72,12 +73,20 @@
 # return: <bool>                flag
 :global IsCIDR do={
     # global declare
-    :global InKeys;
-    :global TypeofArray;
+    :global IsArrayN;
+    :global GetKeys;
+    :global IsSubset;
     # check
-    :if ([:typeof $1] != $TypeofArray) do={
+    :if (![$IsArrayN $1]) do={
         :return false;
-    }; 
+    };
+    # check keys
+    :local keys [$GetKeys $1];
+    :local validator {
+        "cidr";"ip";"prefix";"subnet";"wildcard";
+        "network";"boardcast";"first";"last";"total";"usable";
+    }
+    :return [$IsSubset $keys $validator];
 }
 
 # $ParseCIDR
