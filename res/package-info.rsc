@@ -72,16 +72,17 @@
     };
     {
         "name"="global-functions.array";
-        "description"="global functions for array related operation";
+        "description"="Global functions are designed to perform array related operation.";
         "version"="0.5.1";
         "global"=true;
         "global-functions"={
             "Append";
-            "Appends";
             "Prepend";
             "Insert";
             "Extend";
             "Reverse";
+            "IsSubset";
+            "IsSuperset";
         };
     };
     {
@@ -105,7 +106,7 @@
     };
     {
         "name"="global-functions.network";
-        "description"="Global functions aim at network calcuation.";
+        "description"="Global functions are designed to perform network calcuation.";
         "version"="0.5.1";
         "global"=true;
         "global-functions"={
