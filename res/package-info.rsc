@@ -114,6 +114,7 @@
             "ToIPPrefix";
             "IsCIDR";
             "ParseCIDR";
+            "GetPool";
         };
     };
     {
