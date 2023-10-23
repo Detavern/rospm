@@ -104,6 +104,16 @@
         };
     };
     {
+        "name"="global-functions.network";
+        "description"="Global functions aim at network calcuation.";
+        "version"="0.5.1";
+        "global"=true;
+        "global-functions"={
+            "ToIPPrefix";
+            "ParseCIDR";
+        };
+    };
+    {
         "name"="global-functions.random";
         "description"="global functions for random related operation";
         "version"="0.5.0";
@@ -359,38 +369,39 @@
     "global-functions"=1;
     "global-functions.array"=2;
     "global-functions.string"=3;
-    "global-functions.random"=4;
-    "global-functions.cache"=5;
-    "global-functions.datetime"=6;
-    "global-functions.package"=7;
-    "global-functions.config"=8;
-    "global-functions.unicode"=9;
-    "global-functions.misc"=10;
-    "global-helpers"=11;
-    "ip.address"=12;
-    "routing.rule"=13;
-    "tool.remote"=14;
-    "interface.list"=15;
-    "rospm"=16;
-    "rospm.state"=17;
-    "tool.json"=18;
-    "rospm.reset"=19;
-    "cidr"=20;
-    "ip.firewall.raw"=21;
-    "interface.ethernet"=22;
-    "ddns"=23;
-    "rospm.config"=24;
-    "routing.table"=25;
-    "ddns.getter"=26;
-    "ddns.provider.cloudflare"=27;
-    "tool.http"=28;
-    "rospm.feature"=29;
-    "ip.firewall.address.watcher"=30;
-    "ip.firewall.address"=31;
-    "rospm.action"=32;
-    "tool.template"=33;
-    "ip.route"=34;
-    "tool.file"=35;
+    "global-functions.network"=4;
+    "global-functions.random"=5;
+    "global-functions.cache"=6;
+    "global-functions.datetime"=7;
+    "global-functions.package"=8;
+    "global-functions.config"=9;
+    "global-functions.unicode"=10;
+    "global-functions.misc"=11;
+    "global-helpers"=12;
+    "ip.address"=13;
+    "routing.rule"=14;
+    "tool.remote"=15;
+    "interface.list"=16;
+    "rospm"=17;
+    "rospm.state"=18;
+    "tool.json"=19;
+    "rospm.reset"=20;
+    "cidr"=21;
+    "ip.firewall.raw"=22;
+    "interface.ethernet"=23;
+    "ddns"=24;
+    "rospm.config"=25;
+    "routing.table"=26;
+    "ddns.getter"=27;
+    "ddns.provider.cloudflare"=28;
+    "tool.http"=29;
+    "rospm.feature"=30;
+    "ip.firewall.address.watcher"=31;
+    "ip.firewall.address"=32;
+    "rospm.action"=33;
+    "tool.template"=34;
+    "ip.route"=35;
+    "tool.file"=36;
 }
 
 # the minimum requirement packages of rospm
@@ -399,6 +410,7 @@
     "global-functions";
     "global-functions.array";
     "global-functions.string";
+    "global-functions.network";
     "global-functions.cache";
     "global-functions.datetime";
     "global-functions.package";
