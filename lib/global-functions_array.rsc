@@ -11,7 +11,7 @@
 :local metaInfo {
     "name"="global-functions.array";
     "version"="0.5.1";
-    "description"="global functions for array related operation";
+    "description"="Global functions are designed to perform array related operation.";
     "global"=true;
     "global-functions"={
         "Append";
@@ -25,8 +25,7 @@
 
 
 # $Append
-# Append variable for array without keys(num key)
-# source array will not be changed
+# Return a new array by appending a variable to a numeric key array.
 # args: <array>                 source array
 # args: <var>                   var to append
 # return: <array>               new array
@@ -37,22 +36,8 @@
 }
 
 
-# $Appends
-# DEPRECATED Append variable for array without keys(num key)
-# source array will change
-# args: <array>                 source array
-# args: <var>                   var to append
-# return: <array>               changed source array
-:global Appends do={
-    :local a $1;
-    :set ($a->[:len $a]) $2;
-    :return $a;
-}
-
-
 # $Prepend
-# Prepend variable for array without keys
-# source array will not be changed
+# Return a new array by prepending a variable to a numeric key array.
 # args: <array>                 source array
 # args: <var>                   var to prepend
 # return: <array>               new array
@@ -64,8 +49,7 @@
 
 
 # $Insert
-# Insert variable for array without keys
-# source array will not be changed
+# Return a new array by inserting a variable to a numeric key array at a specific index.
 # args: <array>                 source array
 # args: <var>                   var to insert
 # args: <num>                   insert position
@@ -89,8 +73,7 @@
 
 
 # $Extend
-# Extend array without keys
-# source array will not change
+# Return a new array by extending a numeric key array with another one at a specific index.
 # args: <array>                 source array
 # args: <array>                 array of var to extend at position
 # args: <num>                   extend position
@@ -100,7 +83,6 @@
     :global NewArray;
     :global TypeofNum;
     :global ReadOption;
-    :global Print;
     # local
     :local pos [$ReadOption $3 $TypeofNum [:len $1]];
     :local pre [$NewArray ];
@@ -117,7 +99,7 @@
 
 
 # $Reverse
-# reverse an array without keys
+# Return a new reversed array.
 # args: <array>                 target array
 # return: <str>                 array
 :global Reverse do={
@@ -129,6 +111,58 @@
         :set ($result->[:len $result]) ($1->$i);
     }
     :return $result;
+}
+
+
+# $IsSubset
+# Return if a numeric key array A is subset of another numeric key array B.
+# args: <array>                 array A
+# args: <array>                 array B
+# return: <bool>                flag
+:global IsSubset do={
+    # global declare
+    :global IsNil;
+    :global NewArray;
+    # local
+    :if ([:len $1] > 0 and [:len $2] = 0) do={
+        :return false;
+    }
+    :local m [$NewArray ];
+    :foreach v in $2 do={
+        :set ($m->$v) true;
+    }
+    :foreach v in $1 do={
+        :if ([$IsNil ($m->$v)]) do={
+            :return false;
+        }
+    }
+    :return true;
+}
+
+
+# $IsSuperset
+# Return if a numeric key array A is superset of another numeric key array B.
+# args: <array>                 array A
+# args: <array>                 array B
+# return: <bool>                flag
+:global IsSuperset do={
+    # global declare
+    :global IsNil;
+    :global NewArray;
+    # local
+    :if ([:len $2] > 0 and [:len $1] = 0) do={
+        :return false;
+    }
+    :local m [$NewArray ];
+    :foreach v in $1 do={
+        :set ($m->$v) true;
+    }
+    :foreach v in $2 do={
+        :if ([$IsNil ($m->$v)]) do={
+            :return false;
+        }
+    }
+    :return true;
 }
 
 

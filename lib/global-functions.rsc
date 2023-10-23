@@ -470,8 +470,8 @@
 }
 
 
-# $InKeys
-# Check if an element exists in the values of an array
+# $InValues
+# Check if an element exists in the values of an array.
 # args: <var>                   value to seach
 # args: <array->var>            array to search in
 # return: <bool>                in or not
