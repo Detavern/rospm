@@ -29,7 +29,7 @@
     :global UpdateConfig;
     :global GlobalEnvInfo;
     :global GetCurrentDatetime;
-    :global GetTimedelta;
+    :global GetTimeDiff;
     # env
     :global EnvROSPMVersion;
     :global EnvROSPMBaseURL;
@@ -48,7 +48,7 @@
     :if (!$forceUpdate) do={
         :local sdt ((($GlobalEnvInfo->"data")->"EnvROSPMVersion")->"updateDT");
         :local cdt [$GetCurrentDatetime];
-        :local ctd [$GetTimedelta $sdt $cdt];
+        :local ctd [$GetTimeDiff $sdt $cdt];
         # return true if in expire time
         :if ($ctd < $td) do={:return true};
     }

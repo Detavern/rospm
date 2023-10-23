@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-functions.datetime
 # ===================================================================
 # ALL global functions follows upper camel case.
-# global functions for datetime operation
+# Global functions are designed to perform datetime calcuation.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -15,7 +15,7 @@
 #     "time"=<time>;
 # }
 #
-# <datetime> array
+# <Datetime> array
 # {<year>; <month>; <day>; <hour>; <minute>; <second>}
 # <year>      num, calender year
 # <month>     num, calendar month 1-12
@@ -24,7 +24,7 @@
 # <minute>    num, 0-59
 # <second>    num, 0-59
 #
-# <timedelta> array
+# <Timedelta> array
 # {
 #     "seconds"=<num>;
 #     "minutes"=<num>;
@@ -33,10 +33,13 @@
 #     "months"=<num>;
 #     "years"=<num>;
 # }
+# NOTE: <Timedelta> array may not be complete.
+# An array contains any sort of keys above will be recognized as a valid <Timedelta> array.
+#
 :local metaInfo {
     "name"="global-functions.datetime";
-    "version"="0.5.0";
-    "description"="global functions for datetime operation";
+    "version"="0.5.1";
+    "description"="Global functions are designed to perform datetime calcuation.";
     "global"=true;
     "global-functions"={
         "IsSDT";
@@ -52,7 +55,8 @@
         "IsLeapYear";
         "ShiftDatetime";
         "CompareDatetime";
-        "GetTimedelta";
+        "GetTimeDiff";
+        "GetTimedeltaDiff";
     };
 };
 
@@ -62,24 +66,22 @@
 # return: <bool>                flag
 :global IsSDT do={
     # global declare
-    :global InKeys;
-    :global TypeofArray;
+    :global IsArrayN;
+    :global GetKeys;
+    :global IsSubset;
     # check
-    :if ([:typeof $1] != $TypeofArray) do={
+    :if (![$IsArrayN $1]) do={
         :return false;
     };
-    :if (![$InKeys "date" $1]) do={
-        :return false;
+    # check keys
+    :local validator {
+        "date";"time";
     }
-    :if (![$InKeys "time" $1]) do={
-        :return false;
-    }
-    :return true;
+    :return [$IsSubset $validator [$GetKeys $1]];
 }
 
 
 # $IsDatetime
-# {<year>; <month>; <day>; <hour>; <minute>; <second>}
 # args: <var>                   var
 # return: <bool>                flag
 :global IsDatetime do={
@@ -131,23 +133,16 @@
 # return: <bool>                flag
 :global IsTimedelta do={
     # global declare
-    :global InValues;
-    :global IsNum;
-    :global TypeofArray;
+    :global IsArrayN;
+    :global GetKeys;
+    :global IsSubset;
     # local
-    :local nKeys {"seconds";"minutes";"hours";"days";"months";"years"};
-    :if ([:typeof $1] != $TypeofArray) do={
+    :if (![$IsArrayN $1]) do={
         :return false;
     };
-    :foreach k,v in $1 do={
-        :if (![$InValues $k $nKeys]) do={
-            :return false;
-        }
-        :if (![$IsNum $v]) do={
-            :return false;
-        }
-    }
-    :return true;
+    # check
+    :local validator {"seconds";"minutes";"hours";"days";"months";"years"};
+    :return [$IsSubset [$GetKeys $1] $validator];
 }
 
 
@@ -173,13 +168,14 @@
         :local mmName ($MonthsName->($mm - 1));
         :return "$mmName/$dd/$yy";
     }
-    :error "Global.Datetime.GetCurrentDate: unknown format of date $date";
+    # raise if unknown format
+    :error "Global.Datetime.GetCurrentDate: unknown format of date $date, report to the developer!";
 }
 
 
 # $GetCurrentTime
-# get current date from system clock
-# return: <str>                 date
+# Get current date from system clock.
+# return: <time>                current time
 :global GetCurrentTime do={
     :local clock [/system/clock/print as-value];
     :return ($clock->"time");
@@ -187,8 +183,8 @@
 
 
 # $GetCurrentSDT
-# get current SDT from system clock
-# return: <array>               SDT array
+# Get current SDT from system clock.
+# return: <SDT>                 SDT array
 :global GetCurrentSDT do={
     # global declare
     :global GetCurrentDate;
@@ -203,9 +199,9 @@
 
 
 # $ToTimedelta
-# return a full timedelta array from timedelta or time
-# args: <time>/<timedelta>      time or timedelta
-# return: <array>               timedelta array
+# Return a complete timedelta array from timedelta or time.
+# args: <time> or <Timedelta>       time or timedelta
+# return: <Timedelta>               complete timedelta array
 :global ToTimedelta do={
     # global declare
     :global NewArray;
@@ -273,8 +269,9 @@
 
 
 # $ToDatetime
-# args: <var>                   <sdt>, <timestamp>
-# return: <datetime>            datetime
+# Convert a SDT array to a datetime array.
+# args: <var>                   <SDT>
+# return: <Datetime>            datetime array
 :global ToDatetime do={
     # global declare
     :global IsSDT;
@@ -320,8 +317,8 @@
 
 
 # $GetCurrentDatetime
-# get current datetime from system clock
-# return: <array>               datetime array
+# Get current datetime from system clock.
+# return: <Datetime>            datetime array
 :global GetCurrentDatetime do={
     # global declare
     :global GetCurrentSDT;
@@ -333,8 +330,9 @@
 
 
 # $ToSDT
-# args: <var>                   <datetime>, <timestamp>
-# return: <sdt>                 array of sdt
+# Convert a datetime array to a SDT array.
+# args: <var>                   <Datetime>
+# return: <SDT>                 SDT array
 :global ToSDT do={
     # global declare
     :global IsDatetime;
@@ -374,6 +372,7 @@
 
 
 # $IsLeapYear
+# Determine whether the input year is a leap year.
 # args: <num>               year
 # return: <bool>            is leap year or not
 :global IsLeapYear do={
@@ -383,10 +382,10 @@
 
 
 # $ShiftDatetime
-# datetime shift
-# args: <datetime>              array of datetime
-# args: <time>/<timedelta>      time or timedelta
-# return: <array>               shifted datetime
+# Return a new datetime array by shifting a datetime array with time or timedelta. 
+# args: <Datetime>                  datetime array
+# args: <time> or <Timedelta>       time or timedelta
+# return: <Datetime>                shifted datetime array
 :global ShiftDatetime do={
     # global declare
     :global IsNothing;
@@ -519,8 +518,10 @@
 
 
 # $CompareDatetime
-# args: <datetime>              datetime
-# args: <datetime>              datetime
+# Return a number that indicate which datetime array of two inputs is later,
+# return zero if same. 
+# args: <Datetime>              datetime
+# args: <Datetime>              datetime
 # return: <num>                 1: $1 > $2, -1: $1 < $2, 0: same
 :global CompareDatetime do={
     # global declare
@@ -544,22 +545,23 @@
 }
 
 
-# $GetTimedelta
-# datetime shift
-# args: <datetime>              datetime of start point
-# args: <datetime>              datetime of end point
-# return: <time>                shifted timedelta, positive when $1 earlier than $2
-:global GetTimedelta do={
+# $GetTimeDiff
+# Return a time value that represents the difference of two datetime arrays.
+# The value is positive if the first datetime array ($1) is earlier.
+# args: <Datetime>              start point datetime array
+# args: <Datetime>              end point datetime array
+# return: <time>                the difference of two datetime arrays
+:global GetTimeDiff do={
     # global declare
+    :global IsNil;
     :global NewArray;
     :global IsDatetime;
-    :global CompareDatetime;
-    :global ToTimedelta;
     :global IsLeapYear;
     :global MonthsOfTheYear;
+    :global CompareDatetime;
     # check
-    :if (![$IsDatetime $1]) do={:error "Global.Datetime.GetTimedelta: \$1 should be datetime"};
-    :if (![$IsDatetime $2]) do={:error "Global.Datetime.GetTimedelta: \$2 should be datetime"};
+    :if (![$IsDatetime $1]) do={:error "Global.Datetime.GetTimeDiff: \$1 should be datetime"};
+    :if (![$IsDatetime $2]) do={:error "Global.Datetime.GetTimeDiff: \$2 should be datetime"};
     # ensure adt earlier than bdt
     :local adt $1;
     :local bdt $2;
@@ -648,6 +650,26 @@
     # make result
     :local result [:totime ("$sign$dd" . "d$HH:$MM:$SS")]
     :return $result;
+}
+
+
+# $GetTimedeltaDiff
+# Return a timedelta value that represents the difference of two datetime arrays.
+# args: <Datetime>              start point datetime array
+# args: <Datetime>              end point datetime array
+# return: <Timedelta>           the difference of two datetime arrays
+:global GetTimedeltaDiff do={
+    # global declare
+    :global IsNil;
+    :global IsDatetime;
+    :global GetTimeDiff;
+    :global ToTimedelta;
+    # check
+    :if (![$IsDatetime $1]) do={:error "Global.Datetime.GetTimedeltaDiff: \$1 should be datetime"};
+    :if (![$IsDatetime $2]) do={:error "Global.Datetime.GetTimedeltaDiff: \$2 should be datetime"};
+    # local
+    :local timeDiff [$GetTimeDiff $1 $2];
+    :return [$ToTimedelta $timeDiff];
 }
 
 
