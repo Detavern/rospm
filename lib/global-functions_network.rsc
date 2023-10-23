@@ -33,7 +33,7 @@
         "ToIPPrefix";
         "IsCIDR";
         "ParseCIDR";
-        "GetPool";
+        "GetIPPool";
     };
 };
 
@@ -137,13 +137,13 @@
 }
 
 
-# $GetPool
+# $GetIPPool
 # Return a valid ip pool notation by specify a first offset & a last offset.
 # args: <CIDR>                  cidr
 # args: <num>                   first offset
 # args: <num>                   last offset
 # return: <str>                 ip pool notation like 192.168.0.100-192.168.0.199
-:global GetPool do={
+:global GetIPPool do={
     # global declare
     :global IsNil;
     :global IsCIDR;
@@ -166,8 +166,8 @@
         :error "Global.network.GetPool: not enough usable ips!";
     }
     # do
-    :local ipF ($1->"network") + $offsetF;
-    :local ipL ($1->"network") + $offsetL;
+    :local ipF (($1->"network") + $offsetF);
+    :local ipL (($1->"network") + $offsetL);
     :return "$ipF-$ipL";
 }
 
