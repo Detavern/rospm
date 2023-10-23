@@ -81,6 +81,7 @@
             "Insert";
             "Extend";
             "Reverse";
+            "GetKeys";
             "IsSubset";
             "IsSuperset";
         };
