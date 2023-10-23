@@ -35,9 +35,25 @@
     :put [$ShiftDatetime $cdt $td ];
 }
 
-## get timedelta
+## GetTimeDiff
 {
     :local adt {2020;1;2;16;37;21};
     :local bdt {2050;3;30;3;52;1};
-    :put [$GetTimedelta $adt $bdt];
+    :put [$GetTimeDiff $adt $bdt];
+}
+
+{
+    :local adt {2020;1;2;16;37;21};
+    :local bdt {2050;3;30;3;52;1};
+    :local timeDiff [$GetTimeDiff $bdt $adt];
+    :put $timeDiff;
+}
+
+## GetTimedeltaDiff
+
+{
+    :local adt {2020;1;2;16;37;21};
+    :local bdt {2050;3;30;3;52;1};
+    :local timeDiff [$GetTimedelta $bdt $adt];
+    :put [$ToTimedelta $timeDiff];
 }

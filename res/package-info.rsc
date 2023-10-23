@@ -143,8 +143,8 @@
     };
     {
         "name"="global-functions.datetime";
-        "description"="global functions for datetime operation";
-        "version"="0.5.0";
+        "description"="Global functions are designed to perform datetime calcuation.";
+        "version"="0.5.1";
         "global"=true;
         "global-functions"={
             "IsSDT";
@@ -160,7 +160,8 @@
             "IsLeapYear";
             "ShiftDatetime";
             "CompareDatetime";
-            "GetTimedelta";
+            "GetTimeDiff";
+            "GetTimedeltaDiff";
         };
     };
     {

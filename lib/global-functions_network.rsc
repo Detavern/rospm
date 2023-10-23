@@ -81,12 +81,11 @@
         :return false;
     };
     # check keys
-    :local keys [$GetKeys $1];
     :local validator {
         "cidr";"ip";"prefix";"subnet";"wildcard";
         "network";"boardcast";"first";"last";"total";"usable";
     }
-    :return [$IsSubset $keys $validator];
+    :return [$IsSubset $validator [$GetKeys $1]];
 }
 
 # $ParseCIDR
