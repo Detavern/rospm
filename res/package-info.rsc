@@ -247,73 +247,13 @@
         };
     };
     {
-        "name"="ip.address";
-        "description"="";
-        "version"="0.5.0";
-    };
-    {
-        "name"="routing.rule";
-        "description"="routing rule tools";
-        "version"="0.5.0";
-    };
-    {
-        "name"="tool.remote";
-        "description"="remote script load tools";
-        "version"="0.5.0";
-    };
-    {
-        "name"="interface.list";
-        "description"="interface list related functions.";
-        "version"="0.5.0";
-    };
-    {
-        "name"="rospm";
-        "description"="ROSPM package entrypoints";
-        "version"="0.5.0";
-    };
-    {
-        "name"="rospm.state";
-        "description"="ROSPM package state tools";
-        "version"="0.5.0";
-    };
-    {
-        "name"="tool.json";
-        "description"="json loads and dumps";
-        "version"="0.5.0";
-    };
-    {
-        "name"="rospm.reset";
-        "description"="rospm configuration reset tools";
-        "version"="0.5.0";
-    };
-    {
         "name"="cidr";
         "description"="collections of special CIDRs";
         "version"="0.5.0";
     };
     {
-        "name"="ip.firewall.raw";
-        "description"="";
-        "version"="0.5.0";
-    };
-    {
-        "name"="interface.ethernet";
-        "description"="";
-        "version"="0.5.0";
-    };
-    {
         "name"="ddns";
         "description"="ddns schedule framework";
-        "version"="0.5.0";
-    };
-    {
-        "name"="rospm.config";
-        "description"="rospm configuration tools";
-        "version"="0.5.0";
-    };
-    {
-        "name"="routing.table";
-        "description"="";
         "version"="0.5.0";
     };
     {
@@ -327,13 +267,28 @@
         "version"="0.5.0";
     };
     {
-        "name"="tool.http";
-        "description"="http utility";
+        "name"="interface.ethernet";
+        "description"="";
         "version"="0.5.0";
     };
     {
-        "name"="rospm.feature";
-        "description"="rospm feature tools";
+        "name"="interface.list";
+        "description"="interface list related functions.";
+        "version"="0.5.0";
+    };
+    {
+        "name"="ip.address";
+        "description"="";
+        "version"="0.5.0";
+    };
+    {
+        "name"="ip.dhcp";
+        "description"="DHCP client & server scripts are used to facilitate the IP allocation.";
+        "version"="0.5.1";
+    };
+    {
+        "name"="ip.firewall.address";
+        "description"="";
         "version"="0.5.0";
     };
     {
@@ -342,18 +297,8 @@
         "version"="0.5.0";
     };
     {
-        "name"="ip.firewall.address";
+        "name"="ip.firewall.raw";
         "description"="";
-        "version"="0.5.0";
-    };
-    {
-        "name"="rospm.action";
-        "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
-        "version"="0.5.0";
-    };
-    {
-        "name"="tool.template";
-        "description"="A simple template utility.";
         "version"="0.5.0";
     };
     {
@@ -362,8 +307,68 @@
         "version"="0.5.0";
     };
     {
+        "name"="rospm";
+        "description"="ROSPM package entrypoints";
+        "version"="0.5.0";
+    };
+    {
+        "name"="rospm.action";
+        "description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
+        "version"="0.5.0";
+    };
+    {
+        "name"="rospm.config";
+        "description"="rospm configuration tools";
+        "version"="0.5.0";
+    };
+    {
+        "name"="rospm.feature";
+        "description"="rospm feature tools";
+        "version"="0.5.0";
+    };
+    {
+        "name"="rospm.reset";
+        "description"="rospm configuration reset tools";
+        "version"="0.5.0";
+    };
+    {
+        "name"="rospm.state";
+        "description"="ROSPM package state tools";
+        "version"="0.5.0";
+    };
+    {
+        "name"="routing.rule";
+        "description"="routing rule tools";
+        "version"="0.5.0";
+    };
+    {
+        "name"="routing.table";
+        "description"="";
+        "version"="0.5.0";
+    };
+    {
         "name"="tool.file";
         "description"="file utility";
+        "version"="0.5.0";
+    };
+    {
+        "name"="tool.http";
+        "description"="http utility";
+        "version"="0.5.0";
+    };
+    {
+        "name"="tool.json";
+        "description"="json loads and dumps";
+        "version"="0.5.0";
+    };
+    {
+        "name"="tool.remote";
+        "description"="remote script load tools";
+        "version"="0.5.0";
+    };
+    {
+        "name"="tool.template";
+        "description"="A simple template utility.";
         "version"="0.5.0";
     };
 };
@@ -383,30 +388,31 @@
     "global-functions.unicode"=10;
     "global-functions.misc"=11;
     "global-helpers"=12;
-    "ip.address"=13;
-    "routing.rule"=14;
-    "tool.remote"=15;
-    "interface.list"=16;
-    "rospm"=17;
-    "rospm.state"=18;
-    "tool.json"=19;
-    "rospm.reset"=20;
-    "cidr"=21;
-    "ip.firewall.raw"=22;
-    "interface.ethernet"=23;
-    "ddns"=24;
-    "rospm.config"=25;
-    "routing.table"=26;
-    "ddns.getter"=27;
-    "ddns.provider.cloudflare"=28;
-    "tool.http"=29;
-    "rospm.feature"=30;
-    "ip.firewall.address.watcher"=31;
-    "ip.firewall.address"=32;
-    "rospm.action"=33;
-    "tool.template"=34;
-    "ip.route"=35;
-    "tool.file"=36;
+    "cidr"=13;
+    "ddns"=14;
+    "ddns.getter"=15;
+    "ddns.provider.cloudflare"=16;
+    "interface.ethernet"=17;
+    "interface.list"=18;
+    "ip.address"=19;
+    "ip.dhcp"=20;
+    "ip.firewall.address"=21;
+    "ip.firewall.address.watcher"=22;
+    "ip.firewall.raw"=23;
+    "ip.route"=24;
+    "rospm"=25;
+    "rospm.action"=26;
+    "rospm.config"=27;
+    "rospm.feature"=28;
+    "rospm.reset"=29;
+    "rospm.state"=30;
+    "routing.rule"=31;
+    "routing.table"=32;
+    "tool.file"=33;
+    "tool.http"=34;
+    "tool.json"=35;
+    "tool.remote"=36;
+    "tool.template"=37;
 }
 
 # the minimum requirement packages of rospm
