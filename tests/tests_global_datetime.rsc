@@ -54,6 +54,6 @@
 {
     :local adt {2020;1;2;16;37;21};
     :local bdt {2050;3;30;3;52;1};
-    :local timeDiff [$GetTimedelta $bdt $adt];
-    :put [$ToTimedelta $timeDiff];
+    :local timeDiff [$GetTimedeltaDiff $bdt $adt];
+    :put $timeDiff;
 }
