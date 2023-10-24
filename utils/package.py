@@ -36,7 +36,7 @@ class PackageResourceGenerator:
     def parse_folder(self, path):
         print(f'Parsing resource file from folder: {path}')
         meta_list = []
-        for p in os.listdir(path):
+        for p in sorted(os.listdir(path)):
             if p.startswith('#'):
                 continue
             pp = PackageParser.from_file(os.path.abspath(os.path.join(path, p)))
