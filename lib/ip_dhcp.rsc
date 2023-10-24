@@ -17,10 +17,10 @@
 
 # $ensureClient
 # Make sure the target interface has a DHCP client, keep it disabled if it is already disabled.
-# kwargs: Interface=<str>               on which physical interface
-# kwargs: AddDefaultRoute=<bool>        flag of default route
-# kwargs: UsePeerDNS=<bool>             flag of peer dns
-# kwargs: UsePeerNTP=<bool>             flag of peer ntp
+# kwargs: Interface=<str>                   on which physical interface
+# opt kwargs: AddDefaultRoute=<bool>        flag of default route
+# opt kwargs: UsePeerDNS=<bool>             flag of peer dns
+# opt kwargs: UsePeerNTP=<bool>             flag of peer ntp
 :local ensureClient do={
     #DEFINE global
     :global IsNil;
@@ -29,18 +29,21 @@
     :global TypeofBool;
     :global ReadOption;
     # read opt
-    :local intf [$ReadOption $Interface $TypeofStr];
+    :local pIntf [$ReadOption $Interface $TypeofStr];
     :local pRoute [$ReadOption $AddDefaultRoute $TypeofStr no];
     :local pPeerDNS [$ReadOption $UsePeerDNS $TypeofBool no];
     :local pPeerNTP [$ReadOption $UsePeerNTP $TypeofBool no];
     # check
-    :if ([$IsNil $intf]) do={
+    :if ([$IsNil $pIntf]) do={
         :error "ip.dhcp.ensureClient: require a target interface";
     }
+    :if ([$IsEmpty [/interface/find name=$pIntf]]) do={
+        :error "ip.dhcp.ensureClient: target interface not found";
+    }
     # do
-    :local idList [/ip/dhcp-client/find interface=$intf];
+    :local idList [/ip/dhcp-client/find interface=$pIntf];
     :if ([$IsEmpty $idList]) do={
-        /ip/dhcp-client/add interface=$intf \
+        /ip/dhcp-client/add interface=$pIntf \
             use-peer-dns=$pPeerDNS use-peer-ntp=$pPeerNTP add-default-route=$pRoute;
     }
 }
@@ -57,7 +60,7 @@
 # kwargs: AddressPool=<str>             client address pool name
 # opt kwargs: Network=<str>             DHCP network like 192.168.0.0/24
 # opt kwargs: LeaseTime=<str>           client lease time
-# opt kwargs: Authoritative=<bool>      authoritative flag
+# opt kwargs: Authoritative=<str>       authoritative value
 :local ensureServer do={
     #DEFINE global
     :global IsNil;
@@ -67,7 +70,6 @@
     :global GetFunc;
     :global TypeofStr;
     :global TypeofTime;
-    :global TypeofBool;
     :global ParseCIDR;
     :global GetAddressPool;
     :global ReadOption;
@@ -77,7 +79,7 @@
     :local pAddressPool [$ReadOption $AddressPool $TypeofStr];
     :local pNetwork [$ReadOption $Network $TypeofStr];
     :local pLeaseTime [$ReadOption $LeaseTime $TypeofTime 00:10:00];
-    :local pAuth [$ReadOption $Authoritative $TypeofBool true];
+    :local pAuth [$ReadOption $Authoritative $TypeofStr "yes"];
     # check
     :if ([$IsNil $pName]) do={
         :error "ip.dhcp.ensureServer: require server name";
@@ -98,7 +100,7 @@
     :foreach v in $addresses do={
         :if ($cflag) do={
             :local parsed [$ParseCIDR $v];
-            :if ($parsed->"prefix") <= 24) do={
+            :if (($parsed->"prefix") <= 24) do={
                 :set cidr $parsed;
                 :set $cflag false;
             }
