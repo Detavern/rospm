@@ -82,27 +82,38 @@
     :local pAuth [$ReadOption $Authoritative $TypeofStr "yes"];
     # check
     :if ([$IsNil $pName]) do={
-        :error "ip.dhcp.ensureServer: require server name";
+        :error "ip.dhcp.ensureServer: require \$Name";
     }
     :if ([$IsNil $pIntf]) do={
-        :error "ip.dhcp.ensureServer: require target interface";
+        :error "ip.dhcp.ensureServer: require \$Interface";
     }
     :if ([$IsNil $pAddressPool]) do={
-        :error "ip.dhcp.ensureServer: require address pool";
+        :error "ip.dhcp.ensureServer: require \$AddressPool";
+    }
+    :if (![$IsNil $pNetwork]) do={
+        :if ([$IsNil [$ParseCIDR $pNetwork]]) do={
+            :error "ip.dhcp.ensureServer: \$Network should be valid ip-prefix";
+        }
     }
     # set network by interface
     :local addresses [[$GetFunc "ip.address.find"] Interface=$pIntf Output="cidr"];
     :if ([:len $addresses] = 0) do={
-        :error "ip.dhcp.ensureServer: interface found, but no network on it";
+        :error "ip.dhcp.ensureServer: interface not found or no address on it";
     }
     :local cidr;
     :local cflag true;
     :foreach v in $addresses do={
-        :if ($cflag) do={
-            :local parsed [$ParseCIDR $v];
-            :if (($parsed->"prefix") <= 24) do={
+        :local parsed [$ParseCIDR $v];
+        :if ($cflag and (($parsed->"prefix") <= 24)) do={
+            :if ([$IsNil $pNetwork]) do={
                 :set cidr $parsed;
-                :set $cflag false;
+                :set cflag false;
+            } else {
+                :local net (($parsed->"network") . ("/") . ($parsed->"prefix"));
+                :if ($net = $pNetwork) do={
+                    :set cidr $parsed;
+                    :set cflag false;
+                }
             }
         }
     }
