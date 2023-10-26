@@ -55,21 +55,22 @@
 # If the DHCP network is not specified, it will be automatically created based on
 # the first network of the interface. The network prefix of this interface must be lower than 
 # or equal to /24 to ensure enough IP address space is available.
-# kwargs: Name=<str>                    DHCP server name
-# kwargs: Interface=<str>               on which underlying interface
-# kwargs: AddressPool=<str>             client address pool name
-# opt kwargs: Network=<str>             DHCP network like 192.168.0.0/24
-# opt kwargs: LeaseTime=<str>           client lease time
-# opt kwargs: Authoritative=<str>       authoritative value
+# kwargs: Name=<str>                        DHCP server name
+# kwargs: Interface=<str>                   on which underlying interface
+# kwargs: AddressPool=<str>                 client address pool name
+# opt kwargs: Network=<ip-prefix>           DHCP network like 192.168.0.1/24
+#                                           The ip part of the ip-prefix will be used as gateway.
+# opt kwargs: LeaseTime=<str>               client lease time
+# opt kwargs: Authoritative=<str>           authoritative value
 :local ensureServer do={
     #DEFINE global
     :global IsNil;
     :global IsEmpty;
-    :global InputV;
-    :global StartsWith;
     :global GetFunc;
     :global TypeofStr;
     :global TypeofTime;
+    :global TypeofIP;
+    :global TypeofIPPrefix;
     :global ParseCIDR;
     :global GetAddressPool;
     :global ReadOption;
@@ -77,9 +78,14 @@
     :local pName [$ReadOption $Name $TypeofStr];
     :local pIntf [$ReadOption $Interface $TypeofStr];
     :local pAddressPool [$ReadOption $AddressPool $TypeofStr];
-    :local pNetwork [$ReadOption $Network $TypeofStr];
+    :local pNetwork [$ReadOption $Network $TypeofIPPrefix];
+    :local pGateway [$ReadOption $Gateway $TypeofIP];
     :local pLeaseTime [$ReadOption $LeaseTime $TypeofTime 00:10:00];
     :local pAuth [$ReadOption $Authoritative $TypeofStr "yes"];
+    # local
+    :local cidr;
+    :local gw;
+    :local prefix;
     # check
     :if ([$IsNil $pName]) do={
         :error "ip.dhcp.ensureServer: require \$Name";
@@ -90,42 +96,47 @@
     :if ([$IsNil $pAddressPool]) do={
         :error "ip.dhcp.ensureServer: require \$AddressPool";
     }
-    :if (![$IsNil $pNetwork]) do={
-        :if ([$IsNil [$ParseCIDR $pNetwork]]) do={
-            :error "ip.dhcp.ensureServer: \$Network should be valid ip-prefix";
+    # determine network & gateway
+    :if ([$IsNil $pNetwork]) do={
+        :local addresses [[$GetFunc "ip.address.find"] Interface=$pIntf Output="cidr"];
+        :if ([:len $addresses] = 0) do={
+            :error "ip.dhcp.ensureServer: interface not found or no address on it";
         }
-    }
-    # set network by interface
-    :local addresses [[$GetFunc "ip.address.find"] Interface=$pIntf Output="cidr"];
-    :if ([:len $addresses] = 0) do={
-        :error "ip.dhcp.ensureServer: interface not found or no address on it";
-    }
-    :local cidr;
-    :local cflag true;
-    :foreach v in $addresses do={
-        :local parsed [$ParseCIDR $v];
-        :if ($cflag and (($parsed->"prefix") <= 24)) do={
-            :if ([$IsNil $pNetwork]) do={
+        :local cflag true;
+        :foreach v in $addresses do={
+            :local parsed [$ParseCIDR $v];
+            :if ($cflag and (($parsed->"prefix") <= 24)) do={
                 :set cidr $parsed;
+                :set gw ($parsed->"ip");
+                :set prefix ($parsed->"prefix");
                 :set cflag false;
-            } else {
-                :local net (($parsed->"network") . ("/") . ($parsed->"prefix"));
-                :if ($net = $pNetwork) do={
-                    :set cidr $parsed;
-                    :set cflag false;
-                }
             }
         }
+        :if ($cflag) do={
+            :error "ip.dhcp.ensureServer: interface found, but no available network on it";
+        }
+    } else {
+        :set cidr [$ParseCIDR $pNetwork];
+        :set prefix ($cidr->"prefix");
+        :if ($prefix > 24) do={
+            :error "ip.dhcp.ensureServer: \$Network space should be larger than /24";
+        }
+        # gateway
+        :set gw ($cidr->"ip");
+        :if ($gw = ($cidr->"network")) do={
+            :set gw ($cidr->"first");
+        }
+        # ensure network
+        :local idList [/ip/address/find address="$gw/$prefix" interface=$pIntf];
+        :if ([$IsEmpty $idList]) do={
+            /ip/address/add address="$gw/$prefix" interface=$pIntf;
+        }
     }
-    :if ($cflag) do={
-        :error "ip.dhcp.ensureServer: interface found, but no available network on it";
-    }
-    # ensure network
-    :local addr (($cidr->"network") . ("/") . ($cidr->"prefix"));
+    # ensure dhcp network
+    :local addr (($cidr->"network") . "/$prefix");
     :local idList [/ip/dhcp-server/network/find address=$addr];
     :if ([$IsEmpty $idList]) do={
-        /ip/dhcp-server/network/add address=$addr gateway=[:tostr ($cidr->"ip")] \
-            dns-server=[:tostr ($cidr->"ip")];
+        /ip/dhcp-server/network/add address=$addr gateway=[:tostr $gw] dns-server=[:tostr $gw];
     }
     # ensure pool
     :local addrPool [$GetAddressPool $cidr 100 199];
