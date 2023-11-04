@@ -492,7 +492,7 @@
 
 
 # $ListAllGlobals
-# List all existing global variables & global functions.
+# List all existing global variables, global functions & envs.
 :global ListAllGlobals do={
     # global declare
     :global IsNil;
@@ -506,16 +506,17 @@
     :local pkgConfig [$GetConfig $pkgConfigName];
     :local pkgExtConfig [$GetConfig $pkgExtConfigName];
     # local
-    :local globals [$NewArray ];
+    :local globals [$NewArray ];    # const
+    :local pre "Env";
     # environment
-    :foreach env in ([$GetConfig "config.rospm"]->"environment") do={
-        :set ($globals->[:len $globals]) $env;
+    :foreach k,v in ([$GetConfig "config.rospm"]->"environment") do={
+        :set ($globals->[:len $globals]) ($pre . $k);
     }
-    :foreach env in ($pkgConfig->"environment") do={
-        :set ($globals->[:len $globals]) $env;
+    :foreach k,v in ($pkgConfig->"environment") do={
+        :set ($globals->[:len $globals]) ($pre . $k);
     }
-    :foreach env in ($pkgExtConfig->"environment") do={
-        :set ($globals->[:len $globals]) $env;
+    :foreach k,v in ($pkgExtConfig->"environment") do={
+        :set ($globals->[:len $globals]) ($pre . $k);
     }
     # package
     :foreach meta in ($pkgConfig->"packageList") do={
@@ -536,14 +537,6 @@
         }
     }
     :return $globals;
-    # remove all environments
-    :foreach pkg in $globals do={
-        /system/script/environment/remove [/system/script/environment/find name=$pkg];
-    }
-    # remove config
-    /system/script/remove [$FindPackage $pkgName];
-    # unregister env
-    [$LoadGlobalEnv $pkgName [$NewArray ]];
 }
 
 

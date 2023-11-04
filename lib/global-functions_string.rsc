@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="global-functions.string";
-    "version"="0.5.0";
+    "version"="0.5.1";
     "description"="global functions for string related operation";
     "global"=true;
     "global-functions"={
@@ -25,6 +25,7 @@
         "SimpleLoad";
         "NumToHex";
         "HexToNum";
+        "QuoteRegexMeta";
     };
 };
 
