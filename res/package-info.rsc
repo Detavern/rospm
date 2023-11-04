@@ -89,7 +89,7 @@
     {
         "name"="global-functions.string";
         "description"="global functions for string related operation";
-        "version"="0.5.0";
+        "version"="0.5.1";
         "global"=true;
         "global-functions"={
             "Replace";
@@ -103,6 +103,7 @@
             "SimpleLoad";
             "NumToHex";
             "HexToNum";
+            "QuoteRegexMeta";
         };
     };
     {
@@ -249,7 +250,7 @@
     {
         "name"="cidr";
         "description"="collections of special CIDRs";
-        "version"="0.5.0";
+        "version"="0.5.1";
     };
     {
         "name"="ddns";
