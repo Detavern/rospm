@@ -658,12 +658,6 @@ $Print [$LoadGlobalVar "Nothing"];
     :put [[$GetFunc "ip.firewall.address-list.ensureAddressList"] List="TEST" AddressList=$addressList];
 }
 
-# tool
-
-## http
-:put [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rospm/master/rospm-installer.rsc"];
-$Print [[$GetFunc "tool.http.httpGet"] URL="https://raw.githubusercontent.com/Detavern/rospm/master/res/package-info.rsc"];
-
 # rospm config
 $Print [$GetFunc "rospm.install" $a];
 
