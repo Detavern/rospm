@@ -1,18 +1,18 @@
 #!rsc by RouterOS
 # ===================================================================
-# |       ROSPM Packages      |   ddns.provider.cloudflare
+# |       ROSPM Packages      |   ddns.service.provider.cloudflare
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# ddns provider functions for cloudflare
+# Cloudflare service provider
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # Use cloudflare v4 api
 :local metaInfo {
-    "name"="ddns.provider.cloudflare";
-    "version"="0.5.0";
-    "description"="ddns provider functions for cloudflare";
+    "name"="ddns.service.provider.cloudflare";
+    "version"="0.5.2";
+    "description"="Cloudflare service provider";
 };
 
 

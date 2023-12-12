@@ -3,74 +3,99 @@
 # |       ROSPM Packages      |   ddns
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# ddns schedule framework
+# A simple ddns scheduler framework
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="ddns";
-    "version"="0.5.0";
-    "description"="ddns schedule framework";
+    "version"="0.5.2";
+    "description"="A simple ddns scheduler framework";
 };
+
+
+# $createConfig
+# Create default config for ddns package.
+:local createConfig do={
+    #DEFINE global
+    :global CreateConfig;
+    # env
+    :global EnvROSPMOwner;
+    # local
+    :local configName "config.ddns";
+    :local config {
+        "scheduler"={};
+    }
+    :local description "Auto generated configuration working for ddns scheduler.";
+    [$CreateConfig $configName $config Force=true \
+        Owner=$EnvROSPMOwner Description=$description];
+}
 
 
 # $addSchedule
 # kwargs: Name=<str>                                schedule name
-# kwargs: IPGetter=<str>                            ip getter function path
-# kwargs: IPGetterParams=<array->str>               ip getter function params
+# kwargs: IPProvider=<str>                            ip getter function path
+# kwargs: IPProviderParams=<array->str>               ip getter function params
 # kwargs: ServiceProvider=<str>                     service provider function path
 # kwargs: ServiceProviderParams=<array->str>        service provider function params
 # opt kwargs: Interval=<time>                       schedule interval(default: 00:03:00)
 :local addSchedule do={
     #DEFINE global
-    :global IsStrN;
-    :global IsArray;
     :global TypeofTime;
+    :global IsStrN;
+    :global IsEmpty;
+    :global IsArray;
     :global ReadOption;
-    :global Replace;
+    :global FindPackage;
     :global GetConfig;
-    :global CreateConfig;
+    :global UpdateConfig;
     :global GetFunc;
+    # env
+    :global EnvROSPMBaseURL;
     # check
     :if (![$IsStrN $Name]) do={:error "ddns.addSchedule: \$Name should be a string"}
-    :if (![$IsStrN $IPGetter]) do={:error "ddns.addSchedule: \$IPGetter should be a string"}
-    :if (![$IsArray $IPGetterParams]) do={:error "ddns.addSchedule: \$IPGetterParams should be an array"}
+    :if (![$IsStrN $IPProvider]) do={:error "ddns.addSchedule: \$IPProvider should be a string"}
+    :if (![$IsArray $IPProviderParams]) do={:error "ddns.addSchedule: \$IPProviderParams should be an array"}
     :if (![$IsStrN $ServiceProvider]) do={:error "ddns.addSchedule: \$ServiceProvider should be a string"}
     :if (![$IsArray $ServiceProviderParams]) do={:error "ddns.addSchedule: \$ServiceProviderParams should be an array"}
     :local pInterval [$ReadOption $Interval $TypeofTime 00:03:00];
     # const
     :local tmplName "schedule_ddns.rsc";
     :local rospmConfigName "config.rospm.package";
-    :local configOwner "ddns";
-    :local skdComment "managed by ddns";
-    :local skdName "ddns_updater_$Name";
+    :local configName "config.ddns";
+    :local scheduleComment "managed by ROSPM";
+    :local scheduleName "DDNS_UPDATER_$Name";
     # create config
-    :local configName "config.ddns.schedule.$Name";
-    :local config {
-        "description"="auto generated ddns schedule configuration for $Name";
+    :if ([$IsEmpty [$FindPackage $configName]]) do={
+        [[$GetFunc "ddns.createConfig"]];
+    }
+    :local config [$GetConfig $configName];
+    # update config
+    :local cfgScheduler {
         "name"=$Name;
-        "ipGetter"=$IPGetter;
-        "ipGetterParams"=$IPGetterParams;
+        "ipProvider"=$IPProvider;
+        "ipProviderParams"=$IPProviderParams;
         "serviceProvider"=$ServiceProvider;
         "serviceProviderParams"=$ServiceProviderParams;
     }
-    [$CreateConfig $configName $config Owner=$configOwner Force=true];
+    :set (($config->"scheduler")->$Name) $cfgScheduler;
+    [$UpdateConfig $configName $config];
     # load remote template
-    :local rospm [$GetConfig "config.rospm.package"];
-    :local tmplUrl (($rospm->"baseURL") . "templates/$tmplName");
+    :local tmplUrl ("https://raw.githubusercontent.com/Detavern/rospm/develop/" . "templates/$tmplName");
     :local content [[$GetFunc "tool.remote.loadRemoteSource"] URL=$tmplUrl Normalize=true];
-    # TODO: maybe a template engine in the future?
-    :set content [$Replace $content "{{ configName }}" $configName];
+    :local v {"schedulerName"=$Name};
+    :set content [[$GetFunc "tool.template.render"] Template=$content Variables=$v];
     # add schedule
-    /system scheduler add name=$skdName comment=$skdComment \
+    /system/scheduler/add name=$scheduleName comment=$scheduleComment \
         start-time=startup interval=$pInterval on-event=$content \
-        policy=read,write,policy,test
+        policy=read,write,policy,test;
 }
 
 
 :local package {
     "metaInfo"=$metaInfo;
+    "createConfig"=$createConfig;
     "addSchedule"=$addSchedule;
 }
 :return $package;
