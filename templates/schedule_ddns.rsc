@@ -37,7 +37,7 @@
     :log/warning "ROSPM DDNS: $schedulerName: get ip address failed, the Provider is $ipProvider";
     :return $Nil;
 }
-:log/info "ROSPM DDNS: $schedulerName: get ip address $ipAddr from provider $ipProvider";
+:log/debug "ROSPM DDNS: $schedulerName: get ip address $ipAddr from provider $ipProvider";
 
 # determine update or not
 :if (!$alwaysUpdate) do={
@@ -49,10 +49,10 @@
     } else {
         :local ipAddrLast [/ip/firewall/address-list/get ($idList->0) address];
         :if ($ipAddrLast = $ipAddr) do={
-            :log/info "ROSPM DDNS: $schedulerName: no need to update address list";
+            :log/debug "ROSPM DDNS: $schedulerName: no need to update address list";
             :return $Nil;
         } else {
-            /ip/firewall/address-list remove [ip/firewall/address-list/find list="$addrListName"];
+            /ip/firewall/address-list remove [/ip/firewall/address-list/find list="$addrListName"];
             /ip/firewall/address-list add list="$addrListName" address=$ipAddr;
             :log/info "ROSPM DDNS: $schedulerName: address list $addrListName updated";
         }
