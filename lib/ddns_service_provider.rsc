@@ -35,7 +35,7 @@
     :global NewArray;
     :global ReadOption;
     # local
-    :local vIP [$ReadOption $Params $TypeofStr];
+    :local vIP [$ReadOption $IP $TypeofStr];
     :local params [$ReadOption $Params $TypeofArray];
     :local adviceList [$NewArray ];
     :set ($adviceList->[:len $adviceList]) ("IP is $vIP");
