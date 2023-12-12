@@ -43,7 +43,7 @@
         "zoneName"="THIS IS A DEBUG ZONE";
         "recordName"="THIS IS A DEBUG RECORD";
     };
-    [[$GetFunc "ddns.addSchedule"] \
+    [[$GetFunc "ddns.addScheduler"] \
         Name="TEST" \
         IPProvider="ddns.ip.provider.byInterface" IPProviderParams=$ipProviderParams \
         ServiceProvider="ddns.service.provider.logForDebug" ServiceProviderParams=$serviceProviderParams \
@@ -61,7 +61,7 @@
         "zoneName"="example.com";
         "recordName"="test.ddns";
     };
-    [[$GetFunc "ddns.addSchedule"] \
+    [[$GetFunc "ddns.addScheduler"] \
         Name="TEST" \
         IPProvider="ddns.ip.provider.byInterface" IPProviderParams=$ipProviderParams \
         ServiceProvider="ddns.service.provider.cloudflare.ensureHostRecord" ServiceProviderParams=$serviceProviderParams \

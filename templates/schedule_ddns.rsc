@@ -59,7 +59,7 @@
     }
 }
 
-# update the host record by  0service provider function
+# update the host record by service provider function
 :local result;
 :do {
     :set result [[$GetFunc $serviceProvider] IP=$ipAddr Params=$serviceProviderParams];

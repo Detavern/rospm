@@ -35,10 +35,10 @@
     :global NewArray;
     :global ReadOption;
     # local
-    :local ip [$ReadOption $Params $TypeofStr];
+    :local vIP [$ReadOption $Params $TypeofStr];
     :local params [$ReadOption $Params $TypeofArray];
     :local adviceList [$NewArray ];
-    :set ($adviceList->[:len $adviceList]) ("IP is $ip");
+    :set ($adviceList->[:len $adviceList]) ("IP is $vIP");
     :foreach k,v in=$params do={
         :set ($adviceList->[:len $adviceList]) ("Param \"$k\" is \"$v\"");
     }
@@ -55,8 +55,3 @@
     "logForDebug"=$logForDebug;
 }
 :return $package;
-
-
-
-
-
