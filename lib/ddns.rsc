@@ -88,7 +88,7 @@
     # load remote template
     :local tmplUrl ("https://raw.githubusercontent.com/Detavern/rospm/develop/" . "templates/$tmplName");
     :local content [[$GetFunc "tool.remote.loadRemoteSource"] URL=$tmplUrl Normalize=true];
-    :local v {"schedulerName"=$Name;"AlwaysUpdate"=$pAlwaysUpdate};
+    :local v {"schedulerName"=$Name;"alwaysUpdateFlag"=$pAlwaysUpdate};
     :set content [[$GetFunc "tool.template.render"] Template=$content Variables=$v];
     # add schedule
     /system/scheduler/add name=$scheduleName comment=$scheduleComment \
