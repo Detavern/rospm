@@ -8,7 +8,6 @@
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
-# Use cloudflare v4 api
 :local metaInfo {
     "name"="ddns.service.provider";
     "version"="0.5.2";
@@ -29,12 +28,23 @@
 # kwargs: IP=<ip>                           ip address or ipv6 address
 # kwargs: Params=<array->str>               provider function params
 :local logForDebug do={
+    #DEFINE global
+    :global IsNil;
+    :global TypeofStr;
+    :global TypeofArray;
+    :global NewArray;
+    :global ReadOption;
+    # local
+    :local ip [$ReadOption $Params $TypeofStr];
+    :local params [$ReadOption $Params $TypeofArray];
+    :local adviceList [$NewArray ];
+    :set ($adviceList->[:len $adviceList]) ("IP is $ip");
+    :foreach k,v in=$params do={
+        :set ($adviceList->[:len $adviceList]) ("Param \"$k\" is \"$v\"");
+    }
     :local result {
         "result"="created";
-        "advice"={
-            "IP is $IP";
-            "Params are $Params";
-        };
+        "advice"=$adviceList;
     }
     :return $result;
 }
@@ -45,4 +55,8 @@
     "logForDebug"=$logForDebug;
 }
 :return $package;
+
+
+
+
 
