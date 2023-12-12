@@ -50,8 +50,64 @@
 }
 
 
+# $byHTTPGet
+# Update ip record by a HTTP Get API which use url, ip, token as params.
+# kwargs: IP=<ip>                           ip address or ipv6 address
+# kwargs: Params=<array->str>               provider function params
+:local byHTTPGet do={
+    #DEFINE global
+    :global IsNil;
+    :global TypeofStr;
+    :global TypeofArray;
+    :global GetFunc;
+    :global ReadOption;
+    :global Strip;
+    # local
+    :local vIP [$ReadOption $IP $TypeofStr];
+    :local params [$ReadOption $Params $TypeofArray];
+    :local url ($params->"url");
+    :set ($params->"url");
+    :set ($params->"ip") $vIP;
+    :local resp [[$GetFunc "tool.http.httpGet"] URL=$url Params=$params DataType="text"];
+    :local result {
+        "result"="updated";
+        "advice"=($resp->"data");
+    }
+    :return $result;
+}
+
+
+# $byHTTPPostJSON
+# Update ip record by a HTTP Post API which use json string as data.
+# Example JSON: {"ip": "", "token": ""}
+# kwargs: IP=<ip>                           ip address or ipv6 address
+# kwargs: Params=<array->str>               provider function params
+:local byHTTPPostJSON do={
+    #DEFINE global
+    :global IsNil;
+    :global TypeofStr;
+    :global TypeofArray;
+    :global GetFunc;
+    :global ReadOption;
+    # local
+    :local vIP [$ReadOption $IP $TypeofStr];
+    :local params [$ReadOption $Params $TypeofArray];
+    :local url ($params->"url");
+    :set ($params->"url");
+    :set ($params->"ip") $vIP;
+    :local resp [[$GetFunc "tool.http.httpPost"] URL=$url Data=$params DataType="json" Output="json"];
+    :local result {
+        "result"="updated";
+        "advice"=($resp->"data");
+    }
+    :return $result;
+}
+
+
 :local package {
     "metaInfo"=$metaInfo;
     "logForDebug"=$logForDebug;
+    "byHTTPGet"=$byHTTPGet;
+    "byHTTPPostJSON"=$byHTTPPostJSON;
 }
 :return $package;
