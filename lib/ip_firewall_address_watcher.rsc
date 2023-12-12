@@ -3,15 +3,15 @@
 # |       ROSPM Packages      |   ip.firewall.address.watcher
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# watch and store address on specific interface
+# Watch and store address on specific interface.
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="ip.firewall.address.watcher";
-    "version"="0.5.0";
-    "description"="watch and store address on specific interface";
+    "version"="0.5.2";
+    "description"="Watch and store address on specific interface.";
 };
 
 
@@ -51,12 +51,13 @@
     :local scriptStr [[$GetFunc "tool.template.render"] Template=$scriptTemplate Variables=$v];
     # add schedule
     :local scheduleName ("ROSPM_WATCHER_" . $pInterfaceList);
-    :local scheduleComment ("rospm: watch ip change on interface list " . $pInterfaceList)
+    :local scheduleComment "managed by ROSPM";
 
     /system/scheduler/remove [/system/scheduler/find name=$scheduleName];
     :put "Adding $scheduleName schedule...";
     # add scheduler use default policy
-    :local id [/system/scheduler/add name=$scheduleName start-time=startup interval=$pInterval on-event=$scriptStr];
+    :local id [/system/scheduler/add name=$scheduleName comment=$scheduleComment \
+        start-time=startup interval=$pInterval on-event=$scriptStr];
     :return $id;
 }
 

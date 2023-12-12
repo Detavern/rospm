@@ -254,18 +254,23 @@
     };
     {
         "name"="ddns";
-        "description"="ddns schedule framework";
-        "version"="0.5.0";
+        "description"="A simple ddns scheduler framework.";
+        "version"="0.5.2";
     };
     {
-        "name"="ddns.getter";
-        "description"="ddns ip getter";
-        "version"="0.5.0";
+        "name"="ddns.ip.provider";
+        "description"="The collections of ddns ip providers";
+        "version"="0.5.2";
     };
     {
-        "name"="ddns.provider.cloudflare";
-        "description"="ddns provider functions for cloudflare";
-        "version"="0.5.0";
+        "name"="ddns.service.provider";
+        "description"="The collections of ddns service providers";
+        "version"="0.5.2";
+    };
+    {
+        "name"="ddns.service.provider.cloudflare";
+        "description"="Cloudflare service provider";
+        "version"="0.5.2";
     };
     {
         "name"="interface.ethernet";
@@ -294,8 +299,8 @@
     };
     {
         "name"="ip.firewall.address.watcher";
-        "description"="watch and store address on specific interface";
-        "version"="0.5.0";
+        "description"="Watch and store address on specific interface.";
+        "version"="0.5.2";
     };
     {
         "name"="ip.firewall.raw";
@@ -391,29 +396,30 @@
     "global-helpers"=12;
     "cidr"=13;
     "ddns"=14;
-    "ddns.getter"=15;
-    "ddns.provider.cloudflare"=16;
-    "interface.ethernet"=17;
-    "interface.list"=18;
-    "ip.address"=19;
-    "ip.dhcp"=20;
-    "ip.firewall.address"=21;
-    "ip.firewall.address.watcher"=22;
-    "ip.firewall.raw"=23;
-    "ip.route"=24;
-    "rospm"=25;
-    "rospm.action"=26;
-    "rospm.config"=27;
-    "rospm.feature"=28;
-    "rospm.reset"=29;
-    "rospm.state"=30;
-    "routing.rule"=31;
-    "routing.table"=32;
-    "tool.file"=33;
-    "tool.http"=34;
-    "tool.json"=35;
-    "tool.remote"=36;
-    "tool.template"=37;
+    "ddns.ip.provider"=15;
+    "ddns.service.provider"=16;
+    "ddns.service.provider.cloudflare"=17;
+    "interface.ethernet"=18;
+    "interface.list"=19;
+    "ip.address"=20;
+    "ip.dhcp"=21;
+    "ip.firewall.address"=22;
+    "ip.firewall.address.watcher"=23;
+    "ip.firewall.raw"=24;
+    "ip.route"=25;
+    "rospm"=26;
+    "rospm.action"=27;
+    "rospm.config"=28;
+    "rospm.feature"=29;
+    "rospm.reset"=30;
+    "rospm.state"=31;
+    "routing.rule"=32;
+    "routing.table"=33;
+    "tool.file"=34;
+    "tool.http"=35;
+    "tool.json"=36;
+    "tool.remote"=37;
+    "tool.template"=38;
 }
 
 # the minimum requirement packages of rospm
