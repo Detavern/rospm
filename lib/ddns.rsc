@@ -19,6 +19,7 @@
 # Create default config for ddns package.
 :local createConfig do={
     #DEFINE global
+    :global IsNil;
     :global CreateConfig;
     # env
     :global EnvROSPMOwner;
@@ -33,15 +34,17 @@
 }
 
 
-# $addSchedule
+# $addScheduler
 # kwargs: Name=<str>                                schedule name
-# kwargs: IPProvider=<str>                            ip getter function path
-# kwargs: IPProviderParams=<array->str>               ip getter function params
+# kwargs: IPProvider=<str>                          ip provider function path
+# kwargs: IPProviderParams=<array->str>             ip provider function params
 # kwargs: ServiceProvider=<str>                     service provider function path
 # kwargs: ServiceProviderParams=<array->str>        service provider function params
 # opt kwargs: Interval=<time>                       schedule interval(default: 00:03:00)
-:local addSchedule do={
+# opt kwargs: AlwaysUpdate=<bool>                   always update flag
+:local addScheduler do={
     #DEFINE global
+    :global TypeofBool;
     :global TypeofTime;
     :global IsStrN;
     :global IsEmpty;
@@ -59,7 +62,8 @@
     :if (![$IsArray $IPProviderParams]) do={:error "ddns.addSchedule: \$IPProviderParams should be an array"}
     :if (![$IsStrN $ServiceProvider]) do={:error "ddns.addSchedule: \$ServiceProvider should be a string"}
     :if (![$IsArray $ServiceProviderParams]) do={:error "ddns.addSchedule: \$ServiceProviderParams should be an array"}
-    :local pInterval [$ReadOption $Interval $TypeofTime 00:03:00];
+    :local pInterval [$ReadOption $Interval $TypeofTime 00:01:00];
+    :local pAlwaysUpdate [$ReadOption $AlwaysUpdate $TypeofBool false];
     # const
     :local tmplName "schedule_ddns.rsc";
     :local rospmConfigName "config.rospm.package";
@@ -84,7 +88,7 @@
     # load remote template
     :local tmplUrl ("https://raw.githubusercontent.com/Detavern/rospm/develop/" . "templates/$tmplName");
     :local content [[$GetFunc "tool.remote.loadRemoteSource"] URL=$tmplUrl Normalize=true];
-    :local v {"schedulerName"=$Name};
+    :local v {"schedulerName"=$Name;"AlwaysUpdate"=$pAlwaysUpdate};
     :set content [[$GetFunc "tool.template.render"] Template=$content Variables=$v];
     # add schedule
     /system/scheduler/add name=$scheduleName comment=$scheduleComment \
@@ -96,6 +100,6 @@
 :local package {
     "metaInfo"=$metaInfo;
     "createConfig"=$createConfig;
-    "addSchedule"=$addSchedule;
+    "addScheduler"=$addScheduler;
 }
 :return $package;

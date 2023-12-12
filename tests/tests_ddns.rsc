@@ -20,6 +20,19 @@
     :put [[$GetFunc "ddns.ip.provider.byAPIGroup"] ];
 }
 
+## service provider
+
+{
+    :local params {
+        "token"="THIS IS A DEBUG TOKEN";
+        "zoneName"="THIS IS A DEBUG ZONE";
+        "recordName"="THIS IS A DEBUG RECORD";
+    };
+    :local result [[$GetFunc "ddns.service.provider.logForDebug"] IP="1.1.1.1" Params=$params];
+    :put ($result->"result");
+    :put ($result->"advice");
+}
+
 ## debug
 {
     :local ipProviderParams {
@@ -32,7 +45,7 @@
     };
     [[$GetFunc "ddns.addSchedule"] \
         Name="TEST" \
-        IPProvider="ddns.ip.provider.getIPByInterface" IPProviderParams=$ipProviderParams \
+        IPProvider="ddns.ip.provider.byInterface" IPProviderParams=$ipProviderParams \
         ServiceProvider="ddns.service.provider.logForDebug" ServiceProviderParams=$serviceProviderParams \
     ];
 }
@@ -50,7 +63,7 @@
     };
     [[$GetFunc "ddns.addSchedule"] \
         Name="TEST" \
-        IPProvider="ddns.ip.provider.getIPByInterface" IPProviderParams=$ipProviderParams \
+        IPProvider="ddns.ip.provider.byInterface" IPProviderParams=$ipProviderParams \
         ServiceProvider="ddns.service.provider.cloudflare.ensureHostRecord" ServiceProviderParams=$serviceProviderParams \
     ];
 }

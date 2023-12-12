@@ -9,6 +9,7 @@
 # local
 :local configName "config.ddns";
 :local schedulerName "{{ schedulerName }}";
+:local alwaysUpdate {{ alwaysUpdateFlag }};
 
 # load config
 :if ([$IsEmpty [$FindPackage $configName]]) do={
@@ -38,7 +39,27 @@
 }
 :log/info "ROSPM DDNS: $schedulerName: get ip address $ipAddr from provider $ipProvider";
 
-# Update the host record by service provider function.
+# determine update or not
+:if (!$alwaysUpdate) do={
+    :local addrListName "IP_DDNS_$schedulerName";
+    :local idList [/ip/firewall/address-list/find list="$addrListName"];
+    :if ([$IsEmpty $idList]) do={
+        /ip/firewall/address-list add list="$addrListName" address=$ipAddr;
+        :log/info "ROSPM DDNS: $schedulerName: address list $addrListName created";
+    } else {
+        :local ipAddrLast [/ip/firewall/address-list/get ($idList->0) address];
+        :if ($ipAddrLast = $ipAddr) do={
+            :log/info "ROSPM DDNS: $schedulerName: no need to update address list";
+            :return $Nil;
+        } else {
+            /ip/firewall/address-list remove [ip/firewall/address-list/find list="$addrListName"];
+            /ip/firewall/address-list add list="$addrListName" address=$ipAddr;
+            :log/info "ROSPM DDNS: $schedulerName: address list $addrListName updated";
+        }
+    }
+}
+
+# update the host record by  0service provider function
 :local result;
 :do {
     :set result [[$GetFunc $serviceProvider] IP=$ipAddr Params=$serviceProviderParams];
