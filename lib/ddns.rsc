@@ -86,7 +86,7 @@
     :set (($config->"scheduler")->$Name) $cfgScheduler;
     [$UpdateConfig $configName $config];
     # load remote template
-    :local tmplUrl ("https://raw.githubusercontent.com/Detavern/rospm/develop/" . "templates/$tmplName");
+    :local tmplUrl ($EnvROSPMBaseURL . "templates/$tmplName");
     :local content [[$GetFunc "tool.remote.loadRemoteSource"] URL=$tmplUrl Normalize=true];
     :local v {"schedulerName"=$Name;"alwaysUpdateFlag"=$pAlwaysUpdate};
     :set content [[$GetFunc "tool.template.render"] Template=$content Variables=$v];
