@@ -79,7 +79,7 @@
 
 # $byHTTPPostJSON
 # Update ip record by a HTTP Post API which use json string as data.
-# Example JSON: {"ip": "", "token": ""}
+# Example JSON: {"ip": "", "token": "", "client_id": ""}
 # kwargs: IP=<ip>                           ip address or ipv6 address
 # kwargs: Params=<array->str>               provider function params
 :local byHTTPPostJSON do={
@@ -95,6 +95,7 @@
     :local url ($params->"url");
     :set ($params->"url");
     :set ($params->"ip") $vIP;
+    :set ($params->"client_id") [/system/identity/get name];
     :local resp [[$GetFunc "tool.http.httpPost"] URL=$url Data=$params DataType="json" Output="json"];
     :local result {
         "result"="updated";
