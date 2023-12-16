@@ -3,34 +3,44 @@
 # |       ROSPM Packages      |   rospm.reset
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rospm configuration reset tools
+# ROSPM configuration reset tools
 #
 # Copyright (c) 2020-2023 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
     "name"="rospm.reset";
-    "version"="0.5.0";
-    "description"="rospm configuration reset tools";
+    "version"="0.5.2";
+    "description"="ROSPM configuration reset tools";
 };
 
 
+# TODO: complete this!
 :local resetConfig do={
 
 }
 
 
 # $removeGlobal
+# Remove global variables & functions by the package metainfo.
+# This procedure will ignore any package name that starts with "global-"
+# to keep the integrity of ROSPM.
 # kwargs: MetaInfo=<metaInfo>               package name
 :local removeGlobal do={
     #DEFINE global
+    :global Nil;
     :global IsNothing;
+    :global StartsWith;
     :global IsDict;
     # check
     :if (![$IsDict $MetaInfo]) do={
         :error "rospm.reset.removeGlobal: \$MetaInfo shoud be a dict-like array";
     }
     # local
+    :local pkgName ($MetaInfo->"name");
+    :if ([$StartsWith $pkgName "global-"]) do={
+        :return $Nil;
+    }
     :local funcList ($MetaInfo->"global-functions");
     :local varList ($MetaInfo->"global-variables");
     :if (![$IsNothing $funcList]) do={
