@@ -254,7 +254,7 @@
     };
     {
         "name"="ddns";
-        "description"="A simple ddns scheduler framework.";
+        "description"="A simple ddns scheduler framework";
         "version"="0.5.2";
     };
     {
