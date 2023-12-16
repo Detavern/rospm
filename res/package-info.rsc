@@ -334,8 +334,8 @@
     };
     {
         "name"="rospm.reset";
-        "description"="rospm configuration reset tools";
-        "version"="0.5.0";
+        "description"="ROSPM configuration reset tools";
+        "version"="0.5.2";
     };
     {
         "name"="rospm.state";
