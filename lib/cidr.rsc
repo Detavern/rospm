@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="cidr";
-    "version"="0.5.1";
+    "version"="0.5.2";
     "description"="collections of special CIDRs";
 };
 
@@ -66,7 +66,6 @@
     /ip/firewall/address-list/add address=255.255.255.255 comment="Limited Broadcast" list=IP-CIDR_BAD-SRC
     # bad dst
     /ip/firewall/address-list/add address=0.0.0.0/8 comment="Self-Identification" list=IP-CIDR_BAD-DST
-    /ip/firewall/address-list/add address=224.0.0.0/4 comment="IP Multicast" list=IP-CIDR_BAD-DST
 }
 
 :local package {
