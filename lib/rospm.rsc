@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="rospm";
-    "version"="0.5.0";
+    "version"="0.5.2";
     "description"="ROSPM package entrypoints";
 };
 
@@ -67,7 +67,9 @@
     /system/scheduler/remove [/system/scheduler/find name=$startupName];
     :put "Adding $startupName schedule...";
     # add scheduler use default policy
-    /system/scheduler/add name=$startupName start-time=startup on-event=$scriptStr;
+    :local scheduleComment "managed by ROSPM";
+    /system/scheduler/add name=$startupName comment=$scheduleComment \
+        start-time=startup on-event=$scriptStr policy=read,write,test;
     :return $Nil;
 }
 
@@ -93,9 +95,9 @@
     # local
     :local configPkgName "config.rospm.package";
     :local configExtPkgName "config.rospm.package.ext";
-    :put "Loading local configuration: $configPkgName...";
+    :put "Loading local core package list...";
     :local config [$GetConfig $configPkgName];
-    :put "Loading local configuration: $configExtPkgName...";
+    :put "Loading local extension package list...";
     :local configExt [$GetConfig $configExtPkgName];
     :local version $EnvROSPMVersion;
     :local newConfigExt;
@@ -104,9 +106,9 @@
     :put "Get: $resVersionURL";
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
     # check core
-    :put "Checking core packages...";
+    :put "Checking core package list...";
     :if ($version >= $resVersion) do={
-        :put "ROSPM packages already up-to-date";
+        :put "Core package list is up-to-date";
         :set newConfigExt $configExt;
     } else {
         :put "Latest version is $resVersion, your current version is $version";
@@ -114,7 +116,7 @@
         :local packageInfoURL ($EnvROSPMBaseURL . "res/package-info.rsc");
         :put "Get: $packageInfoURL";
         :local packageInfo [[$GetFunc "tool.remote.loadRemoteVar"] URL=$packageInfoURL];
-        :put "Updating local configuration: $configPkgName...";
+        :put "Updating core package list...";
         :foreach k,v in $packageInfo do={
             :set ($config->$k) $v;
         }
@@ -141,9 +143,11 @@
         :put "Get: $startupResURL";
         :local scriptStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$startupResURL Normalize=true];
         /system/scheduler/remove [/system/scheduler/find name=$startupName];
-        :put "Adding rospm-startup schedule...";
+        :put "Updating startup scheduler...";
         # add scheduler use default policy
-        /system/scheduler/add name=$startupName start-time=startup on-event=$scriptStr;
+        :local scheduleComment "managed by ROSPM";
+        /system/scheduler/add name=$startupName comment=$scheduleComment \
+            start-time=startup on-event=$scriptStr policy=read,write,test;
     }
     # check ext
     :local counter 0;
@@ -179,10 +183,10 @@
         }
     }
     # update ext config
-    :put "$counter extension packages need upgrade";
-    :put "Updating local configuration: $configExtPkgName...";
+    :put "Updating extension package list...";
     [$UpdateConfig $configExtPkgName $newConfigExt];
-    :put "The package list has been updated.";
+    # TODO: better prompt, core package count
+    :put "$counter extension packages need upgrade";
     :return $Nil;
 }
 
@@ -293,7 +297,7 @@
     :global GetConfig;
     # local
     :local configPkgName "config.rospm.package";
-    :put "Loading local configuration: $configPkgName...";
+    :put "Loading local core package list...";
     :local config [$GetConfig $configPkgName];
     # opt
     :local pkgName $Package;
@@ -360,9 +364,9 @@
     # local
     :local configPkgName "config.rospm.package";
     :local configExtPkgName "config.rospm.package.ext";
-    :put "Loading local configuration: $configPkgName...";
+    :put "Loading local core package list...";
     :local config [$GetConfig $configPkgName];
-    :put "Loading local configuration: $configExtPkgName...";
+    :put "Loading local extension package list...";
     :local configExt [$GetConfig $configExtPkgName];
     # check latest
     :local isLatest [[$GetFunc "rospm.state.checkVersion"] ];
@@ -380,6 +384,7 @@
     };
     # do upgrade
     :local lenUpradeList [:len $upgradeList];
+    # TODO: improve prompt
     :put "$lenUpradeList packages need upgrade.";
     :foreach report in $upgradeList do={
         [[$GetFunc "rospm.action.upgrade"] Report=$report];

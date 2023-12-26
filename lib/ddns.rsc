@@ -93,7 +93,7 @@
     # add schedule
     /system/scheduler/add name=$scheduleName comment=$scheduleComment \
         start-time=startup interval=$pInterval on-event=$content \
-        policy=read,write,policy,test;
+        policy=read,write,test;
 }
 
 
