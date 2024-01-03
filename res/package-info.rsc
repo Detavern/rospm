@@ -169,7 +169,7 @@
     {
         "name"="global-functions.package";
         "description"="Global functions are vital for the package operation.";
-        "version"="0.5.1";
+        "version"="0.5.2";
         "global"=true;
         "global-functions"={
             "FindPackage";
@@ -250,7 +250,7 @@
     {
         "name"="cidr";
         "description"="collections of special CIDRs";
-        "version"="0.5.1";
+        "version"="0.5.2";
     };
     {
         "name"="ddns";
@@ -315,7 +315,7 @@
     {
         "name"="rospm";
         "description"="ROSPM package entrypoints";
-        "version"="0.5.0";
+        "version"="0.5.2";
     };
     {
         "name"="rospm.action";
