@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="global-functions.package";
-    "version"="0.5.1";
+    "version"="0.5.2";
     "description"="Global functions are vital for the package operation.";
     "global"=true;
     "global-functions"={
@@ -705,6 +705,7 @@
         :local startTime ($sdt->"time");
         :local startDate ($sdt->"date");
         :local scheduleName "ROSPM_SetGlobalVar_$name_Timeout";
+        :local scheduleComment "managed by ROSPM";
         :local idList [/system/scheduler/find name=$scheduleName];
         :if ([$IsEmpty $idList]) do={
             :local eventStrList {
@@ -712,7 +713,8 @@
                 "/system/scheduler/remove $scheduleName;";
             }
             :local eventStr [$Join ("\r\n") $eventStrList];
-            /system/scheduler/add name=$scheduleName start-date=$startDate start-time=$startTime on-event=$eventStr;
+            /system/scheduler/add name=$scheduleName comment=$scheduleComment \
+                start-date=$startDate start-time=$startTime on-event=$eventStr policy=read,write,test;
         } else {
             :local sID ($idList->0);
             /system/scheduler/set numbers=$sID start-date=$startDate start-time=$startTime;
