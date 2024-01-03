@@ -74,6 +74,33 @@
 }
 
 
+# $printUpgradePrompts
+# kwargs: Num=<num>             upgrade count
+# opt kwargs: IsExt=<bool>      is extension package
+:local printUpgradePrompts do={
+    #DEFINE global
+    :global Nil;
+    :global ReadOption;
+    :global TypeofNum;
+    :global TypeofBool;
+    # read opt
+    :local pNum [$ReadOption $Num $TypeofNum];
+    :local pIsExt [$ReadOption $IsExt $TypeofBool false];
+    # local
+    :local pkgType "core";
+    :if ($pIsExt) do={:set pkgType "extension"};
+    :if ($pNum = 0) do={
+        :put "All $pkgType packages are up to date.";
+        :return $Nil;
+    }
+    :if ($pNum = 1) do={
+        :put "1 $pkgType package needs upgrade.";
+        :return $Nil;
+    }
+    :put "$pNum $pkgType packages need upgrade.";
+}
+
+
 # $update
 # Update local package configuration file.
 # kwargs: Package=<str>         package name
@@ -106,9 +133,9 @@
     :put "Get: $resVersionURL";
     :local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
     # check core
-    :put "Checking core package list...";
+    :put "Checking core packages...";
     :if ($version >= $resVersion) do={
-        :put "Core package list is up-to-date";
+        :put "Core package list is up-to-date.";
         :set newConfigExt $configExt;
     } else {
         :put "Latest version is $resVersion, your current version is $version";
@@ -149,8 +176,16 @@
         /system/scheduler/add name=$startupName comment=$scheduleComment \
             start-time=startup on-event=$scriptStr policy=read,write,test;
     }
-    # check ext
+    # get upgrade count
     :local counter 0;
+    :local reportList [[$GetFunc "rospm.state.checkAllState"]];
+    :foreach report in $reportList do={
+        :if (($report->"state") = "GT") do={
+            :set counter ($counter+1);
+        }
+    };
+    # check ext
+    :local counterExt 0;
     :put "Checking extension packages...";
     :foreach meta in ($newConfigExt->"packageList") do={
         :local extName ($meta->"name");
@@ -174,7 +209,7 @@
             } else {
                 :local extVerR (($pkgExt->"metaInfo")->"version");
                 :if ($extVerL < $extVerR) do={
-                    :set counter ($counter+1);
+                    :set counterExt ($counterExt+1);
                     :foreach k,v in ($pkgExt->"metaInfo") do={
                         :set ($meta->$k) $v;
                     }
@@ -185,8 +220,10 @@
     # update ext config
     :put "Updating extension package list...";
     [$UpdateConfig $configExtPkgName $newConfigExt];
-    # TODO: better prompt, core package count
-    :put "$counter extension packages need upgrade";
+    # count core packages
+    [[$GetFunc "rospm.printUpgradePrompts"] Num=$counter];
+    # count extension packages
+    [[$GetFunc "rospm.printUpgradePrompts"] Num=$counterExt IsExt=true];
     :return $Nil;
 }
 
@@ -397,6 +434,7 @@
 :local package {
     "metaInfo"=$metaInfo;
     "firstRun"=$firstRun;
+    "printUpgradePrompts"=$printUpgradePrompts;
     "update"=$update;
     "register"=$register;
     "install"=$install;
