@@ -92,8 +92,7 @@
     :set content [[$GetFunc "tool.template.render"] Template=$content Variables=$v];
     # add schedule
     /system/scheduler/add name=$scheduleName comment=$scheduleComment \
-        start-time=startup interval=$pInterval on-event=$content \
-        policy=read,write,test;
+        start-time=startup interval=$pInterval on-event=$content;
 }
 
 

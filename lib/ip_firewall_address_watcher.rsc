@@ -57,7 +57,7 @@
     :put "Adding $scheduleName schedule...";
     # add scheduler use default policy
     :local id [/system/scheduler/add name=$scheduleName comment=$scheduleComment \
-        start-time=startup interval=$pInterval on-event=$scriptStr policy=read,write,test];
+        start-time=startup interval=$pInterval on-event=$scriptStr];
     :return $id;
 }
 

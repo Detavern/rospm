@@ -714,7 +714,7 @@
             }
             :local eventStr [$Join ("\r\n") $eventStrList];
             /system/scheduler/add name=$scheduleName comment=$scheduleComment \
-                start-date=$startDate start-time=$startTime on-event=$eventStr policy=read,write,test;
+                start-date=$startDate start-time=$startTime on-event=$eventStr;
         } else {
             :local sID ($idList->0);
             /system/scheduler/set numbers=$sID start-date=$startDate start-time=$startTime;
