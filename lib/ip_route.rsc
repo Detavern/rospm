@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="ip.route";
-    "version"="0.5.0";
+    "version"="0.5.2";
     "description"="";
 };
 
@@ -81,7 +81,7 @@
     }
     # read opt
     :local pDistance [$ReadOption $Distance $TypeofNum];
-    :local pRoutingTable [$ReadOption $RoutingTable $TypeofStr];
+    :local pRoutingTable [$ReadOption $RoutingTable $TypeofStr "main"];
     # set template
     :local tmpl [$NewArray ];
     :set ($tmpl->"dst-address") $DstAddress;
