@@ -69,7 +69,7 @@
     # add scheduler use default policy
     :local scheduleComment "managed by ROSPM";
     /system/scheduler/add name=$startupName comment=$scheduleComment \
-        start-time=startup on-event=$scriptStr policy=read,write,test;
+        start-time=startup on-event=$scriptStr;
     :return $Nil;
 }
 
@@ -174,7 +174,7 @@
         # add scheduler use default policy
         :local scheduleComment "managed by ROSPM";
         /system/scheduler/add name=$startupName comment=$scheduleComment \
-            start-time=startup on-event=$scriptStr policy=read,write,test;
+            start-time=startup on-event=$scriptStr;
     }
     # get upgrade count
     :local counter 0;
