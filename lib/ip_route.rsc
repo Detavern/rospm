@@ -80,7 +80,7 @@
         :error "ensureStaticRoute: require \$Gateway";
     }
     # read opt
-    :local pDistance [$ReadOption $Distance $TypeofNum];
+    :local pDistance [$ReadOption $Distance $TypeofNum 1];
     :local pRoutingTable [$ReadOption $RoutingTable $TypeofStr "main"];
     # set template
     :local tmpl [$NewArray ];
