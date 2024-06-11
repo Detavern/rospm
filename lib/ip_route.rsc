@@ -11,13 +11,14 @@
 :local metaInfo {
     "name"="ip.route";
     "version"="0.5.2";
-    "description"="";
+    "description"="Route scripts are used to facilitate the routing.";
 };
 
 
 # $getGateway
 # kwargs: DstAddress=<str>
 # kwargs: RoutingTable=<str>
+# opt kwargs: NoSuffix=<bool>
 # return: Gateway=<str>
 :local getGateway do={
     #DEFINE global
@@ -26,10 +27,12 @@
     :global IsIPPrefix;
     :global Print;
     :global TypeofStr;
+    :global TypeofBool;
     :global ReadOption;
     # read opt
     :local pDstAddress [$ReadOption $DstAddress $TypeofStr];
     :local pRoutingTable [$ReadOption $RoutingTable $TypeofStr];
+    :local pNoSuffix [$ReadOption $NoSuffix $TypeofBool false];
     # check params
     :if ([$IsNil $pDstAddress]) do={
         :error "getGateway: require \$DstAddress";
@@ -42,9 +45,12 @@
     :if ([$IsEmpty $routeIDList]) do={
         :error "getGateway: gateway for $pDstAddress with mark $pRoutingTable not found"
     }
-    
-    # check gateway like 1.1.1.1%ether1
+    # gateway
     :local gw [:tostr [/ip/route/get ($routeIDList->0) gateway]];
+    :if (!$pNoSuffix) do={
+        :return $gw;
+    }
+    # check gateway like 1.1.1.1%ether1
     :local sPos [:find $gw "%"];
     :if ([$IsNil $sPos]) do={
         :return $gw;
