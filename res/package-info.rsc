@@ -290,7 +290,7 @@
     {
         "name"="ip.dhcp";
         "description"="DHCP client & server scripts are used to facilitate the IP allocation.";
-        "version"="0.5.1";
+        "version"="0.5.2";
     };
     {
         "name"="ip.firewall.address";

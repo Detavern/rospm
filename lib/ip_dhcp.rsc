@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="ip.dhcp";
-    "version"="0.5.1";
+    "version"="0.5.2";
     "description"="DHCP client & server scripts are used to facilitate the IP allocation.";
 };
 
@@ -44,6 +44,9 @@
     :local idList [/ip/dhcp-client/find interface=$pIntf];
     :if ([$IsEmpty $idList]) do={
         /ip/dhcp-client/add interface=$pIntf \
+            use-peer-dns=$pPeerDNS use-peer-ntp=$pPeerNTP add-default-route=$pRoute;
+    } else {
+        /ip/dhcp-client/set $pIntf \
             use-peer-dns=$pPeerDNS use-peer-ntp=$pPeerNTP add-default-route=$pRoute;
     }
 }
