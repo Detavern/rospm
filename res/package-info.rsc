@@ -309,7 +309,7 @@
     };
     {
         "name"="ip.route";
-        "description"="";
+        "description"="Route scripts are used to facilitate the routing.";
         "version"="0.5.2";
     };
     {
