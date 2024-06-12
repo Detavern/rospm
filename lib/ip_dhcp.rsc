@@ -46,7 +46,7 @@
         /ip/dhcp-client/add interface=$pIntf \
             use-peer-dns=$pPeerDNS use-peer-ntp=$pPeerNTP add-default-route=$pRoute;
     } else {
-        /ip/dhcp-client/set $pIntf \
+        /ip/dhcp-client/set ($idList->0) \
             use-peer-dns=$pPeerDNS use-peer-ntp=$pPeerNTP add-default-route=$pRoute;
     }
 }
@@ -162,4 +162,3 @@
     "ensureServer"=$ensureServer;
 }
 :return $package;
-
