@@ -66,6 +66,8 @@
     /ip/firewall/address-list/add address=255.255.255.255 comment="Limited Broadcast" list=IP-CIDR_BAD-SRC
     # bad dst
     /ip/firewall/address-list/add address=0.0.0.0/8 comment="Self-Identification" list=IP-CIDR_BAD-DST
+    # no track
+    /ip/firewall/address-list/add address=169.254.0.0/16 comment="Link Local" list=IP-CIDR_NO-TRACK
 }
 
 :local package {
