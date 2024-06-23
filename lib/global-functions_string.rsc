@@ -10,7 +10,7 @@
 #
 :local metaInfo {
     "name"="global-functions.string";
-    "version"="0.5.1";
+    "version"="0.5.2";
     "description"="global functions for string related operation";
     "global"=true;
     "global-functions"={
@@ -25,6 +25,8 @@
         "SimpleLoad";
         "NumToHex";
         "HexToNum";
+        "ToUpper";
+        "ToLower";
         "QuoteRegexMeta";
     };
 };
@@ -412,6 +414,58 @@
         :set c ($c * 16);
     }
     :return $v;
+}
+
+
+# $ToUpper
+# Convert all lowercase string to uppercase.
+# args: <str>                   input string
+# return: <str>                 result
+:global ToUpper do={
+    # global
+    :global IsNothing;
+    # local
+	:local mm {"a"="A";"b"="B";"c"="C";"d"="D";"e"="E";"f"="F";"g"="G";"h"="H";"i"="I";"j"="J";"k"="K";"l"="L";"m"="M";"n"="N";"o"="O";"p"="P";"q"="Q";"r"="R";"s"="S";"t"="T";"u"="U";"v"="V";"x"="X";"z"="Z";"y"="Y";"w"="W"};
+    :local s [:tostr $1];
+    :local result "";
+    :local ch;
+    :local nch;
+	:for i from=0 to=([:len $s] - 1) do={
+	    :set ch [:pick $s $i];
+	    :set nch ($mm->$ch);
+	    :if ([$IsNothing $nch]) do={
+            :set result ($result . $ch);
+	    } else {
+            :set result ($result . $nch);
+        }
+	}
+	:return $result;
+}
+
+
+# $ToLower
+# Convert all uppercase string to lowercase.
+# args: <str>                   input string
+# return: <str>                 result
+:global ToLower do={
+    # global
+    :global IsNothing;
+    # local
+    :local mm {"A"="a";"B"="b";"C"="c";"D"="d";"E"="e";"F"="f";"G"="g";"H"="h";"I"="i";"J"="j";"K"="k";"L"="l";"M"="m";"N"="n";"O"="o";"P"="p";"Q"="q";"R"="r";"S"="s";"T"="t";"U"="u";"V"="v";"X"="x";"Z"="z";"Y"="y";"W"="w"};
+    :local s [:tostr $1];
+    :local result "";
+    :local ch;
+    :local nch;
+	:for i from=0 to=([:len $s] - 1) do={
+	    :set ch [:pick $s $i];
+	    :set nch ($mm->$ch);
+	    :if ([$IsNothing $nch]) do={
+            :set result ($result . $ch);
+	    } else {
+            :set result ($result . $nch);
+        }
+	}
+	:return $result;
 }
 
 
