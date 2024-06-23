@@ -1,7 +1,22 @@
 # global string
 
-## QuoteRegexMeta
+## ToUpper & ToLower
 
+### upper
+{
+    :local s "abcdefg";
+    :put [$ToUpper $s];
+    :put [$ToLower $s];
+}
+
+## lower
+{
+    :local s "ABCDEFG";
+    :put [$ToLower $s];
+    :put [$ToUpper $s];
+}
+
+## QuoteRegexMeta
 
 ### meta echo
 {

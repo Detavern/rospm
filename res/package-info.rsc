@@ -89,7 +89,7 @@
     {
         "name"="global-functions.string";
         "description"="global functions for string related operation";
-        "version"="0.5.1";
+        "version"="0.5.2";
         "global"=true;
         "global-functions"={
             "Replace";
@@ -103,6 +103,8 @@
             "SimpleLoad";
             "NumToHex";
             "HexToNum";
+            "ToUpper";
+            "ToLower";
             "QuoteRegexMeta";
         };
     };
