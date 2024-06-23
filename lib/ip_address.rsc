@@ -10,8 +10,8 @@
 #
 :local metaInfo {
     "name"="ip.address";
-    "version"="0.5.0";
-    "description"="";
+    "version"="0.5.2";
+    "description"="/ip/address utilities";
 };
 
 
@@ -70,8 +70,50 @@
 }
 
 
+# $waitAndFind
+# opt kwargs: Interface=<str>                       find addresses by interface
+# opt kwargs: InterfaceList=<str>                   find addresses by interface list
+# opt kwargs: Output=<str>                          "cidr"=<str>, "ip"=<ip>(default)
+# opt kwargs: Timeout=<time>                        timeout(sec)
+# return: <array->str>                              list of addresses
+:local waitAndFind do={
+    #DEFINE global
+    :global Nil;
+    :global TypeofTime;
+    :global ReadOption;
+    :global GetFunc;
+    # check
+    :local timeout [$ReadOption $Timeout $TypeofTime 0:0:3]
+    :if ($timeout > 0:3:0) do={
+        :error "ip.address.waitAndFind: Timeout should be lower than 3 minutes!";
+    }
+    # local
+    :local ipList $Nil;
+    :local continueFlag true;
+    :local cnt 0:0:0;
+    :while ($continueFlag) do={
+        :set ipList [[$GetFunc "ip.address.find"] Interface=$Interface InterfaceList=$InterfaceList];
+        :if ([:len $ipList]=0) do={
+            :put ("ip.address.waitAndFind: could not find address by condition: " . \
+                "<Interface=$Interface List=$InterfaceList>, waiting...");
+            :delay 1000ms;
+            :set cnt ($cnt + 0:0:1);
+        } else {
+            :set continueFlag false;
+        }
+        # break
+        :if ($cnt >= $timeout) do={
+            :put "ip.address.waitAndFind: timeout $timeout second(s) reached!";
+            :set continueFlag false;
+        }
+    };
+    :return $ipList;
+}
+
+
 :local package {
     "metaInfo"=$metaInfo;
     "find"=$find;
+    "waitAndFind"=$waitAndFind;
 }
 :return $package;

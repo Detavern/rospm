@@ -284,8 +284,8 @@
     };
     {
         "name"="ip.address";
-        "description"="";
-        "version"="0.5.0";
+        "description"="/ip/address utilities";
+        "version"="0.5.2";
     };
     {
         "name"="ip.dhcp";
