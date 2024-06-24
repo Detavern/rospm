@@ -22,6 +22,7 @@
     /ip/firewall/address-list/remove [/ip/firewall/address-list/find list=IP-CIDR_NO-GLOBAL-ROUTE];
     /ip/firewall/address-list/remove [/ip/firewall/address-list/find list=IP-CIDR_BAD-SRC];
     /ip/firewall/address-list/remove [/ip/firewall/address-list/find list=IP-CIDR_BAD-DST];
+    /ip/firewall/address-list/remove [/ip/firewall/address-list/find list=IP-CIDR_NO-TRACK];
     # reserved
     /ip/firewall/address-list/add address=0.0.0.0/8 comment="Self-Identification" list=IP-CIDR_RESERVED
     /ip/firewall/address-list/add address=10.0.0.0/8 comment="Private CLASS A" list=IP-CIDR_RESERVED
