@@ -18,7 +18,7 @@
 # $ensureClient
 # Make sure the target interface has a DHCP client, keep it disabled if it is already disabled.
 # kwargs: Interface=<str>                   on which physical interface
-# opt kwargs: AddDefaultRoute=<bool>        flag of default route
+# opt kwargs: AddDefaultRoute=<str>         flag of default route
 # opt kwargs: UsePeerDNS=<bool>             flag of peer dns
 # opt kwargs: UsePeerNTP=<bool>             flag of peer ntp
 :local ensureClient do={
