@@ -1,5 +1,4 @@
 # global declare
-:global Nil;
 :global IsNil;
 :global IsEmpty;
 :global IsNothing;
@@ -8,6 +7,7 @@
 :global GetConfig;
 
 # local
+:local cFlag true;
 :local configName "config.ddns";
 :local schedulerName "{{ schedulerName }}";
 :local alwaysUpdate {{ alwaysUpdateFlag }};
@@ -36,12 +36,12 @@
     :set ipAddr [[$GetFunc $ipProvider] Params=$ipProviderParams];
 } on-error={
     :log/warning "ROSPM DDNS: $schedulerName: get ip address failed, the Provider is $ipProvider";
-    :return $Nil;
+    :set cFlag false;
 }
 :log/debug "ROSPM DDNS: $schedulerName: get ip address $ipAddr from provider $ipProvider";
 
 # determine update or not
-:if (!$alwaysUpdate) do={
+:if (!$alwaysUpdate and $cFlag) do={
     :local addrListName "IP_DDNS_$schedulerName";
     :local idList [/ip/firewall/address-list/find list="$addrListName"];
     :if ([$IsEmpty $idList]) do={
@@ -51,7 +51,7 @@
         :local ipAddrLast [/ip/firewall/address-list/get ($idList->0) address];
         :if ($ipAddrLast = $ipAddr) do={
             :log/debug "ROSPM DDNS: $schedulerName: no need to update address list";
-            :return $Nil;
+            :set cFlag false;
         } else {
             /ip/firewall/address-list remove [/ip/firewall/address-list/find list="$addrListName"];
             /ip/firewall/address-list add list="$addrListName" address=$ipAddr;
@@ -61,22 +61,27 @@
 }
 
 # update the host record by service provider function
-:local result;
-:do {
-    :set result [[$GetFunc $serviceProvider] IP=$ipAddr Params=$serviceProviderParams];
-} on-error={
-    :log/error "ROSPM DDNS: $schedulerName: unexpected error occurred, the service provider is $serviceProvider";
-    :return $Nil;
-}
-:local rs ($result->"result")
-:if ($rs = "error") do={
-    :log/warning "ROSPM DDNS: $schedulerName: service provider got in trouble, it is $serviceProvider";
-    :foreach v in ($result->"advice") do={
-        :log/warning "$v";
+:if ($cFlag) do={
+    :local result;
+    :do {
+        :set result [[$GetFunc $serviceProvider] IP=$ipAddr Params=$serviceProviderParams];
+    } on-error={
+        :log/error "ROSPM DDNS: $schedulerName: unexpected error occurred, the service provider is $serviceProvider";
+        :set cFlag false;
     }
-} else {
-    :log/info "ROSPM DDNS: $schedulerName: schedule result is $rs";
-    :foreach v in ($result->"advice") do={
-        :log/info "$v";
+}
+
+:if ($cFlag) do={
+    :local rs ($result->"result")
+    :if ($rs = "error") do={
+        :log/warning "ROSPM DDNS: $schedulerName: service provider got in trouble, it is $serviceProvider";
+        :foreach v in ($result->"advice") do={
+            :log/warning "$v";
+        }
+    } else {
+        :log/info "ROSPM DDNS: $schedulerName: schedule result is $rs";
+        :foreach v in ($result->"advice") do={
+            :log/info "$v";
+        }
     }
 }
