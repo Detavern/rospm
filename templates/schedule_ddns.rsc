@@ -1,5 +1,6 @@
 # global declare
 :global Nil;
+:global IsNil;
 :global IsEmpty;
 :global IsNothing;
 :global FindPackage;
@@ -65,6 +66,7 @@
     :set result [[$GetFunc $serviceProvider] IP=$ipAddr Params=$serviceProviderParams];
 } on-error={
     :log/error "ROSPM DDNS: $schedulerName: unexpected error occurred, the service provider is $serviceProvider";
+    :return $Nil;
 }
 :local rs ($result->"result")
 :if ($rs = "error") do={

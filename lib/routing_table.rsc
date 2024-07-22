@@ -18,7 +18,7 @@
 # $add
 # add a new routing table
 # kwargs: Name=<str>            routing table name
-# opt kwargs: FIB=<str>         default false, forwarding Information Base
+# opt kwargs: FIB=<bool>        default false, forwarding Information Base
 :local add do={
     #DEFINE global
     :global IsStr;
@@ -47,7 +47,7 @@
 
 # $ensure
 # kwargs: Name=<str>            routing table name
-# opt kwargs: FIB=<str>         default false, forwarding Information Base
+# opt kwargs: FIB=<bool>        default false, forwarding Information Base
 :local ensure do={
     #DEFINE global
     :global IsStr;

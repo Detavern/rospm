@@ -93,9 +93,7 @@
     :set ($tmpl->"dst-address") $DstAddress;
     :set ($tmpl->"gateway") $Gateway;
     :set ($tmpl->"routing-table") $pRoutingTable;
-    if (![$IsNil pDistance]) do={
-        :set ($tmpl->"distance") $pDistance;
-    };
+    :set ($tmpl->"distance") $pDistance;
     # find if exist
     :local idList [$helperFindByTemplate "ip/route" $tmpl];
     :if ([$IsEmpty $idList]) do={
