@@ -61,8 +61,8 @@
 }
 
 # update the host record by service provider function
+:local result;
 :if ($cFlag) do={
-    :local result;
     :do {
         :set result [[$GetFunc $serviceProvider] IP=$ipAddr Params=$serviceProviderParams];
     } on-error={
@@ -72,16 +72,16 @@
 }
 
 :if ($cFlag) do={
-    :local rs ($result->"result")
+    :local rs ($result->"result");
     :if ($rs = "error") do={
         :log/warning "ROSPM DDNS: $schedulerName: service provider got in trouble, it is $serviceProvider";
         :foreach v in ($result->"advice") do={
-            :log/warning "$v";
+            :log/warning "ROSPM DDNS: $schedulerName: response is $v";
         }
     } else {
         :log/info "ROSPM DDNS: $schedulerName: schedule result is $rs";
         :foreach v in ($result->"advice") do={
-            :log/info "$v";
+            :log/info "ROSPM DDNS: $schedulerName: response is $v";
         }
     }
 }
