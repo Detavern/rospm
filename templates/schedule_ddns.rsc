@@ -11,6 +11,7 @@
 :local configName "config.ddns";
 :local schedulerName "{{ schedulerName }}";
 :local alwaysUpdate {{ alwaysUpdateFlag }};
+:local addrListName "IP_DDNS_$schedulerName";
 
 # load config
 :if ([$IsEmpty [$FindPackage $configName]]) do={
@@ -41,26 +42,18 @@
 :log/debug "ROSPM DDNS: $schedulerName: get ip address $ipAddr from provider $ipProvider";
 
 # determine update or not
-:if (!$alwaysUpdate and $cFlag) do={
-    :local addrListName "IP_DDNS_$schedulerName";
+:if ($cFlag and !$alwaysUpdate) do={
     :local idList [/ip/firewall/address-list/find list="$addrListName"];
-    :if ([$IsEmpty $idList]) do={
-        /ip/firewall/address-list add list="$addrListName" address=$ipAddr;
-        :log/info "ROSPM DDNS: $schedulerName: address list $addrListName created";
-    } else {
+    :if (![$IsEmpty $idList]) do={
         :local ipAddrLast [/ip/firewall/address-list/get ($idList->0) address];
         :if ($ipAddrLast = $ipAddr) do={
             :log/debug "ROSPM DDNS: $schedulerName: no need to update address list";
             :set cFlag false;
-        } else {
-            /ip/firewall/address-list remove [/ip/firewall/address-list/find list="$addrListName"];
-            /ip/firewall/address-list add list="$addrListName" address=$ipAddr;
-            :log/info "ROSPM DDNS: $schedulerName: address list $addrListName updated";
         }
     }
 }
 
-# update the host record by service provider function
+# update record by service provider function
 :local result;
 :if ($cFlag) do={
     :do {
@@ -71,17 +64,25 @@
     }
 }
 
+# update check
 :if ($cFlag) do={
-    :local rs ($result->"result");
-    :if ($rs = "error") do={
+    :local res ($result->"result");
+    :log/info "ROSPM DDNS: $schedulerName: schedule result is $res";
+    :if ($res != "updated") do={
         :log/warning "ROSPM DDNS: $schedulerName: service provider got in trouble, it is $serviceProvider";
         :foreach v in ($result->"advice") do={
             :log/warning "ROSPM DDNS: $schedulerName: response is $v";
         }
-    } else {
-        :log/info "ROSPM DDNS: $schedulerName: schedule result is $rs";
-        :foreach v in ($result->"advice") do={
-            :log/info "ROSPM DDNS: $schedulerName: response is $v";
-        }
+        :set cFlag false;
+    }
+}
+
+# finally
+:if ($cFlag) do={
+    /ip/firewall/address-list remove [/ip/firewall/address-list/find list="$addrListName"];
+    /ip/firewall/address-list add list="$addrListName" address=$ipAddr;
+    :log/info "ROSPM DDNS: $schedulerName: address list $addrListName updated";
+    :foreach v in ($result->"advice") do={
+        :log/info "ROSPM DDNS: $schedulerName: response is $v";
     }
 }
