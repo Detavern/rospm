@@ -33,7 +33,7 @@
     } else={
         /log/info "ROSPM Container startup: $ctnDir is mounted";
         :set mounted true;
-        :delay 2s;
+        :delay 5s;
     }
 }
 
@@ -43,9 +43,10 @@
 }
 
 :if ($cFlag) do={
-    # TODO: add a manual delay for each container
+    # TODO: add a configurable delay for each container
     :foreach itemID in [/container/find] do={
         /container/start $itemID
+        :delay 5s;
     }
     /log/info "ROSPM Container startup: All containers started";
 }
