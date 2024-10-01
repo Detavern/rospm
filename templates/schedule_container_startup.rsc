@@ -4,6 +4,7 @@
 # global declare
 :global IsNil;
 :global IsEmpty;
+:global StartsWith;
 :global GetConfig;
 
 # local
@@ -16,8 +17,13 @@
 :local ctnDir "$mountDir/containers";
 
 # usb power reset
-/system/routerboard/usb/power-reset duration=5s;
-:delay 5s;
+:if ([$StartsWith $mountDir "usb"]) do={
+    /system/routerboard/usb/power-reset duration=5s;
+    :delay 5s;
+} else {
+    /log/info "ROSPM Container startup: $ctnDir is onboard storage";
+    :set mounted true;
+}
 
 :while (!$mounted && ($maxWaitSec > $cur)) do={
     :if ([$IsEmpty [/file/find name=$ctnDir]]) do={
