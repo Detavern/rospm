@@ -11,7 +11,7 @@
 # Use cloudflare v4 api
 :local metaInfo {
 	"name"="ddns.service.provider.cloudflare";
-	"version"="0.5.2";
+	"version"="0.6.0";
 	"description"="Cloudflare service provider";
 };
 

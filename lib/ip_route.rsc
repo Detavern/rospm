@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.route";
-	"version"="0.5.2";
+	"version"="0.6.0";
 	"description"="Route scripts are used to facilitate the routing.";
 };
 

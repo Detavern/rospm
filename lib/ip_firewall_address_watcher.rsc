@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.firewall.address.watcher";
-	"version"="0.5.2";
+	"version"="0.6.0";
 	"description"="Watch and store address on specific interface.";
 };
 

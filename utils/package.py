@@ -263,14 +263,14 @@ class PackageMetainfoModifier:
         ]
         for k, v in metainfo.items():
             if type(v) is bool:
-                result.append(f'    "{k}"={"true" if v else "false"};')
+                result.append(f'\t"{k}"={"true" if v else "false"};')
             elif type(v) is list:
-                result.append(f'    "{k}"={{')
+                result.append(f'\t"{k}"={{')
                 for vv in v:
-                    result.append(f'        "{vv}";')
-                result.append('    };')
+                    result.append(f'\t\t"{vv}";')
+                result.append('\t};')
             else:
-                result.append(f'    "{k}"="{v}";')
+                result.append(f'\t"{k}"="{v}";')
         result.append("};\r\n")
         string = "\r\n".join(result)
         return string

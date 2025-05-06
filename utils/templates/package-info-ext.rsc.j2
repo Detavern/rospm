@@ -2,46 +2,46 @@
 
 # extension package meta list
 :local packageList {
-    {% for meta in package_mapping.values() %}
-    {
-        "name"="{{ meta.name }}";
-        {% if meta.author %}
-        "author"="{{ meta.author }}";
-        {% endif %}
-        "description"="{{ meta.description }}";
-        "version"="{{ meta.version }}";
-        "url"="{{ meta.url }}";
-        {% if meta.global == True %}
-        "global"=true;
-        {% endif %}
-        {% if meta["global-variables"] %}
-        "global-variables"={
-            {% for var in meta["global-variables"] %}
-            "{{ var }}";
-            {% endfor %}
-        };
-        {% endif %}
-        {% if meta["global-functions"] %}
-        "global-functions"={
-            {% for func in meta["global-functions"] %}
-            "{{ func }}";
-            {% endfor %}
-        };
-        {% endif %}
-    };
-    {% endfor %}
+	{% for meta in package_mapping.values() %}
+	{
+		"name"="{{ meta.name }}";
+		{% if meta.author %}
+		"author"="{{ meta.author }}";
+		{% endif %}
+		"description"="{{ meta.description }}";
+		"version"="{{ meta.version }}";
+		"url"="{{ meta.url }}";
+		{% if meta.global == True %}
+		"global"=true;
+		{% endif %}
+		{% if meta["global-variables"] %}
+		"global-variables"={
+			{% for var in meta["global-variables"] %}
+			"{{ var }}";
+			{% endfor %}
+		};
+		{% endif %}
+		{% if meta["global-functions"] %}
+		"global-functions"={
+			{% for func in meta["global-functions"] %}
+			"{{ func }}";
+			{% endfor %}
+		};
+		{% endif %}
+	};
+	{% endfor %}
 };
 
 # extension package meta mapping, use with list.
 :local packageMapping {
-    {% for name in package_mapping %}
-    "{{ name }}"={{ loop.index0 }};
-    {% endfor %}
+	{% for name in package_mapping %}
+	"{{ name }}"={{ loop.index0 }};
+	{% endfor %}
 }
 
 :local packageInfo {
-    "packageList"=$packageList;
-    "packageMapping"=$packageMapping;
+	"packageList"=$packageList;
+	"packageMapping"=$packageMapping;
 }
 
 :return $packageInfo;

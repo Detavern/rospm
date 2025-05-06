@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.dhcp";
-	"version"="0.5.2";
+	"version"="0.6.0";
 	"description"="DHCP client & server scripts are used to facilitate the IP allocation.";
 };
 

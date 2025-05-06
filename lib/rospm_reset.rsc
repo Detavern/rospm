@@ -9,9 +9,9 @@
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
-    "name"="rospm.reset";
-    "version"="0.5.2";
-    "description"="ROSPM configuration reset tools";
+	"name"="rospm.reset";
+	"version"="0.6.0";
+	"description"="ROSPM configuration reset tools";
 };
 
 

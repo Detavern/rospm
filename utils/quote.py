@@ -11,8 +11,9 @@ class ScriptQuoteGenerator:
         '\\': '\\\\',
     }
 
-    def __init__(self, reader: StreamReader) -> None:
+    def __init__(self, reader: StreamReader, quote_heading_space=False) -> None:
         self.reader = reader
+        self.quote_heading_space = quote_heading_space
         self._lines = []
 
     @staticmethod
@@ -55,10 +56,13 @@ class ScriptQuoteGenerator:
 
     def parse_heading_space(self):
         c = 0
-        while self.reader.peek() == ' ':
+        while self.reader.peek() in {' ', '\t'}:
             self.reader.read()
             c += 1
-        return '\\_' * c
+        if self.quote_heading_space:
+            return '\\_' * c
+        else:
+            return ''
 
     def parse_line(self):
         v = self.parse_heading_space()
