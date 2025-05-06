@@ -208,7 +208,7 @@ def from_json(ctx: click.Context, *_, **kwargs):
     parse_ctx_src_dst(ctx, filename_filter=filter_json_file, filename_handler=handler)
 
     for target in ctx.params['targets']:
-        dumper = ObjectDumper.from_json_file(target[0], 4)
+        dumper = ObjectDumper.from_json_file(target[0])
         pkg_name = package_name if package_name else get_package_name(target[0])
         dumper.to_configuration(target[1], pkg_name)
 
@@ -232,7 +232,7 @@ def from_yaml(ctx: click.Context, *_, **kwargs):
     parse_ctx_src_dst(ctx, filename_filter=filter_yaml_file, filename_handler=handler)
 
     for target in ctx.params['targets']:
-        dumper = ObjectDumper.from_yaml(target[0], 4)
+        dumper = ObjectDumper.from_yaml(target[0])
         pkg_name = package_name if package_name else get_package_name(target[0])
         dumper.to_configuration(target[1], pkg_name)
 
