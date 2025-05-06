@@ -9,9 +9,9 @@
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
-    "name"="ddns.service.provider";
-    "version"="0.5.2";
-    "description"="The collections of ddns service providers";
+	"name"="ddns.service.provider";
+	"version"="0.5.2";
+	"description"="The collections of ddns service providers";
 };
 
 
@@ -28,25 +28,25 @@
 # kwargs: IP=<ip>                           ip address or ipv6 address
 # kwargs: Params=<array->str>               provider function params
 :local logForDebug do={
-    #DEFINE global
-    :global IsNil;
-    :global TypeofStr;
-    :global TypeofArray;
-    :global NewArray;
-    :global ReadOption;
-    # local
-    :local vIP [$ReadOption $IP $TypeofStr];
-    :local params [$ReadOption $Params $TypeofArray];
-    :local adviceList [$NewArray ];
-    :set ($adviceList->[:len $adviceList]) ("IP is $vIP");
-    :foreach k,v in=$params do={
-        :set ($adviceList->[:len $adviceList]) ("Param \"$k\" is \"$v\"");
-    }
-    :local result {
-        "result"="created";
-        "advice"=$adviceList;
-    }
-    :return $result;
+	#DEFINE global
+	:global IsNil;
+	:global TypeofStr;
+	:global TypeofArray;
+	:global NewArray;
+	:global ReadOption;
+	# local
+	:local vIP [$ReadOption $IP $TypeofStr];
+	:local params [$ReadOption $Params $TypeofArray];
+	:local adviceList [$NewArray ];
+	:set ($adviceList->[:len $adviceList]) ("IP is $vIP");
+	:foreach k,v in=$params do={
+		:set ($adviceList->[:len $adviceList]) ("Param \"$k\" is \"$v\"");
+	}
+	:local result {
+		"result"="created";
+		"advice"=$adviceList;
+	}
+	:return $result;
 }
 
 
@@ -55,25 +55,25 @@
 # kwargs: IP=<ip>                           ip address or ipv6 address
 # kwargs: Params=<array->str>               provider function params
 :local byHTTPGet do={
-    #DEFINE global
-    :global IsNil;
-    :global TypeofStr;
-    :global TypeofArray;
-    :global GetFunc;
-    :global ReadOption;
-    :global Strip;
-    # local
-    :local vIP [$ReadOption $IP $TypeofStr];
-    :local params [$ReadOption $Params $TypeofArray];
-    :local url ($params->"url");
-    :set ($params->"url");
-    :set ($params->"ip") $vIP;
-    :local resp [[$GetFunc "tool.http.httpGet"] URL=$url Params=$params DataType="text"];
-    :local result {
-        "result"="updated";
-        "advice"=($resp->"data");
-    }
-    :return $result;
+	#DEFINE global
+	:global IsNil;
+	:global TypeofStr;
+	:global TypeofArray;
+	:global GetFunc;
+	:global ReadOption;
+	:global Strip;
+	# local
+	:local vIP [$ReadOption $IP $TypeofStr];
+	:local params [$ReadOption $Params $TypeofArray];
+	:local url ($params->"url");
+	:set ($params->"url");
+	:set ($params->"ip") $vIP;
+	:local resp [[$GetFunc "tool.http.httpGet"] URL=$url Params=$params DataType="text"];
+	:local result {
+		"result"="updated";
+		"advice"=($resp->"data");
+	}
+	:return $result;
 }
 
 
@@ -83,32 +83,32 @@
 # kwargs: IP=<ip>                           ip address or ipv6 address
 # kwargs: Params=<array->str>               provider function params
 :local byHTTPPostJSON do={
-    #DEFINE global
-    :global IsNil;
-    :global TypeofStr;
-    :global TypeofArray;
-    :global GetFunc;
-    :global ReadOption;
-    # local
-    :local vIP [$ReadOption $IP $TypeofStr];
-    :local params [$ReadOption $Params $TypeofArray];
-    :local url ($params->"url");
-    :set ($params->"url");
-    :set ($params->"ip") $vIP;
-    :set ($params->"client_id") [/system/identity/get name];
-    :local resp [[$GetFunc "tool.http.httpPost"] URL=$url Data=$params DataType="json" Output="json"];
-    :local result {
-        "result"="updated";
-        "advice"=($resp->"data");
-    }
-    :return $result;
+	#DEFINE global
+	:global IsNil;
+	:global TypeofStr;
+	:global TypeofArray;
+	:global GetFunc;
+	:global ReadOption;
+	# local
+	:local vIP [$ReadOption $IP $TypeofStr];
+	:local params [$ReadOption $Params $TypeofArray];
+	:local url ($params->"url");
+	:set ($params->"url");
+	:set ($params->"ip") $vIP;
+	:set ($params->"client_id") [/system/identity/get name];
+	:local resp [[$GetFunc "tool.http.httpPost"] URL=$url Data=$params DataType="json" Output="json"];
+	:local result {
+		"result"="updated";
+		"advice"=($resp->"data");
+	}
+	:return $result;
 }
 
 
 :local package {
-    "metaInfo"=$metaInfo;
-    "logForDebug"=$logForDebug;
-    "byHTTPGet"=$byHTTPGet;
-    "byHTTPPostJSON"=$byHTTPPostJSON;
+	"metaInfo"=$metaInfo;
+	"logForDebug"=$logForDebug;
+	"byHTTPGet"=$byHTTPGet;
+	"byHTTPPostJSON"=$byHTTPPostJSON;
 }
 :return $package;

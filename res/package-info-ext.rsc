@@ -2,23 +2,23 @@
 
 # extension package meta list
 :local packageList {
-    {
-        "name"="rospm.example.hello-world";
-        "author"="rospm";
-        "description"="A bootstrap ROSPM extension package example";
-        "version"="1.0.0";
-        "url"="https://raw.githubusercontent.com/Detavern/rospm-pkg-example-hello-world/master/hello-world.rsc";
-    };
+	{
+		"name"="rospm.example.hello-world";
+		"author"="rospm";
+		"description"="A bootstrap ROSPM extension package example";
+		"version"="1.0.0";
+		"url"="https://raw.githubusercontent.com/Detavern/rospm-pkg-example-hello-world/master/hello-world.rsc";
+	};
 };
 
 # extension package meta mapping, use with list.
 :local packageMapping {
-    "rospm.example.hello-world"=0;
+	"rospm.example.hello-world"=0;
 }
 
 :local packageInfo {
-    "packageList"=$packageList;
-    "packageMapping"=$packageMapping;
+	"packageList"=$packageList;
+	"packageMapping"=$packageMapping;
 }
 
 :return $packageInfo;

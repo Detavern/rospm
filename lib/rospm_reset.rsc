@@ -51,7 +51,7 @@
     :if (![$IsNothing $varList]) do={
         :foreach v in $varList do={
             /system/script/environment/remove [/system/script/environment/find name="$v"];
-        }  
+        }
     }
 }
 

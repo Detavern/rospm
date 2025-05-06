@@ -9,38 +9,38 @@
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
-    "name"="global-variables";
-    "version"="0.5.0";
-    "description"="global variable package";
-    "global"=true;
-    "global-variables"={
-        "Nothing";
-        "Nil";
-        "EmptyArray";
-        "TypeofNothing";
-        "TypeofNil";
-        "TypeofStr";
-        "TypeofNum";
-        "TypeofBool";
-        "TypeofID";
-        "TypeofTime";
-        "TypeofIP";
-        "TypeofIPPrefix";
-        "TypeofIPv6";
-        "TypeofIPv6Prefix";
-        "TypeofArray";
-        "SYSArchitectureName";
-        "SYSBoardName";
-        "SYSCPU";
-        "SYSCPUCount";
-        "SYSCPUFrequency";
-        "SYSVersion";
-        "ScriptLengthLimit";
-        "VariableLengthLimit";
-        "MonthsOfTheYear";
-        "MonthsName";
-        "CharToNum";
-    };
+	"name"="global-variables";
+	"version"="0.5.0";
+	"description"="global variable package";
+	"global"=true;
+	"global-variables"={
+		"Nothing";
+		"Nil";
+		"EmptyArray";
+		"TypeofNothing";
+		"TypeofNil";
+		"TypeofStr";
+		"TypeofNum";
+		"TypeofBool";
+		"TypeofID";
+		"TypeofTime";
+		"TypeofIP";
+		"TypeofIPPrefix";
+		"TypeofIPv6";
+		"TypeofIPv6Prefix";
+		"TypeofArray";
+		"SYSArchitectureName";
+		"SYSBoardName";
+		"SYSCPU";
+		"SYSCPUCount";
+		"SYSCPUFrequency";
+		"SYSVersion";
+		"ScriptLengthLimit";
+		"VariableLengthLimit";
+		"MonthsOfTheYear";
+		"MonthsName";
+		"CharToNum";
+	};
 };
 
 # for framework
@@ -340,6 +340,6 @@
 
 # package info
 :local package {
-    "metaInfo"=$metaInfo;
+	"metaInfo"=$metaInfo;
 }
 :return $package;
