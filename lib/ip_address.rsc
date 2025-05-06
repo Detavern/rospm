@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.address";
-	"version"="0.5.2";
+	"version"="0.6.0";
 	"description"="/ip/address utilities";
 };
 

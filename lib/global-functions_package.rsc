@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.package";
-	"version"="0.5.2";
+	"version"="0.6.0";
 	"description"="Global functions are vital for the package operation.";
 	"global"=true;
 	"global-functions"={

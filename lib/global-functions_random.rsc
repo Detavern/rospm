@@ -11,7 +11,7 @@
 # Reference from [GPLv3]https://github.dev/eworm-de/routeros-scripts/global-functions
 :local metaInfo {
 	"name"="global-functions.random";
-	"version"="0.5.0";
+	"version"="0.6.0";
 	"description"="global functions for random related operation";
 	"global"=true;
 	"global-functions"={

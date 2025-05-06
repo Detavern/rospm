@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.string";
-	"version"="0.5.2";
+	"version"="0.6.0";
 	"description"="global functions for string related operation";
 	"global"=true;
 	"global-functions"={

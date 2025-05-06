@@ -1,5 +1,10 @@
 # Changelog
 
+- ## 0.6.0
+
+  - Reduced file sizes by replacing leading spaces with tab characters across all source files.
+  - Deprecated tool.json in favor of serialize/deserialize.
+
 - ## 0.3.0
 
   - Add `CHANGELOG.md`

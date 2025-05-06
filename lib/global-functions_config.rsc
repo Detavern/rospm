@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.config";
-	"version"="0.5.1";
+	"version"="0.6.0";
 	"description"="Global functions are vital for the configuration management.";
 	"global"=true;
 	"global-functions"={
