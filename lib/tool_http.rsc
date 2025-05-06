@@ -110,7 +110,7 @@
 	:if ($flag and ($DataType = "json")) do={
 		:set flag false;
 		:set ($Headers->"Content-Type") "application/json";
-		:set dataStr [[$GetFunc "tool.json.dumps"] Obj=$Data];
+		:set dataStr [:serialize $Data to=json];
 	};
 	:if ($flag and ($DataType = "text")) do={
 		:set flag false;
@@ -147,7 +147,7 @@
 	}
 	:if ($flag and ($Output = "json")) do={
 		:set flag false;
-		:local js [[$GetFunc "tool.json.loads"] Str=($respResult->"data")];
+		:local js [:deserialize ($respResult->"data") from=json];
 		:set ($respResult->"json") $js;
 	}
 	:if ($flag) do={
