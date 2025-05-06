@@ -22,16 +22,17 @@ RouterOS v7+
 ## Installation
 
 Open the RouterOS terminal, copy & paste the following and run:
-```
-/tool fetch url="https://raw.githubusercontent.com/Detavern/rspm/master/rspm-installer.rsc";
-/import rspm-installer.rsc;
+
+```rsc
+/tool fetch url="https://raw.githubusercontent.com/Detavern/rospm/master/rospm-installer.rsc";
+/import rospm-installer.rsc;
 ```
 
 ## Getting Started
 
 ### Concept
 
-- package: every script file with proper `metaInfo` defined in it, take the [Example Package hello world](https://github.com/Detavern/rspm-pkg-hello-world) at a glance. 
+- package: every script file with proper `metaInfo` defined in it, take the [Example Package hello world](https://github.com/Detavern/rospm-pkg-hello-world) at a glance.
 
 There are two kinds of packages, the `core package` and `extension package`.
 
@@ -40,27 +41,32 @@ There are two kinds of packages, the `core package` and `extension package`.
 
 ### Install a package
 
-Taking [Example Package hello world](https://github.com/Detavern/rspm-pkg-hello-world) as an example, installing via raw script file's URL:
-```
-[[$GetFunc "rspm.install"] URL="https://raw.githubusercontent.com/Detavern/rspm-pkg-hello-world/master/hello-world.rsc"];
+Taking [Example Package hello world](https://github.com/Detavern/rospm-pkg-hello-world) as an example, installing via raw script file's URL:
+
+```rsc
+[[$GetFunc "rospm.install"] URL="https://raw.githubusercontent.com/Detavern/rospm-pkg-hello-world/master/hello-world.rsc"];
 ```
 
 Now you can invoke the `helloWorld` functions in that package:
-```
-[[$GetFunc "rspm.hello-world.helloWorld"] ];
+
+```rsc
+[[$GetFunc "rospm.hello-world.helloWorld"] ];
 ```
 
 Try passing a parameter into the function:
-```
-[[$GetFunc "rspm.hello-world.helloWorld"] Name="Bob"];
+
+```rsc
+[[$GetFunc "rospm.hello-world.helloWorld"] Name="Bob"];
 ```
 
 ### Update the package list
 
 You can use this command to check the package list.
+
+```rsc
+[[$GetFunc "rospm.update"] ];
 ```
-[[$GetFunc "rspm.update"] ];
-```
+
 It will tell you how many packages need upgrade.
 It is recommended to invoke this function before upgrading.
 (just like `apt update`)
@@ -68,23 +74,26 @@ It is recommended to invoke this function before upgrading.
 ### Upgrade the package
 
 Use this command to upgrade specific package.
-```
-[[$GetFunc "rspm.upgrade"] Package="rspm.hello-world"];
+
+```rsc
+[[$GetFunc "rospm.upgrade"] Package="rospm.hello-world"];
 ```
 
-You may notice here we start to use the package name `rspm.hello-world`.
+You may notice here we start to use the package name `rospm.hello-world`.
 And yes, after installation,all interactions with packages are done via package name.
 
 Or you can use this command to check and upgrade all packages.
-```
-[[$GetFunc "rspm.upgradeAll"] ];
+
+```rsc
+[[$GetFunc "rospm.upgradeAll"] ];
 ```
 
 ### Remove installed package
 
 You can use this command to remove installed package.
-```
-[[$GetFunc "rspm.remove"] Package="rspm.hello-world"];
+
+```rsc
+[[$GetFunc "rospm.remove"] Package="rospm.hello-world"];
 ```
 
 ### Reinstall package
@@ -94,26 +103,27 @@ And now, you want to install it again.
 You can use package name to install it directly,
 since the `metaInfo` is already written into local configurations.
 
-Take `rspm.hello-world` as an example.
-```
-[[$GetFunc "rspm.install"] Package="rspm.hello-world"];
+Take `rospm.hello-world` as an example.
+
+```rsc
+[[$GetFunc "rospm.install"] Package="rospm.hello-world"];
 ```
 
 ### Register manually added package
 
 Under some circumstances, you may need to register local added packages.
-Take [Example Package hello world](https://github.com/Detavern/rspm-pkg-hello-world) as an example:
+Take [Example Package hello world](https://github.com/Detavern/rospm-pkg-hello-world) as an example:
 
 - First, open `winbox` -> `system` -> `script`.
-- Add a new script, its name should be `rspm_hello-world`
+- Add a new script, its name should be `rospm_hello-world`
 (Replace package name's "." with "_").
 - Copy and paste all content from file `hello-world.rsc` into source form.
 - Press OK, now local package is added.
 
 Register use following command:
 
-```
-[[$GetFunc "rspm.register"] Package="rspm.hello-world"];
+```rsc
+[[$GetFunc "rospm.register"] Package="rospm.hello-world"];
 ```
 
 ## Global Variables
@@ -124,7 +134,7 @@ that you can use when writing your own script.
 **DO NOT CORRUPT any value of those UNLESS you know what you are doing, otherwise the tiny world will be ruined.**
 
 I will not list global variables here,
-you can take a look at [/lib/global-variables.rsc](https://github.com/Detavern/rspm/blob/master/lib/global-variables.rsc) for detail.
+you can take a look at [/lib/global-variables.rsc](https://github.com/Detavern/rospm/blob/master/lib/global-variables.rsc) for detail.
 
 ## Global Functions
 
@@ -134,7 +144,7 @@ you can take a look at [/lib/global-variables.rsc](https://github.com/Detavern/r
 
 Your dearest friend, not only print value by also its type:
 
-```
+```rsc
 [admin@MikroTik] > $Print 1
 Type  : str
 Value : 1
@@ -149,14 +159,16 @@ It seems all values passing into the function without
 explicit variable will be interpretered into `str` type!
 
 Using explicit variables and you will get the right answer:
-```
+
+```rsc
 [admin@MikroTik] > :local v 1;$Print $v;
 Type  : num
 Value : 1
 ```
 
 However, there is some trick to bypassing it:
-```
+
+```rsc
 [admin@MikroTik] > $Print (1)
 Type  : num
 Value : 1
@@ -168,7 +180,7 @@ Value : 1
 
 #### `$IsNothing`
 
-```
+```rsc
 [admin@MikroTik] > {
     :local v;
     $Print [$IsNothing $v];
@@ -185,7 +197,7 @@ Value : true
 
 #### `$IsNil`
 
-```
+```rsc
 [admin@MikroTik] > {
     :local v [find "" "a"];
     $Print [$IsNil $v];
@@ -202,7 +214,7 @@ Value : true
 
 #### `$Is<Type>`
 
-```
+```rsc
 [admin@MikroTik] > {
     # IsStr
     :local v "foo";
@@ -227,7 +239,7 @@ Value : true
 
 #### `$InKeys` & `$InValues`
 
-```
+```rsc
 [admin@MikroTik] > {
     # InKeys
     :local v {
@@ -246,7 +258,7 @@ Value : true
 
 #### `$Assert`
 
-```
+```rsc
 [admin@MikroTik] > {
     :local v {
         "foo"="vf";
@@ -263,7 +275,7 @@ Assert error: value not found
 
 Load value into the variable from terminal interactively.
 
-```
+```rsc
 # $InputV
 # args: <str>                   info
 # opt args: <str>               answer
@@ -286,7 +298,7 @@ Value : 1.1.1.1
 
 #### `$Replace`
 
-```
+```rsc
 # $Replace
 # args: <str>                   string
 # args: <str>                   old
@@ -301,7 +313,7 @@ Value : hello Alice
 
 #### `$Split`
 
-```
+```rsc
 # $Split
 # args: <str>                   target string
 # args: <str>                   sub string
@@ -326,7 +338,7 @@ Key 1: b,c,d
 
 #### `$RSplit`
 
-```
+```rsc
 # $RSplit
 # args: <str>                   target string
 # args: <str>                   sub string
@@ -351,7 +363,7 @@ Key 1: d
 
 #### `$StartsWith` & `$EndsWith`
 
-```
+```rsc
 # $StartsWith / $EndsWith
 # args: <str>                   target string
 # args: <str>                   sub string
@@ -370,7 +382,7 @@ Value : true
 
 #### `$Strip`
 
-```
+```rsc
 # $Strip
 # args: <str>                   target string
 # opt args: <str>               characters to be removed
@@ -399,7 +411,7 @@ Value : hello worl
 
 #### `$Join`
 
-```
+```rsc
 # $Join
 # args: <str>                   separator
 # args: <array>                 array of concatenation
@@ -421,7 +433,8 @@ We will take an useful example of scheduler to explore these operations.
 Suppose you want to execute a script 1 week after current time.
 
 **At first, we need to know current time.**
-```
+
+```rsc
 [admin@MikroTik] > :put [$GetCurrentDatetime ];
 
 2021;8;11;19;29;35
@@ -434,11 +447,11 @@ You can call it a `datetime` array.
 `datetime` format:
 `<year>;<month>;<day>;<hour>;<minute>;<second>`
 
-Each of its elements is `num` type. 
+Each of its elements is `num` type.
 
 **Second, we need to adjust the datetime array one week forward:**
 
-```
+```rsc
 [admin@MikroTik] > {
     # current time
     :local t [$GetCurrentDatetime ];
@@ -459,7 +472,7 @@ Have a look at `/system scheduler add`, you can notice that new schedule use `st
 
 **Therefore, we need to convert our shifted `datetime` into some struct that scheduler can use.**
 
-```
+```rsc
 [admin@MikroTik] > {
     :local t [$GetCurrentDatetime ];
     :local timedelta {"days"=7};
@@ -475,7 +488,7 @@ Key time: 19:29:35
 
 **Finally we could create our new schedule:**
 
-```
+```rsc
 [admin@MikroTik] > {
     :local t [$GetCurrentDatetime ];
     :local timedelta {"days"=7};
@@ -485,9 +498,10 @@ Key time: 19:29:35
     /system scheduler add name="example" start-time=($sdt->"time") start-date=($sdt->"date") on-event=":put \"do sth\";"
 }
 ```
+
 #### Data Structure
 
-```
+```rsc
 # <SDT> array (system datetime)
 {
     "date"=<str>;       # "aug/18/2021"
@@ -516,7 +530,8 @@ Key time: 19:29:35
 ```
 
 #### `$IsSDT`
-```
+
+```rsc
 [admin@MikroTik] > {
     :local v [/system clock print as-value];
     $Print [$IsSDT $v];
@@ -531,7 +546,8 @@ Value : true
 ```
 
 #### `$IsDatetime`
-```
+
+```rsc
 [admin@MikroTik] > {
     :local v {2021; 8; 12; 0; 0; 0};
     $Print [$IsDatetime $v];
@@ -546,7 +562,8 @@ Value : false
 ```
 
 #### `$IsTimedelta`
-```
+
+```rsc
 [admin@MikroTik] > {
     :local v {"days"=-100};
     $Print [$IsTimedelta $v];
@@ -561,7 +578,8 @@ Value : false
 ```
 
 #### `$IsLeapYear`
-```
+
+```rsc
 [admin@MikroTik] > {
     $Print [$IsLeapYear 2020];
     $Print [$IsLeapYear 2021];
@@ -574,7 +592,8 @@ Value : false
 ```
 
 #### `$GetCurrentSDT`
-```
+
+```rsc
 # $GetCurrentSDT
 # get current SDT from system clock
 # return: <array>               SDT array
@@ -587,7 +606,8 @@ Key time: 20:00:00
 ```
 
 #### `$GetCurrentDatetime`
-```
+
+```rsc
 # $GetCurrentDatetime
 # get current datetime from system clock
 # return: <array>               datetime array
@@ -598,7 +618,8 @@ Key time: 20:00:00
 ```
 
 #### `$ToSDT`
-```
+
+```rsc
 # $ToSDT
 # args: <var>                   <datetime>
 # return: <sdt>                 array of sdt
@@ -611,7 +632,8 @@ Key time: 20:00:00
 ```
 
 #### `$ToDatetime`
-```
+
+```rsc
 # $ToDatetime
 # args: <var>                   <sdt>
 # return: <datetime>            datetime
@@ -622,7 +644,8 @@ Key time: 20:00:00
 ```
 
 #### `$ToTimedelta`
-```
+
+```rsc
 # $ToTimedelta
 # return a full timedelta array from timedelta or time
 # args: <time>/<timedelta>      time or partial timedelta
@@ -653,7 +676,8 @@ Key years: 0
 ```
 
 #### `$ShiftDatetime`
-```
+
+```rsc
 # $ShiftDatetime
 # datetime shift
 # args: <datetime>              array of datetime
@@ -689,7 +713,7 @@ Key years: 0
 
 When you use `months` key in `timedelta`, do realize that it may cause the change of date:
 
-```
+```rsc
 [admin@MikroTik] > {
     :local dt {2021;8;31;20;00;00};
     :local td {"months"=18};
@@ -705,63 +729,6 @@ When you use `months` key in `timedelta`, do realize that it may cause the chang
 ```
 
 ### Array Operations
-### JSON Operations
-
-ROSPM add the limited support of JSON serialization and deserialization(support utf-8).
-
-You need to install the JSON package first.
-```
-[[$GetFunc "rspm.install"] Package="tool.json"];
-```
-
-#### JSON Loads
-```
-# $loads
-# kwargs: Str=<str>                 string to parse
-# return: <obj>                     object
-
-[admin@MikroTik] > {
-    :local s "{\"text\": \"hello world!\"}";
-    :local array [[$GetFunc "tool.json.loads"] Str=$s];
-    $Print $array;
-}
-
-Type  : array
-Key text: hello world!
-
-```
-
-#### JSON Dumps
-```
-# $loads
-# kwargs: Str=<str>                 string to parse
-# return: <obj>                     object
-
-[admin@MikroTik] > {
-    :local a {
-        "a"={
-            "aa"=true;
-            "ab"=false;
-            "ac"=$Nil;
-            "b"={1;2;3;4;{"ccc"="dwafagcsad";}};
-        };
-        "s"="asdvasd";
-        "ip"=1.2.3.4;
-        "ip-range"=1.0.0.0/8;
-        "ipv6"=ffff::0000;
-        "time"=12:00:59;
-    }
-    # no indent
-    $Print [[$GetFunc "tool.json.dumps"] Obj=$a];
-    # use indent
-    $Print [[$GetFunc "tool.json.dumps"] Obj=$a Indent=4];
-}
-
-Type  : str
-Value : {"a": {"aa": true, "ab": false, "ac": null, "b": [1, 2, 3, 4, {"ccc": "dwafagcsad"}]}, "ip": "1.2.3.4", "ip-range": "1.0.0.0/8", "ipv6": "ffff::", "s": "asdvasd", "time": "12:00:59"}
-
-```
-
 
 ## License
 
