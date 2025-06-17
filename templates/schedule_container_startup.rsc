@@ -16,13 +16,22 @@
 :local mountDir ((($config->"container")->"config")->"storage");
 :local ctnDir "$mountDir/containers";
 
-# usb power reset
-:if ([$StartsWith $mountDir "usb"]) do={
-	/system/routerboard/usb/power-reset duration=5s;
-	:delay 5s;
-} else {
-	/log/info "ROSPM Container startup: $ctnDir is onboard storage";
+# routerboard or chr
+:if ([/system/resource/get board-name]~"^(CHR|chr)") do={
+	/log/info "ROSPM Container startup: not routerboard device";
 	:set mounted true;
+}
+
+# usb power reset
+:if (!$mounted) do={
+	:if ([$StartsWith $mountDir "usb"]) do={
+		:local cmdFunc [:parse "/system/routerboard/usb/power-reset duration=5s;"]
+		[$cmdFunc ];
+		:delay 5s;
+	} else {
+		/log/info "ROSPM Container startup: $ctnDir is onboard storage";
+		:set mounted true;
+	}
 }
 
 :while (!$mounted && ($maxWaitSec > $cur)) do={

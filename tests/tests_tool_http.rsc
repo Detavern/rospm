@@ -21,6 +21,13 @@
 
 ## http get
 {
+	:local pHeaders {
+		"Accept"="application/json";
+	}
+	:put [[$GetFunc "tool.http.httpGet"] URL="https://api.ip.sb/geoip" Output="json"];
+}
+
+{
 	:put [[$GetFunc "tool.http.httpGet"]
 		URL="https://raw.githubusercontent.com/Detavern/rospm/master/rospm-installer.rsc"];
 	$Print [[$GetFunc "tool.http.httpGet"]
