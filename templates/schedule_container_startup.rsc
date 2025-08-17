@@ -22,25 +22,31 @@
 	:set mounted true;
 }
 
-# usb power reset
+# mount directory check
 :if (!$mounted) do={
 	:if ([$StartsWith $mountDir "usb"]) do={
-		:local cmdFunc [:parse "/system/routerboard/usb/power-reset duration=5s;"]
-		[$cmdFunc ];
-		:delay 5s;
+		:if ([$IsEmpty [/file/find name=$ctnDir]]) do={
+			:local cmdFunc [:parse "/system/routerboard/usb/power-reset duration=5s;"]
+			[$cmdFunc ];
+			:delay 5s;
+		} else {
+			:set mounted true;
+			/log/info "ROSPM Container startup: $mountDir is mounted correctly";
+		}
 	} else {
-		/log/info "ROSPM Container startup: $ctnDir is onboard storage";
+		/log/info "ROSPM Container startup: $mountDir is onboard storage";
 		:set mounted true;
 	}
 }
 
+# usb power reset if necessary
 :while (!$mounted && ($maxWaitSec > $cur)) do={
 	:if ([$IsEmpty [/file/find name=$ctnDir]]) do={
-		/log/info "ROSPM Container startup: $ctnDir is not mounted yet";
+		/log/info "ROSPM Container startup: $mountDir is not mounted yet";
 		:set cur ($cur + 1);
 		:delay 2s
-	} else={
-		/log/info "ROSPM Container startup: $ctnDir is mounted";
+	} else {
+		/log/info "ROSPM Container startup: $mountDir is mounted";
 		:set mounted true;
 		:delay 5s;
 	}
@@ -48,7 +54,7 @@
 
 :if (!$mounted) do={
 	:set cFlag false;
-	/log/error "ROSPM Container startup: could not find container directory $ctnDir";
+	/log/error "ROSPM Container startup: could not find container directory $mountDir";
 }
 
 :if ($cFlag) do={
