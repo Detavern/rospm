@@ -43,7 +43,7 @@
 		:set intfList {$intf};
 	}
 	:if ($intfL != "") do={
-		:set intfList [[$GetFunc "interface.list.findMembers"] Name=$intfL Enabled=true];
+		:set intfList [[$GetFunc "interface.list.findMembers"] List=$intfL];
 	}
 	:if ([$IsNothing $intfList]) do={
 		:error "ip.address.find: one of \$Interface, \$InterfaceList needed";

@@ -241,7 +241,6 @@
 }
 
 
-
 # package info
 :local package {
 	"metaInfo"=$metaInfo;

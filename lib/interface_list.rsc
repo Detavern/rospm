@@ -21,13 +21,13 @@
 	#DEFINE global
 	:global IsNil;
 	:global IsStr;
-	:global FindOrCreateEntity;
+	:global GetOrCreateEntity;
 	# check params
 	:if (![$IsStr $Name]) do={
 		:error "interface.list.ensure: require \$Name";
 	}
 	# local
-	:return [$FindOrCreateEntity "/interface/list" {"name"=$Name}];
+	:return [$GetOrCreateEntity "/interface/list" ({"name"=$Name})];
 }
 
 
@@ -138,7 +138,7 @@
 	# ensure membership
 	:foreach v in $Interfaces do={
 		[$GetOrCreateEntity "/interface/list/member" \
-			{"list"=$List;"interface"=$v} Disabled=false];
+			({"list"=$List;"interface"=$v}) Disabled=false];
 	}
 }
 
@@ -167,7 +167,7 @@
 		:error "interface.list.findMembers: specific \$Name not exist or disabled"
 	}
 	# get name list
-	:local template {"list"=$Name; "disabled"=$disabledFlag};
+	:local template ({"list"=$Name; "disabled"=$disabledFlag});
 	:local nameList [$FindEntities "/interface/list/member" \
 		$template Attribute="interface"];
 	# find in include

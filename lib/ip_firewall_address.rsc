@@ -57,13 +57,10 @@
 # return: ID=<id>
 :local ensureAddressList do={
 	#DEFINE global
-	:global Nil;
 	:global IsNil;
-	:global IsArray;
 	:global IsStr;
-	:global Append;
+	:global IsArray;
 	:global NewArray;
-	:global Print;
 	:global GetFunc;
 	# check params
 	:if (![$IsStr $List]) do={
@@ -76,7 +73,7 @@
 	:local idList [$NewArray ];
 	:foreach addr in $AddressList do={
 		:local itemID [[$GetFunc "ip.firewall.address.ensureAddress"] List=$List Address=$addr];
-		:set idList [$Append $idList $itemID];
+		:set ($idList->[:len $idList]) $itemID;
 	}
 	:return $idList;
 }
