@@ -1,45 +1,5 @@
 # Global
 
-## recover type
-{
-	:put "testing recover type...";
-	:local srcV [$TypeRecovery "1.1.1.1/24"];
-	:local dstV 1.1.1.1/24;
-	$Assert ($srcV=$dstV) "recover type error";
-}
-
-## positional args
-{
-	:put "testing positional arguments...";
-	:local v 1.1.1.1;
-	:local Foo do={
-		:local t1 [:typeof $1];
-		:local t2 [:typeof $2];
-		:local t3 [:typeof $3];
-		$Assert ($t1=$TypeofIP) "t1 should be ip";
-		$Assert ($t2=$TypeofStr) "t2 should be string";
-		$Assert ($t3=$TypeofNothing) "t3 should be nothing";
-	}
-
-	[$Foo $v 1.1.1.1];
-}
-
-## keyword args
-{
-	:put "testing keyword arguments...";
-	:local v 1.1.1.1;
-	:local Foo do={
-		:local t1 [:typeof $a];
-		:local t2 [:typeof $b];
-		:local t3 [:typeof $c];
-		$Assert ($t1=$TypeofIP) "t1 should be ip";
-		$Assert ($t2=$TypeofStr) "t2 should be string";
-		$Assert ($t3=$TypeofNothing) "t3 should be nothing";
-	}
-
-	[$Foo a=$v b=1.1.1.1];
-}
-
 ## replace
 :put [$Replace "abcd abc ab a" "ab" "xx"];
 :put [$Replace "hello world" "hello" "new"];
@@ -538,69 +498,6 @@ $Print [$LoadGlobalVar "Nothing"];
 {
 	:local template {"ether"="ETH-"; "sfp"="SFP-"; "sfp-sfpplus"="SFPP-"};
 	:put [[$GetFunc "interface.ethernet.renameAllByTemplate"] template=$template];
-}
-
-# interface list
-## /interface list
-
-## addList
-:put [[$GetFunc "interface.list.addList"] iName="WAN"];
-## ensure list
-:put [[$GetFunc "interface.list.ensureList"] iName="WAN"];
-## set list attr
-{
-	:local attrs {
-		"include"=$Nil;
-		"exclude"=$Nil;
-	};
-	:put [[$GetFunc "interface.list.setListAttrs"] iName="WAN" iAttrs=$attrs ];
-}
-## ensure list include
-{
-	:local includeList {"WAN_ETH"; "WAN_PPP"; "WAN_VPN"};
-	:put [[$GetFunc "interface.list.ensureListInclude"] iName="WAN" includeList=$includeList];
-}
-### error example
-{
-	:local includeList {"all"};
-	:put [[$GetFunc "interface.list.ensureListInclude"] iName="NOT_EXIST" includeList=$includeList];
-}
-{
-	:local includeList {"NOT_EXIST"};
-	:put [[$GetFunc "interface.list.ensureListInclude"] iName="WAN" includeList=$includeList];
-}
-## ensure list exclude
-{
-	:local excludeList {"WAN_ETH"; "WAN_PPP"; "WAN_VPN"};
-	:put [[$GetFunc "interface.list.ensureListExclude"] iName="WAN" excludeList=$excludeList];
-}
-### error example
-{
-	:local excludeList {"all"};
-	:put [[$GetFunc "interface.list.ensureListExclude"] iName="NOT_EXIST" excludeList=$excludeList];
-}
-{
-	:local excludeList {"NOT_EXIST"};
-	:put [[$GetFunc "interface.list.ensureListExclude"] iName="WAN" excludeList=$excludeList];
-}
-## find interface
-:put [[$GetFunc "interface.list.findAllInterface"] ListName="WAN"];
-
-
-## /interface list member
-## ensure list member
-{
-	:local intfList {"ETH-1"; "ETH-2"};
-	:put [[$GetFunc "interface.list.ensureListMember"] iName="WAN_ETH" intfList=$intfList];
-}
-### error example
-{
-	:local intfList {"ETH-1"; "ETH-2"};
-	:put [[$GetFunc "interface.list.ensureListMember"] iName="NOT_EXIST" intfList=$intfList];
-}
-{
-	:local intfList {"NOT_EXIST"};
-	:put [[$GetFunc "interface.list.ensureListMember"] iName="NOT_EXIST" intfList=$intfList];
 }
 
 {

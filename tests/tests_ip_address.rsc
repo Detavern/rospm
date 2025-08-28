@@ -1,4 +1,5 @@
-# /ip address
+# /ip/address
+
 ## get address
 :put [[$GetFunc "ip.address.find"] Interface="ETH-1"];
 {

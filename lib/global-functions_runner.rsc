@@ -25,7 +25,9 @@
 :global BuildCommandParams do={
 	# global declare
 	:global IsNil;
+	:global IsNothing;
 	:global IsStr;
+	:global IsBool;
 	:global IsArray;
 	# check
 	:if (![$IsArray $1]) do={
@@ -33,18 +35,44 @@
 	}
 	# local
 	:local cmdBody "";
+	:local disabledFlag;
+	:local makePair do={
+		:global IsNil;
+		:global IsNothing;
+		:global IsNum;
+		:global IsStr;
+		# invalid
+		:if ([$IsNil $Value] or [$IsNothing $Value] or [$IsNum $Key]) do={
+			:return "";
+		}
+		# ignored
+		:if ($Key = "disabled") do={
+			:return "";
+		}
+		# escaped
+		:if ($Value~"^!SUBS\\[.+\\]\$") do={
+			:local vbody [:pick $Value 6 ([:len $Value]-1)];
+			:return " $Key=\"\$[$vbody]\"";
+		}
+		# string
+		:if ([$IsStr $Value]) do={
+			:return " $Key=\"$Value\"";
+		}
+		:return " $k=$v";
+	}
 	:foreach k,v in $1 do={
-		:if (![$IsNil $v]) do={
-			:if ([$IsStr $v]) do={
-				:if ($v~"^!SUBS\\[.+\\]\$") do={
-					:local vbody [:pick $v 6 ([:len $v]-1)];
-					:set cmdBody ($cmdBody . " $k=\"\$[$vbody]\"");
-				} else {
-					:set cmdBody ($cmdBody . " $k=\"$v\"");
-				}
-			} else {
-				:set cmdBody ($cmdBody . " $k=$v");
-			}
+		:local paramStr [$makePair Key=$k Value=$v];
+		:set cmdBody ($cmdBody . $paramStr);
+		:if ($k = "disabled" and [$IsBool $v]) do={
+			:set disabledFlag $v;
+		}
+	}
+	# append disabled flag
+	:if (![$IsNothing $disabledFlag]) do={
+		:if ($disabledFlag) do={
+			:set cmdBody ($cmdBody . " disabled");
+		} else {
+			:set cmdBody ($cmdBody . " !disabled");
 		}
 	}
 	:return $cmdBody;
@@ -74,6 +102,40 @@
 }
 
 
+# $ListAttributes
+# List attributes of a list of internal id.
+# args: <str>               command
+# args: <array->id>         array of id
+# opt args: <str>           attribute name
+:global ListAttributes do={
+	# global declare
+	:global IsNil;
+	:global IsNothing;
+	:global IsArray;
+	:global StartsWith;
+	:global NewArray;
+	# check
+	:if (![$StartsWith $1 "/"]) do={
+		:error "Global.Runner.ListAttributes: \$1 should be a command."
+	}
+	:if (![$IsArray $2]) do={
+		:error "Global.Runner.ListAttributes: \$2 should be an array of id."
+	}
+	:local attr "";
+	:if (![$IsNothing $3]) do={
+		:set attr $3;
+	}
+	# local
+	:local result [$NewArray];
+	:foreach iid in $2 do={
+		:local cmdFunc [:parse "$1/get $iid $attr"];
+		:local v [$cmdFunc];
+		:set ($result->[:len $result]) $v;
+	}
+	:return $result;
+}
+
+
 # $CreateEntity
 # args: <str>                   command
 # args: <array->str>            params
@@ -96,42 +158,88 @@
 }
 
 
-# $EnableOrCreateEntity
-# Find and enable an entity by a filter. Create one if not found.
+# $FindEntities
+# Find entities by a filter and return an array
 # args: <str>                   command
-# args: <array->str>            params
-# opt args: <array->str>        filter
-# return: <id>                  internal ID
-:global EnableOrCreateEntity do={
+# args: <array->str>            filter
+# opt kwargs: Attribute=<str>   attribute name
+:global FindEntities do={
+	# global declare
+	:global IsNil;
+	:global IsStr;
+	:global IsBool;
+	:global TypeofStr;
+	:global ReadOption;
+	:global StartsWith;
+	:global BuildCommandParams;
+	:global ListAttributes;
+	# check
+	:if (![$StartsWith $1 "/"]) do={
+		:error "Global.Runner.FindEntities: \$1 should be a command."
+	}
+	:local filterBody [$BuildCommandParams $2];
+	# local
+	:local attr [$ReadOption $Attribute $TypeofStr];
+	:local cmdFunc [:parse "$1/find $filterBody"];
+	:local idList [$cmdFunc];
+	:if ([$IsNil $attr]) do={
+		:return $idList;
+	}
+	# attribute present
+	:local attrList [$ListAttributes $1 $idList $attr];
+	:return $attrList;
+}
+
+
+# $GetOrCreateEntity
+# Find an entity by a filter. Create one if not found.
+# args: <str>                       command
+# args: <array->str>                params
+# opt kwargs: Filter=<array->str>   filter
+# opt kwargs: Disabled=<array->str> disabled flag
+# return: <id>                      internal ID
+:global GetOrCreateEntity do={
 	# global declare
 	:global IsNil;
 	:global IsNothing;
 	:global IsEmpty;
+	:global TypeofBool;
+	:global ReadOption;
+	:global StartsWith;
 	:global BuildCommandParams;
 	# check
 	:if (![$StartsWith $1 "/"]) do={
-		:error "Global.Runner.EnableOrCreateEntity: \$1 should be a command."
+		:error "Global.Runner.GetOrCreateEntity: \$1 should be a command."
 	}
 	:local cmdBody [$BuildCommandParams $2];
 	:local filterBody $cmdBody;
-	:if (![$IsNothing $3]) do={
-		:set filterBody [$BuildCommandParams $3];
+	:if (![$IsNothing $Filter]) do={
+		:set filterBody [$BuildCommandParams $Filter];
 	}
 	# local
+	:local disabledFlag [$ReadOption $Disabled $TypeofBool];
 	:local filterFunc [:parse "$1/find $filterBody"];
 	:local idList [$filterFunc];
+	# create if not found
 	:if ([$IsEmpty $idList]) do={
-		# create
 		:local addFunc [:parse "$1/add $cmdBody"];
 		:local iid [$addFunc];
 		:return $iid;
-	} else {
-		# enable if disabled
-		:local enableFunc [:parse "$1/enable [find $filterBody disabled]"];
-		[$enableFunc];
-		:return ($idList->0);
 	}
+	# flag present
+	:if (![$IsNil $disabledFlag]) do={
+		:if ($disabledFlag) do={
+			# disable if disabled
+			:local disableFunc [:parse "$1/disable [find $filterBody !disabled]"];
+			[$disableFunc];
+		} else {
+			:local enableFunc [:parse "$1/enable [find $filterBody disabled]"];
+			[$enableFunc];
+		}
+	}
+	:return ($idList->0);
 }
+
 
 
 # package info
