@@ -26,30 +26,6 @@
 };
 
 
-# $Append
-# Return a new array by appending a variable to a numeric key array.
-# args: <array>                 source array
-# args: <var>                   var to append
-# return: <array>               new array
-:global Append do={
-	:local a ($1, 0);
-	:set ($a->[:len $1]) $2;
-	:return $a;
-}
-
-
-# $Prepend
-# Return a new array by prepending a variable to a numeric key array.
-# args: <array>                 source array
-# args: <var>                   var to prepend
-# return: <array>               new array
-:global Prepend do={
-	:local a (0, $1);
-	:set ($a->0) $2;
-	:return $a;
-}
-
-
 # $Insert
 # Return a new array by inserting a variable to a numeric key array at a specific index.
 # args: <array>                 source array
