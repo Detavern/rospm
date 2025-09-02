@@ -12,7 +12,7 @@ class ObjectDumper:
     TOKEN_TRUE = "true"
     TOKEN_FALSE = "false"
     TOKEN_EMPTY_ARRAY = "{}"
-    TOKEN_STR_NEED_PAREN = {'$'}
+    TOKEN_SUBS = '$'
     TOKEN_STR_ESCAPE_MAP = {
         '"': '\\"',
         '\\': '\\\\',
@@ -70,22 +70,25 @@ class ObjectDumper:
             raise ValueError(f"unknown type: {type(obj)}")
 
     def format_str(self, obj):
+        if self.TOKEN_SUBS in obj:
+            return self.format_str_subs(obj)
+
         v = ''
-        need_paren = False
         for ch in obj:
             if ord(ch) > 127:
                 # TODO: add unicode support
                 raise ValueError("only support ASCII currently")
-            if ch in self.TOKEN_STR_NEED_PAREN and not need_paren:
-                need_paren = True
             if ch in self.TOKEN_STR_ESCAPE_MAP:
                 v = f'{v}{self.TOKEN_STR_ESCAPE_MAP[ch]}'
             else:
                 v = f'{v}{ch}'
 
-        if need_paren:
-            return f'("{v}")'
         return f'"{v}"'
+    
+    def format_str_subs(self, v):
+        if v.startswith(f'{self.TOKEN_SUBS}[') and v.endswith(']'):
+            return f'"!SUBS[{v[2:-1]}]"'
+        return f'("{v}")'
 
     def format_dict(self, obj, indent_level):
         if not obj:

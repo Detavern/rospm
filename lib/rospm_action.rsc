@@ -5,7 +5,7 @@
 # ALL package level functions follows lower camel case.
 # The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {

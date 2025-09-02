@@ -5,12 +5,12 @@
 # ALL global functions follows upper camel case.
 # Global Package for unicode related operation
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
 	"name"="global-functions.unicode";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="Global Package for unicode related operation";
 	"global"=true;
 	"global-functions"={

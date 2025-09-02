@@ -5,12 +5,12 @@
 # ALL package level functions follows lower camel case.
 # routing rule tools
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
 	"name"="routing.rule";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="routing rule tools";
 };
 

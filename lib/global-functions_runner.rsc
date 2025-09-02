@@ -1,11 +1,11 @@
 #!rsc by RouterOS
 # ===================================================================
-# |     Global Functions     |   global-functions.template
+# |     Global Functions     |   global-functions.runner
 # ===================================================================
 # ALL global functions follows upper camel case.
-# Global Package for template related operation
+# Global Package for runner related operation
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
@@ -14,6 +14,12 @@
 	"description"="Global Package for runner related operation";
 	"global"=true;
 	"global-functions"={
+		"BuildCommandParams";
+		"RunCommand";
+		"ListAttributes";
+		"CreateEntity";
+		"FindEntities";
+		"GetOrCreateEntity";
 	};
 };
 
@@ -260,3 +266,4 @@
 	"metaInfo"=$metaInfo;
 }
 :return $package;
+

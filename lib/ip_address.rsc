@@ -3,14 +3,14 @@
 # |       ROSPM Packages      |   ip.address
 # ===================================================================
 # ALL package level functions follows lower camel case.
+# /ip/address utilities
 #
-#
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
 	"name"="ip.address";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="/ip/address utilities";
 };
 

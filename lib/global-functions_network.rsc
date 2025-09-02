@@ -5,7 +5,7 @@
 # ALL global functions follows upper camel case.
 # Global functions are designed to perform network calcuation.
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # New structure

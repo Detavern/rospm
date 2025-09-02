@@ -5,7 +5,7 @@
 # ALL global functions follows upper camel case.
 # Global functions are designed to perform datetime calcuation.
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 # New structure
@@ -38,7 +38,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.datetime";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="Global functions are designed to perform datetime calcuation.";
 	"global"=true;
 	"global-functions"={
