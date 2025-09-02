@@ -1,5 +1,12 @@
 # global runner
 
+## BuildCommandParams
+
+{
+	:local params {"!disabled"=true; "interface"="ETH-1"; "!keepalive"=false};
+	:put [$BuildCommandParams $params];
+}
+
 ## RunCommand
 
 {

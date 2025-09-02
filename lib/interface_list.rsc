@@ -167,7 +167,7 @@
 		:error "interface.list.findMembers: specific \$Name not exist or disabled"
 	}
 	# get name list
-	:local template ({"list"=$Name; "disabled"=$disabledFlag});
+	:local template ({"list"=$Name; "!disabled"=!$disabledFlag});
 	:local nameList [$FindEntities "/interface/list/member" \
 		$template Attribute="interface"];
 	# find in include

@@ -25,7 +25,6 @@
 	:global IsNil;
 	:global IsEmpty;
 	:global IsIPPrefix;
-	:global Print;
 	:global TypeofStr;
 	:global TypeofBool;
 	:global ReadOption;
@@ -60,69 +59,65 @@
 }
 
 
-# $ensureStaticRoute
-# kwargs: DstAddress=<str>
-# kwargs: Gateway=<str>
-# opt kwargs: RoutingTable=<str>
-# opt kwargs: Distance=<num>
-:local ensureStaticRoute do={
+# $ensure
+# kwargs: Params=<params>
+# params:
+#   opt kwargs: comment=<str>
+#   opt kwargs: dst-address=<str>
+#   opt kwargs: gateway=<str>
+#   opt kwargs: routing-table=<str>
+#   opt kwargs: distance=<num>
+#   opt kwargs: table=<str>
+#   opt kwargs: check-gateway=<str>
+#   opt kwargs: dst-address-list=<str>, use first address in the list as dst-address
+#   opt kwargs: gateway-address-list=<str>, use first address in the list as gateway
+:local ensure do={
 	#DEFINE global
 	:global IsNil;
-	:global IsStr;
 	:global IsEmpty;
-	:global TypeofNum;
+	:global IsNothing;
+	:global TypeofArray;
 	:global TypeofStr;
-	:global NewArray;
+	:global TypeofNum;
 	:global ReadOption;
-	#DEFINE helper
-	:global helperAddByTemplate;
-	:global helperFindByTemplate;
-	:global helperEnsureOneEnabled;
-	# check params
-	:if (![$IsStr $DstAddress]) do={
-		:error "ensureStaticRoute: require \$DstAddress";
-	}
-	:if (![$IsStr $Gateway]) do={
-		:error "ensureStaticRoute: require \$Gateway";
-	}
+	:global GetOrCreateEntity;
+	# read params
+	:local params [$ReadOption $Params $TypeofArray];
+	:if ([$IsNil $params]) do={:error "ip.route.ensure: require \$Params"}
+	:if ([$IsEmpty $params]) do={:error "ip.route.ensure: require options in \$Params"}
 	# read opt
-	:local pDistance [$ReadOption $Distance $TypeofNum 1];
-	:local pRoutingTable [$ReadOption $RoutingTable $TypeofStr "main"];
-	# set template
-	:local tmpl [$NewArray ];
-	:set ($tmpl->"dst-address") $DstAddress;
-	:set ($tmpl->"gateway") $Gateway;
-	:set ($tmpl->"routing-table") $pRoutingTable;
-	:set ($tmpl->"distance") $pDistance;
-	# find if exist
-	:local idList [$helperFindByTemplate "ip/route" $tmpl];
-	:if ([$IsEmpty $idList]) do={
-		# if couldn't find matched then add one
-		[$helperAddByTemplate "/ip/route" $tmpl];
-	} else {
-		[$helperEnsureOneEnabled "/ip/route" $idList];
+	:local dstAddrList [$ReadOption ($params->"dst-address-list") $TypeofStr];
+	:local gwAddrList [$ReadOption ($params->"gateway-address-list") $TypeofStr];
+	:if (![$IsNil $dstAddrList]) do={
+		:set ($params->"dst-address-list");
+		:local idList [/ip/firewall/address-list/find list=$dstAddrList];
+		:if ([:len $idList] > 0) do={
+			:set ($params->"dst-address") [/ip/firewall/address-list/get ($idList->0) address];
+		} else {
+			:error ("ip.route.ensure: address not found in dst-address-list=$dstAddrList");
+		}
 	}
+	:if (![$IsNil $gwAddrList]) do={
+		:set ($params->"gateway-address-list");
+		:local idList [/ip/firewall/address-list/find list=$gwAddrList];
+		:if ([:len $idList] > 0) do={
+			:set ($params->"gateway") [/ip/firewall/address-list/get ($idList->0) address];
+		} else {
+			:error ("ip.route.ensure: address not found in gateway-address-list=$gwAddrList");
+		}
+	}
+	:if ([$IsNothing ($params->"distance")]) do={
+		:set ($params->"distance") 10;
+	}
+	# local
+	:local iid [$GetOrCreateEntity "/ip/route" $params Disabled=false];
+	:return $iid;
 }
-
-
-# TODO: ensureBlackhole
-:local ensureBlackhole do={}
-
-
-# TODO: ensureProhibit
-:local ensureProhibit do={}
-
-
-# TODO: ensureUnreachable
-:local ensureUnreachable do={}
 
 
 :local package {
 	"metaInfo"=$metaInfo;
 	"getGateway"=$getGateway;
-	"ensureStaticRoute"=$ensureStaticRoute;
-	"ensureBlackhole"=$ensureBlackhole;
-	"ensureProhibit"=$ensureProhibit;
-	"ensureUnreachable"=$ensureUnreachable;
+	"ensure"=$ensure;
 }
 :return $package;

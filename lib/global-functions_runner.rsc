@@ -21,6 +21,7 @@
 # $BuildCommandParams
 # Build command parameters by an array.
 # args: <array->str>            params
+# opt kwargs: IsFilter=<bool>   filter mode flag, attributes like comment will be ignored
 # return: <str>                 params string
 :global BuildCommandParams do={
 	# global declare
@@ -29,24 +30,33 @@
 	:global IsStr;
 	:global IsBool;
 	:global IsArray;
+	:global TypeofBool;
+	:global ReadOption;
+	:global StartsWith;
 	# check
 	:if (![$IsArray $1]) do={
 		:error "Global.Runner.BuildCommandParams: \$1 should be an array."
 	}
 	# local
 	:local cmdBody "";
-	:local disabledFlag;
+	:local extBody "";
+	:local filterFlag [$ReadOption $IsFilter $TypeofBool false];
 	:local makePair do={
 		:global IsNil;
 		:global IsNothing;
 		:global IsNum;
 		:global IsStr;
+		:global StartsWith;
 		# invalid
 		:if ([$IsNil $Value] or [$IsNothing $Value] or [$IsNum $Key]) do={
 			:return "";
 		}
-		# ignored
-		:if ($Key = "disabled") do={
+		# special
+		:if ([$StartsWith $Key "!"]) do={
+			:return "";
+		}
+		# filter mode
+		:if ($FilterFlag and $Key~"^comment\$") do={
 			:return "";
 		}
 		# escaped
@@ -58,24 +68,21 @@
 		:if ([$IsStr $Value]) do={
 			:return " $Key=\"$Value\"";
 		}
-		:return " $k=$v";
+		:return " $Key=$Value";
 	}
 	:foreach k,v in $1 do={
-		:local paramStr [$makePair Key=$k Value=$v];
+		:local paramStr [$makePair Key=$k Value=$v FilterFlag=$filterFlag];
 		:set cmdBody ($cmdBody . $paramStr);
-		:if ($k = "disabled" and [$IsBool $v]) do={
-			:set disabledFlag $v;
+		:if ([$StartsWith $k "!"] and [$IsBool $v]) do={
+			:if ($v) do={
+				:set extBody ($extBody . " $k");
+			} else {
+				:local vbody [:pick $k 1 ([:len $k])];
+				:set extBody ($extBody . " $vbody");
+			}
 		}
 	}
-	# append disabled flag
-	:if (![$IsNothing $disabledFlag]) do={
-		:if ($disabledFlag) do={
-			:set cmdBody ($cmdBody . " disabled");
-		} else {
-			:set cmdBody ($cmdBody . " !disabled");
-		}
-	}
-	:return $cmdBody;
+	:return "$cmdBody$extBody";
 }
 
 
@@ -177,7 +184,7 @@
 	:if (![$StartsWith $1 "/"]) do={
 		:error "Global.Runner.FindEntities: \$1 should be a command."
 	}
-	:local filterBody [$BuildCommandParams $2];
+	:local filterBody [$BuildCommandParams $2 IsFilter=true];
 	# local
 	:local attr [$ReadOption $Attribute $TypeofStr];
 	:local cmdFunc [:parse "$1/find $filterBody"];
@@ -196,7 +203,7 @@
 # args: <str>                       command
 # args: <array->str>                params
 # opt kwargs: Filter=<array->str>   filter
-# opt kwargs: Disabled=<array->str> disabled flag
+# opt kwargs: Disabled=<array->str> disabled flag, if present, disable/enable the entity
 # return: <id>                      internal ID
 :global GetOrCreateEntity do={
 	# global declare
@@ -212,9 +219,9 @@
 		:error "Global.Runner.GetOrCreateEntity: \$1 should be a command."
 	}
 	:local cmdBody [$BuildCommandParams $2];
-	:local filterBody $cmdBody;
+	:local filterBody [$BuildCommandParams $2 IsFilter=true];
 	:if (![$IsNothing $Filter]) do={
-		:set filterBody [$BuildCommandParams $Filter];
+		:set filterBody [$BuildCommandParams $Filter IsFilter=true];
 	}
 	# local
 	:local disabledFlag [$ReadOption $Disabled $TypeofBool];
@@ -227,17 +234,24 @@
 		:return $iid;
 	}
 	# flag present
+	:local iid ($idList->0);
 	:if (![$IsNil $disabledFlag]) do={
 		:if ($disabledFlag) do={
 			# disable if disabled
-			:local disableFunc [:parse "$1/disable [find $filterBody !disabled]"];
+			:local disableFunc [:parse "$1/disable numbers=$iid"];
 			[$disableFunc];
 		} else {
-			:local enableFunc [:parse "$1/enable [find $filterBody disabled]"];
+			:local enableFunc [:parse "$1/enable numbers=$iid"];
 			[$enableFunc];
 		}
 	}
-	:return ($idList->0);
+	# comment
+	:if (![$IsNothing ($2->"comment")]) do={
+		:local cmnt ($2->"comment");
+		:local cmntFunc [:parse "$1/set numbers=$iid comment=$cmnt"];
+		[$cmntFunc];
+	}
+	:return $iid;
 }
 
 
