@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   rospm
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# ROSPM package entrypoints
+# This package provides the main entrypoints and management functions for ROSPM packages.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="rospm";
 	"version"="0.6.0";
-	"description"="ROSPM package entrypoints";
+	"description"="This package provides the main entrypoints and management functions for ROSPM packages.";
 };
 
 

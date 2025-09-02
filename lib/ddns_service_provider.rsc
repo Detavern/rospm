@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ddns.service.provider
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# The collections of ddns service providers
+# Provides functions for updating IP records with DDNS service providers.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="ddns.service.provider";
 	"version"="0.7.0";
-	"description"="The collections of ddns service providers";
+	"description"="Provides functions for updating IP records with DDNS service providers.";
 };
 
 

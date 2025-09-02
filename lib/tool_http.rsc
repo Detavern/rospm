@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   tool.http
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# http utility
+# This package provides HTTP utility functions for making requests and handling responses.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="tool.http";
 	"version"="0.6.0";
-	"description"="http utility";
+	"description"="This package provides HTTP utility functions for making requests and handling responses.";
 };
 
 

@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   rospm.feature
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rospm feature tools
+# This package contains feature management tools for ROSPM, such as global cache control.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="rospm.feature";
 	"version"="0.6.0";
-	"description"="rospm feature tools";
+	"description"="This package contains feature management tools for ROSPM, such as global cache control.";
 };
 
 # $globalCacheFuncOn

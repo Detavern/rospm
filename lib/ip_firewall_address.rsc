@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ip.firewall.address
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# 
+# This package provides utilities for managing firewall address lists in RouterOS.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="ip.firewall.address";
 	"version"="0.6.0";
-	"description"="";
+	"description"="This package provides utilities for managing firewall address lists in RouterOS.";
 };
 
 

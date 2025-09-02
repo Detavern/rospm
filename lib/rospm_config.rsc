@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   rospm.config
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# rospm configuration tools
+# This package provides configuration management tools for ROSPM, including URL and version generation.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="rospm.config";
 	"version"="0.6.0";
-	"description"="rospm configuration tools";
+	"description"="This package provides configuration management tools for ROSPM, including URL and version generation.";
 };
 
 

@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   tool.template
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# A simple template utility.
+# This package provides a simple template utility for variable substitution in scripts.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -15,7 +15,7 @@
 :local metaInfo {
 	"name"="tool.template";
 	"version"="0.6.0";
-	"description"="A simple template utility.";
+	"description"="This package provides a simple template utility for variable substitution in scripts.";
 };
 
 

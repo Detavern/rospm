@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ddns.ip.provider
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# The collections of ddns ip providers
+# Provides functions for obtaining IP addresses from various DDNS providers.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="ddns.ip.provider";
 	"version"="0.6.0";
-	"description"="The collections of ddns ip providers";
+	"description"="Provides functions for obtaining IP addresses from various DDNS providers.";
 };
 
 

@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-functions
 # ===================================================================
 # ALL global functions follows upper camel case.
-# global function package
+# This package provides global functions for type checking, input, and array operations in ROSPM.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="global-functions";
 	"version"="0.6.0";
-	"description"="global function package";
+	"description"="This package provides global functions for type checking, input, and array operations in ROSPM.";
 	"global"=true;
 	"global-functions"={
 		"IsNil";

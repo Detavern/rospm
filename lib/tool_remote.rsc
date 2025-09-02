@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   tool.remote
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# remote script load tools
+# This package offers tools for loading and parsing remote scripts from URLs.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="tool.remote";
 	"version"="0.7.0";
-	"description"="remote script load tools";
+	"description"="This package offers tools for loading and parsing remote scripts from URLs.";
 };
 
 

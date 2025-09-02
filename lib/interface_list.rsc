@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   interface.list
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# interface list related functions.
+# This package provides functions for managing interface lists and their members in RouterOS.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="interface.list";
 	"version"="0.6.0";
-	"description"="interface list related functions.";
+	"description"="This package provides functions for managing interface lists and their members in RouterOS.";
 };
 
 
