@@ -5,7 +5,7 @@
 # ALL package level functions follows lower camel case.
 # interface list related functions.
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
@@ -184,9 +184,7 @@
 
 :local package {
 	"metaInfo"=$metaInfo;
-	"add"=$add;
 	"ensure"=$ensure;
-	"getInclude"=$getInclude;
 	"ensureInclude"=$ensureInclude;
 	"ensureExclude"=$ensureExclude;
 	"ensureMembers"=$ensureMembers;

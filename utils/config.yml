@@ -1,4 +1,4 @@
-version: 0.6.0
+version: 0.7.0
 
 load_order:
     - "global-variables"
@@ -7,23 +7,24 @@ load_order:
     - "global-functions.string"
     - "global-functions.network"
     - "global-functions.random"
-    - "global-functions.cache"
     - "global-functions.datetime"
     - "global-functions.package"
     - "global-functions.config"
+    - "global-functions.runner"
     - "global-functions.unicode"
     - "global-functions.misc"
-    - "global-helpers"
 
 essential_package_list:
     - "global-variables"
     - "global-functions"
     - "global-functions.array"
     - "global-functions.string"
-    - "global-functions.cache"
+    - "global-functions.network"
+    - "global-functions.random"
     - "global-functions.datetime"
     - "global-functions.package"
     - "global-functions.config"
+    - "global-functions.runner"
     - "global-functions.unicode"
     - "global-functions.misc"
     - "tool.http"

@@ -5,7 +5,7 @@
 # ALL global functions follows upper camel case.
 # Global functions are vital for the configuration management.
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {

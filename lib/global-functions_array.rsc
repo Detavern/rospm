@@ -5,7 +5,7 @@
 # ALL global functions follows upper camel case.
 # Global functions are designed to perform array related operation.
 #
-# Copyright (c) 2020-2023 detavern <detavern@live.com>
+# Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
 :local metaInfo {
@@ -14,8 +14,6 @@
 	"description"="Global functions are designed to perform array related operation.";
 	"global"=true;
 	"global-functions"={
-		"Append";
-		"Prepend";
 		"Insert";
 		"Extend";
 		"Reverse";
