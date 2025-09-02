@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ip.address
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# /ip/address utilities
+# This package provides utilities for managing and querying IP addresses in RouterOS.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="ip.address";
 	"version"="0.7.0";
-	"description"="/ip/address utilities";
+	"description"="This package provides utilities for managing and querying IP addresses in RouterOS.";
 };
 
 

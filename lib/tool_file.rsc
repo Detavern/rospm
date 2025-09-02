@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   tool.file
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# file utility
+# This package contains file utility functions for creating, finding, and managing files and directories.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="tool.file";
 	"version"="0.6.0";
-	"description"="file utility";
+	"description"="This package contains file utility functions for creating, finding, and managing files and directories.";
 };
 
 

@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ip.route
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# Route scripts are used to facilitate the routing.
+# This package provides functions to facilitate routing and manage IP routes in RouterOS.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="ip.route";
 	"version"="0.6.0";
-	"description"="Route scripts are used to facilitate the routing.";
+	"description"="This package provides functions to facilitate routing and manage IP routes in RouterOS.";
 };
 
 

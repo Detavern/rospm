@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   rospm.reset
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# ROSPM configuration reset tools
+# This package provides tools for resetting ROSPM configuration and cleaning global variables.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="rospm.reset";
 	"version"="0.6.0";
-	"description"="ROSPM configuration reset tools";
+	"description"="This package provides tools for resetting ROSPM configuration and cleaning global variables.";
 };
 
 

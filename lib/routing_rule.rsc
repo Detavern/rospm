@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   routing.rule
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# routing rule tools
+# This package offers tools for managing and ensuring routing rules in RouterOS.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="routing.rule";
 	"version"="0.7.0";
-	"description"="routing rule tools";
+	"description"="This package offers tools for managing and ensuring routing rules in RouterOS.";
 };
 
 

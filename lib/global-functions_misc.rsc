@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-functions.misc
 # ===================================================================
 # ALL global functions follows upper camel case.
-# global functions for miscellaneous collection
+# Provides global functions for miscellaneous utilities.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="global-functions.misc";
 	"version"="0.6.0";
-	"description"="global functions for miscellaneous collection";
+	"description"="Provides global functions for miscellaneous utilities.";
 	"global"=true;
 	"global-functions"={
 		"UniqueArray";

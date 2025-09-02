@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   interface.ethernet
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# 
+# This package provides utilities for renaming and resetting ethernet interfaces in RouterOS.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="interface.ethernet";
 	"version"="0.6.0";
-	"description"="";
+	"description"="This package provides utilities for renaming and resetting ethernet interfaces in RouterOS.";
 };
 
 

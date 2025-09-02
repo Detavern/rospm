@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ddns.service.provider.cloudflare
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# Cloudflare service provider
+# Provides functions for managing DNS records using the Cloudflare API.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -12,7 +12,7 @@
 :local metaInfo {
 	"name"="ddns.service.provider.cloudflare";
 	"version"="0.6.0";
-	"description"="Cloudflare service provider";
+	"description"="Provides functions for managing DNS records using the Cloudflare API.";
 };
 
 

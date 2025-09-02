@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ip.firewall.address.watcher
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# Watch and store address on specific interface.
+# This package provides tools to watch and store addresses on specific interfaces using scheduled tasks.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="ip.firewall.address.watcher";
 	"version"="0.6.0";
-	"description"="Watch and store address on specific interface.";
+	"description"="This package provides tools to watch and store addresses on specific interfaces using scheduled tasks.";
 };
 
 

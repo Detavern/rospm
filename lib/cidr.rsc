@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   cidr
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# collections of special CIDRs
+# Provides functions for managing collections of special CIDRs.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="cidr";
 	"version"="0.6.0";
-	"description"="collections of special CIDRs";
+	"description"="Provides functions for managing collections of special CIDRs.";
 };
 
 # $ensureReserved

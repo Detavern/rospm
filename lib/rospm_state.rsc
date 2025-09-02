@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   rospm.state
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# ROSPM package state tools
+# This package provides tools for checking and managing the state of ROSPM packages.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="rospm.state";
 	"version"="0.6.0";
-	"description"="ROSPM package state tools";
+	"description"="This package provides tools for checking and managing the state of ROSPM packages.";
 };
 
 

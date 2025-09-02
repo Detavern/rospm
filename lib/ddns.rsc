@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ddns
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# A simple ddns scheduler framework
+# Provides a simple DDNS scheduler framework for RouterOS.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="ddns";
 	"version"="0.6.0";
-	"description"="A simple ddns scheduler framework";
+	"description"="Provides a simple DDNS scheduler framework for RouterOS.";
 };
 
 

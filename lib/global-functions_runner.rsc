@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-functions.runner
 # ===================================================================
 # ALL global functions follows upper camel case.
-# Global Package for runner related operation
+# This package provides global functions for building and running commands and managing entities.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="global-functions.runner";
 	"version"="0.7.0";
-	"description"="Global Package for runner related operation";
+	"description"="This package provides global functions for building and running commands and managing entities.";
 	"global"=true;
 	"global-functions"={
 		"BuildCommandParams";
@@ -266,4 +266,5 @@
 	"metaInfo"=$metaInfo;
 }
 :return $package;
+
 

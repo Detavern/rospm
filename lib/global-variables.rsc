@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-variables
 # ===================================================================
 # ALL global functions follows upper camel case.
-# global variable package
+# This package defines global variables for use throughout the ROSPM framework.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="global-variables";
 	"version"="0.6.0";
-	"description"="global variable package";
+	"description"="This package defines global variables for use throughout the ROSPM framework.";
 	"global"=true;
 	"global-variables"={
 		"Nothing";

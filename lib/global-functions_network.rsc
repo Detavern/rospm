@@ -3,7 +3,7 @@
 # |     Global Functions     |   global-functions.network
 # ===================================================================
 # ALL global functions follows upper camel case.
-# Global functions are designed to perform network calcuation.
+# This package provides global functions for network calculations and CIDR parsing.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -27,7 +27,7 @@
 :local metaInfo {
 	"name"="global-functions.network";
 	"version"="0.6.0";
-	"description"="Global functions are designed to perform network calcuation.";
+	"description"="This package provides global functions for network calculations and CIDR parsing.";
 	"global"=true;
 	"global-functions"={
 		"ToIPPrefix";

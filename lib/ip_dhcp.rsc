@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ip.dhcp
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# DHCP client & server scripts are used to facilitate the IP allocation.
+# This package provides functions to manage DHCP clients and servers for IP allocation.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
@@ -11,7 +11,7 @@
 :local metaInfo {
 	"name"="ip.dhcp";
 	"version"="0.6.0";
-	"description"="DHCP client & server scripts are used to facilitate the IP allocation.";
+	"description"="This package provides functions to manage DHCP clients and servers for IP allocation.";
 };
 
 
