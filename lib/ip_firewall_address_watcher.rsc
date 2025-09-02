@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.firewall.address.watcher";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="This package provides tools to watch and store addresses on specific interfaces using scheduled tasks.";
 };
 

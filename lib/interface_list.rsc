@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="interface.list";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="This package provides functions for managing interface lists and their members in RouterOS.";
 };
 

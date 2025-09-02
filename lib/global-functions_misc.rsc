@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.misc";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="Provides global functions for miscellaneous utilities.";
 	"global"=true;
 	"global-functions"={

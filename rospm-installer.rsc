@@ -68,10 +68,12 @@
 :set sidList ($sidList, [$installPackage "global-functions"]);
 :set sidList ($sidList, [$installPackage "global-functions_array"]);
 :set sidList ($sidList, [$installPackage "global-functions_string"]);
-:set sidList ($sidList, [$installPackage "global-functions_cache"]);
+:set sidList ($sidList, [$installPackage "global-functions_network"]);
+:set sidList ($sidList, [$installPackage "global-functions_random"]);
 :set sidList ($sidList, [$installPackage "global-functions_datetime"]);
 :set sidList ($sidList, [$installPackage "global-functions_package"]);
 :set sidList ($sidList, [$installPackage "global-functions_config"]);
+:set sidList ($sidList, [$installPackage "global-functions_runner"]);
 :set sidList ($sidList, [$installPackage "global-functions_unicode"]);
 :set sidList ($sidList, [$installPackage "global-functions_misc"]);
 
