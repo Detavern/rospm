@@ -526,12 +526,6 @@ $Print [$LoadGlobalVar "Nothing"];
 ### error example
 :put [[$GetFunc "ip.route.getGateway"] DstAddress=0.0.0.0/0 RoutingMark="NOT_EXIST"];
 
-## ensure static route
-:put [[$GetFunc "ip.route.ensureStaticRoute"] DstAddress="0.0.0.0/0" Gateway="172.20.0.253" RoutingMark="IRT_INTERNET" Distance=200];
-
-### error example
-:put [[$GetFunc "ip.route.ensureStaticRoute"] DstAddress="0.0.0.0/0"];
-
 # /ip route rule
 ## ensure rule
 :put [[$GetFunc "ip.route.rule.ensureRule"] DstAddress="10.0.0.0/8" Table="172.20.0.253"];

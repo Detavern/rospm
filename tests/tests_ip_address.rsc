@@ -1,11 +1,12 @@
 # /ip/address
 
-## get address
+## find
+
+### get address by interface
 :put [[$GetFunc "ip.address.find"] Interface="ETH-1"];
-{
-	:local intfList {"ETH-1"; "ETH-2"};
-	:put [[$GetFunc "ip.address.find"] InterfaceList=$intfList];
-}
+
+### get address by interface list
+
 :put [[$GetFunc "ip.address.find"] InterfaceList="WAN"];
 
 ## wait and find

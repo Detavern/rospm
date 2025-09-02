@@ -135,3 +135,12 @@
 	}
 	[$Foo];
 }
+
+## unset an array key
+
+{
+	:local foo {"a"=1; "b"=2; "c"=3};
+	$Assert ([:len $foo]=3) "length of foo array should be 3";
+	:set ($foo->"a");
+	$Assert ([:len $foo]=2) "length of foo array should be 2";
+}

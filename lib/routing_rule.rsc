@@ -16,51 +16,30 @@
 
 
 # $ensure
-# opt kwargs: SrcAddress=<str>
-# opt kwargs: DstAddress=<str>
-# opt kwargs: RoutingMark=<str>
-# opt kwargs: Interface=<str>
-# opt kwargs: Action=<str>
-# opt kwargs: Table=<str>
+# kwargs: Params=<params>
+# params:
+#   opt kwargs: comment=<str>
+#   opt kwargs: src-address=<str>
+#   opt kwargs: dst-address=<str>
+#   opt kwargs: routing-mark=<str>
+#   opt kwargs: interface=<str>
+#   opt kwargs: action=<str>
+#   opt kwargs: table=<str>
 :local ensure do={
 	#DEFINE global
-	:global Nil;
 	:global IsNil;
 	:global IsEmpty;
+	:global TypeofArray;
 	:global TypeofStr;
-	:global NewArray;
 	:global ReadOption;
-	#DEFINE helper
-	:global helperAddByTemplate;
-	:global helperFindByTemplate;
-	:global findOneEnabled;
-	:global findOneDisabled;
-	# read option
-	:local pSrcAddress [$ReadOption $SrcAddress $TypeofStr];
-	:local pDstAddress [$ReadOption $DstAddress $TypeofStr];
-	:local pRoutingMark [$ReadOption $RoutingMark $TypeofStr];
-	:local pInterface [$ReadOption $Interface $TypeofStr];
-	:local pAction [$ReadOption $Action $TypeofStr];
-	:local pTable [$ReadOption $Table $TypeofStr];
+	:global GetOrCreateEntity;
+	# read params
+	:local params [$ReadOption $Params $TypeofArray];
+	:if ([$IsNil $params]) do={:error "routing.rule.ensure: require \$Params"}
+	:if ([$IsEmpty $params]) do={:error "routing.rule.ensure: require options in \$Params"}
 	# local
-	:local tmpl [$NewArray ];
-	:set ($tmpl->"src-address") $pSrcAddress;
-	:set ($tmpl->"dst-address") $pDstAddress;
-	:set ($tmpl->"routing-mark") $pRoutingMark;
-	:set ($tmpl->"interface") $pInterface;
-	:set ($tmpl->"action") $pAction;
-	:set ($tmpl->"table") $pTable;
-	# find
-	:local idList [$helperFindByTemplate "/routing/rule" $tmpl];
-	:if ([$IsEmpty $idList]) do={
-		[$helperAddByTemplate "/routing/rule" $tmpl];
-		:return $Nil;
-	}
-	:local disableID [$findOneDisabled "/routing/rule" $idList];
-	:if (![$IsNil $disableID]) do={
-		/routing/rule/enable numbers=$disableID;
-		:return $Nil;
-	}
+	:local iid [$GetOrCreateEntity "/routing/rule" $params Disabled=false];
+	:return $iid;
 }
 
 

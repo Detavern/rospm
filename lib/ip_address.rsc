@@ -16,45 +16,41 @@
 
 
 # $find
-# opt kwargs: Interface=<str>                       find addresses by interface
-# opt kwargs: InterfaceList=<str>                   find addresses by interface list
-# opt kwargs: Output=<str>                          "cidr"=<str>, "ip"=<ip>(default)
-# return: <array->str>                              list of addresses
+# opt kwargs: Interface=<str>           find addresses by interface
+# opt kwargs: InterfaceList=<str>       find addresses by interface list
+# opt kwargs: Output=<str>              "cidr"=<str>, "ip"=<ip>(default)
+# return: <array->str>                  list of addresses
 :local find do={
 	#DEFINE global
-	:global IsStr;
+	:global IsNil;
 	:global IsNothing;
-	:global IsArray;
-	:global IsEmpty;
 	:global TypeofStr;
 	:global NewArray;
 	:global Split;
 	:global ReadOption;
 	:global GetFunc;
-	#DEFINE helper
-	:global helperFindByTemplate;
+	:global FindEntities;
 	# read opt
 	:local intf [$ReadOption $Interface $TypeofStr ""];
-	:local intfL [$ReadOption $InterfaceList $TypeofStr ""];
+	:local intfList [$ReadOption $InterfaceList $TypeofStr ""];
 	:local pOutput [$ReadOption $Output $TypeofStr "ip"];
 	# local
-	:local intfList;
+	:local interfaces;
 	:if ($intf != "") do={
-		:set intfList {$intf};
+		:set interfaces {$intf};
 	}
-	:if ($intfL != "") do={
-		:set intfList [[$GetFunc "interface.list.findMembers"] List=$intfL];
+	:if ($intfList != "") do={
+		:set interfaces [[$GetFunc "interface.list.findMembers"] Name=$intfList];
 	}
-	:if ([$IsNothing $intfList]) do={
+	:if ([$IsNothing $interfaces]) do={
 		:error "ip.address.find: one of \$Interface, \$InterfaceList needed";
 	}
 	# find address by interface name list
 	:local addressList [$NewArray ];
-	:local template [$NewArray ];
-	:set ($template->"disabled") no;
-	:foreach v in $intfList do={
+	:local template ({"!disabled"=true});
+	:foreach v in $interfaces do={
 		:set ($template->"interface") $v;
-		:local addrList [$helperFindByTemplate "/ip/address" $template Output="address"];
+		:local addrList [$FindEntities "/ip/address" $template Attribute="address"];
 		:set addressList ($addressList, $addrList);
 	}
 	:if ($pOutput = "ip") do={
