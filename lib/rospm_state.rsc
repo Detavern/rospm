@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="rospm.state";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="This package provides tools for checking and managing the state of ROSPM packages.";
 };
 

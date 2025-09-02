@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="tool.http";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="This package provides HTTP utility functions for making requests and handling responses.";
 };
 

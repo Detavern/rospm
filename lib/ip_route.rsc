@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.route";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="This package provides functions to facilitate routing and manage IP routes in RouterOS.";
 };
 

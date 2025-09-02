@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ddns.ip.provider";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="Provides functions for obtaining IP addresses from various DDNS providers.";
 };
 

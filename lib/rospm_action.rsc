@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="rospm.action";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
 };
 

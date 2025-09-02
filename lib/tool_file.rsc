@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="tool.file";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="This package contains file utility functions for creating, finding, and managing files and directories.";
 };
 

@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.dhcp";
-	"version"="0.6.0";
+	"version"="0.7.0";
 	"description"="This package provides functions to manage DHCP clients and servers for IP allocation.";
 };
 
