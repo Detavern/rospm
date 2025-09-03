@@ -158,6 +158,27 @@
 }
 
 
+# $ArrayDiff
+# Return the difference between two k-v arrays.
+# args: <array>                 array A
+# args: <array>                 array B
+# return: <array>               array A - B
+:global ArrayDiff do={
+	# global declare
+	:global IsNil;
+	:global IsNothing;
+	:global NewArray;
+	# local
+	:local diff [$NewArray ];
+	:foreach k,v in $1 do={
+		:if ([$IsNothing ($2->$k)]) do={
+			:set ($diff->$k) $v;
+		}
+	}
+	:return $diff;
+}
+
+
 # package info
 :local package {
 	"metaInfo"=$metaInfo;
