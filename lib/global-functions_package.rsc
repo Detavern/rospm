@@ -382,12 +382,16 @@
 # $PrintPackageInfo
 # args: <str>                   <package name>
 :global PrintPackageInfo do={
-	:local metaInfo [$GetPackageInfo package=$package];
+	# global declare
+	:global IsNil;
+	:global GetMetaSafe;
+	# local
+	:local metaInfo [$GetMetaSafe $1];
 	:put ("Package: " . $metaInfo->"name");
 	:put ("Version: " . $metaInfo->"version");
 	:put ("Description: " . $metaInfo->"description");
-	:put ("FunctionList: " . [:len ($metaInfo->"functionList")]);
-	foreach function in ($metaInfo->"functionList") do={
+	:put ("Global Functions: " . [:len ($metaInfo->"global-functions")]);
+	foreach function in ($metaInfo->"global-functions") do={
 		:put ("    " . $function);
 	}
 	:return "";
@@ -770,6 +774,53 @@
 	# from scheduler
 	:local scheduleName "ROSPM_SetGlobalVar_$varName_Timeout";
 	/system/scheduler/remove [/system/scheduler/find name=$scheduleName];
+}
+
+
+# $CompareVersion
+# Compare two version strings.
+# args: <str>                       version1
+# args: <str>                       version2
+# return: <num>                     positive if version1 > version2
+:global CompareVersion do={
+	# global declare
+	:global IsNil;
+	:global Count;
+	:global RSplit;
+	# check
+	:local vs1 [:tostr $1];
+	:local vs2 [:tostr $2];
+	:if (!($vs1~"^([0-9]+\\.){2}[0-9]+(\\.[a-z])?\$")) do={
+		:error "Global.Package.CompareVersion: \$1 should follow regex \"^([0-9]+\\.){2}[0-9]+(\\.[a-z])?\$\""
+	}
+	:if (!($vs2~"^([0-9]+\\.){2}[0-9]+(\\.[a-z])?\$")) do={
+		:error "Global.Package.CompareVersion: \$2 should follow regex \"^([0-9]+\\.){2}[0-9]+(\\.[a-z])?\$\""
+	}
+	# local
+	:local vlen1 [$Count $1 "."];
+	:local vlen2 [$Count $2 "."];
+	:local va1 "|";
+	:local va2 "|";
+	:if ($vlen1=3) do={
+		:local splitted [$RSplit $vs1 "." 1];
+		:set vs1 ($splitted->0);
+		:set va1 ($splitted->1);
+	}
+	:if ($vlen2=3) do={
+		:local splitted [$RSplit $vs2 "." 1];
+		:set vs2 ($splitted->0);
+		:set va2 ($splitted->1);
+	}
+	:local van1 [:convert $va1 to="num"];
+	:local van2 [:convert $va2 to="num"];
+	# compare
+	:if ($vs1>$vs2) do={
+		:return 1;
+	}
+	:if ($vs1<$vs2) do={
+		:return -1;
+	}
+	:return ($van1 - $van2);
 }
 
 
