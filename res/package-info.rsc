@@ -4,8 +4,8 @@
 :local packageList {
 	{
 		"name"="global-variables";
-		"description"="global variable package";
-		"version"="0.6.0";
+		"description"="This package defines global variables for use throughout the ROSPM framework.";
+		"version"="0.7.0";
 		"global"=true;
 		"global-variables"={
 			"Nothing";
@@ -38,8 +38,8 @@
 	};
 	{
 		"name"="global-functions";
-		"description"="global function package";
-		"version"="0.6.0";
+		"description"="This package provides global functions for type checking, input, and array operations in ROSPM.";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
 			"IsNil";
@@ -73,23 +73,22 @@
 	{
 		"name"="global-functions.array";
 		"description"="Global functions are designed to perform array related operation.";
-		"version"="0.6.0";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
-			"Append";
-			"Prepend";
 			"Insert";
 			"Extend";
 			"Reverse";
 			"GetKeys";
 			"IsSubset";
 			"IsSuperset";
+			"ArrayDiff";
 		};
 	};
 	{
 		"name"="global-functions.string";
-		"description"="global functions for string related operation";
-		"version"="0.6.0";
+		"description"="This package provides global functions for string manipulation and conversion in ROSPM.";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
 			"Replace";
@@ -110,45 +109,20 @@
 	};
 	{
 		"name"="global-functions.network";
-		"description"="Global functions are designed to perform network calcuation.";
-		"version"="0.6.0";
+		"description"="This package provides global functions for network calculations and CIDR parsing.";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
 			"ToIPPrefix";
 			"IsCIDR";
 			"ParseCIDR";
-			"GetAddressPool";
-		};
-	};
-	{
-		"name"="global-functions.random";
-		"description"="global functions for random related operation";
-		"version"="0.6.0";
-		"global"=true;
-		"global-functions"={
-			"Random20CharHex";
-			"RandomNumber";
-			"RandomChoice";
-		};
-	};
-	{
-		"name"="global-functions.cache";
-		"description"="global functions for cache operation";
-		"version"="0.6.0";
-		"global"=true;
-		"global-functions"={
-			"GlobalCacheFuncGet";
-			"GlobalCacheFuncPut";
-			"GlobalCacheFuncRemove";
-			"GlobalCacheFuncRemovePrefix";
-			"GlobalCacheFuncFlush";
-			"GlobalCacheFuncStatus";
+			"GetAddressRange";
 		};
 	};
 	{
 		"name"="global-functions.datetime";
 		"description"="Global functions are designed to perform datetime calcuation.";
-		"version"="0.6.0";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
 			"IsSDT";
@@ -169,9 +143,20 @@
 		};
 	};
 	{
+		"name"="global-functions.random";
+		"description"="This package provides global functions for generating random numbers and selections.";
+		"version"="0.7.0";
+		"global"=true;
+		"global-functions"={
+			"RandomString";
+			"RandomStringSymbol";
+			"RandomChoice";
+		};
+	};
+	{
 		"name"="global-functions.package";
 		"description"="Global functions are vital for the package operation.";
-		"version"="0.6.0";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
 			"FindPackage";
@@ -194,7 +179,7 @@
 	{
 		"name"="global-functions.config";
 		"description"="Global functions are vital for the configuration management.";
-		"version"="0.6.0";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
 			"LoadGlobalEnv";
@@ -208,9 +193,23 @@
 		};
 	};
 	{
+		"name"="global-functions.runner";
+		"description"="This package provides global functions for building and running commands and managing entities.";
+		"version"="0.7.0";
+		"global"=true;
+		"global-functions"={
+			"BuildCommandParams";
+			"RunCommand";
+			"ListAttributes";
+			"CreateEntity";
+			"FindEntities";
+			"GetOrCreateEntity";
+		};
+	};
+	{
 		"name"="global-functions.unicode";
-		"description"="Global Package for unicode related operation";
-		"version"="0.6.0";
+		"description"="This package provides global functions for unicode and UTF-8 encoding and decoding operations.";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
 			"ByteToChar";
@@ -224,155 +223,142 @@
 	};
 	{
 		"name"="global-functions.misc";
-		"description"="global functions for miscellaneous collection";
-		"version"="0.6.0";
+		"description"="Provides global functions for miscellaneous utilities.";
+		"version"="0.7.0";
 		"global"=true;
 		"global-functions"={
 			"UniqueArray";
 		};
 	};
 	{
-		"name"="global-helpers";
-		"description"="global helper package";
-		"version"="0.6.0";
-		"global"=true;
-		"global-functions"={
-			"helperEnsureOneEnabled";
-			"helperEnsureOneDisabled";
-			"helperAddByTemplate";
-			"helperSetByTemplate";
-			"helperFindByTemplate";
-			"findOneEnabled";
-			"findOneDisabled";
-			"findOneActive";
-			"findAllEnabled";
-			"getAttrsByIDList";
-		};
-	};
-	{
 		"name"="cidr";
-		"description"="collections of special CIDRs";
-		"version"="0.6.0";
+		"description"="Provides functions for managing collections of special CIDRs.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="ddns";
-		"description"="A simple ddns scheduler framework";
-		"version"="0.6.0";
+		"description"="Provides a simple DDNS scheduler framework for RouterOS.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="ddns.ip.provider";
-		"description"="The collections of ddns ip providers";
-		"version"="0.6.0";
+		"description"="Provides functions for obtaining IP addresses from various DDNS providers.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="ddns.service.provider";
-		"description"="The collections of ddns service providers";
-		"version"="0.6.0";
+		"description"="Provides functions for updating IP records with DDNS service providers.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="ddns.service.provider.cloudflare";
-		"description"="Cloudflare service provider";
-		"version"="0.6.0";
+		"description"="Provides functions for managing DNS records using the Cloudflare API.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="interface.ethernet";
-		"description"="";
-		"version"="0.6.0";
+		"description"="This package provides utilities for renaming and resetting ethernet interfaces in RouterOS.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="interface.list";
-		"description"="interface list related functions.";
-		"version"="0.6.0";
+		"description"="This package provides functions for managing interface lists and their members in RouterOS.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="ip.address";
-		"description"="/ip/address utilities";
-		"version"="0.6.0";
+		"description"="This package provides utilities for managing and querying IP addresses in RouterOS.";
+		"version"="0.7.0";
 	};
 	{
-		"name"="ip.dhcp";
-		"description"="DHCP client & server scripts are used to facilitate the IP allocation.";
-		"version"="0.6.0";
+		"name"="ip.dhcp.client";
+		"description"="This package provides functions to manage DHCP clients for IP allocation.";
+		"version"="0.7.0";
+	};
+	{
+		"name"="ip.dhcp.server";
+		"description"="This package provides functions to manage DHCP servers for IP allocation.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="ip.firewall.address";
-		"description"="";
-		"version"="0.6.0";
+		"description"="This package provides utilities for managing firewall address lists in RouterOS.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="ip.firewall.address.watcher";
-		"description"="Watch and store address on specific interface.";
-		"version"="0.6.0";
+		"description"="This package provides tools to watch and store addresses on specific interfaces using scheduled tasks.";
+		"version"="0.7.0";
 	};
 	{
-		"name"="ip.firewall.raw";
-		"description"="";
-		"version"="0.6.0";
+		"name"="ip.pool";
+		"description"="This package provides functions to manage IP address pools.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="ip.route";
-		"description"="Route scripts are used to facilitate the routing.";
-		"version"="0.6.0";
+		"description"="This package provides functions to facilitate routing and manage IP routes in RouterOS.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="rospm";
-		"description"="ROSPM package entrypoints";
-		"version"="0.6.0";
+		"description"="This package provides the main entrypoints and management functions for ROSPM packages.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="rospm.action";
 		"description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
-		"version"="0.6.0";
+		"version"="0.7.0";
 	};
 	{
 		"name"="rospm.config";
-		"description"="rospm configuration tools";
-		"version"="0.6.0";
+		"description"="This package provides configuration management tools for ROSPM, including URL and version generation.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="rospm.feature";
-		"description"="rospm feature tools";
-		"version"="0.6.0";
+		"description"="This package contains feature management tools for ROSPM, such as global cache control.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="rospm.reset";
-		"description"="ROSPM configuration reset tools";
-		"version"="0.6.0";
+		"description"="This package provides tools for resetting ROSPM configuration and cleaning global variables.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="rospm.state";
-		"description"="ROSPM package state tools";
-		"version"="0.6.0";
+		"description"="This package provides tools for checking and managing the state of ROSPM packages.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="routing.rule";
-		"description"="routing rule tools";
-		"version"="0.6.0";
+		"description"="This package offers tools for managing and ensuring routing rules in RouterOS.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="routing.table";
-		"description"="";
-		"version"="0.6.0";
-	};
-	{
-		"name"="tool.file";
-		"description"="file utility";
-		"version"="0.6.0";
+		"description"="This package provides functions to manage and ensure routing tables on the device.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="tool.http";
-		"description"="http utility";
-		"version"="0.6.0";
+		"description"="This package provides HTTP utility functions for making requests and handling responses.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="tool.remote";
-		"description"="remote script load tools";
-		"version"="0.6.0";
+		"description"="This package offers tools for loading and parsing remote scripts from URLs.";
+		"version"="0.7.0";
+	};
+	{
+		"name"="tool.sms";
+		"description"="This package offers tools for SMS.";
+		"version"="0.7.0";
 	};
 	{
 		"name"="tool.template";
-		"description"="A simple template utility.";
-		"version"="0.6.0";
+		"description"="This package provides a simple template utility for variable substitution in scripts.";
+		"version"="0.7.0";
 	};
 };
 
@@ -383,26 +369,26 @@
 	"global-functions.array"=2;
 	"global-functions.string"=3;
 	"global-functions.network"=4;
-	"global-functions.random"=5;
-	"global-functions.cache"=6;
-	"global-functions.datetime"=7;
-	"global-functions.package"=8;
-	"global-functions.config"=9;
+	"global-functions.datetime"=5;
+	"global-functions.random"=6;
+	"global-functions.package"=7;
+	"global-functions.config"=8;
+	"global-functions.runner"=9;
 	"global-functions.unicode"=10;
 	"global-functions.misc"=11;
-	"global-helpers"=12;
-	"cidr"=13;
-	"ddns"=14;
-	"ddns.ip.provider"=15;
-	"ddns.service.provider"=16;
-	"ddns.service.provider.cloudflare"=17;
-	"interface.ethernet"=18;
-	"interface.list"=19;
-	"ip.address"=20;
-	"ip.dhcp"=21;
+	"cidr"=12;
+	"ddns"=13;
+	"ddns.ip.provider"=14;
+	"ddns.service.provider"=15;
+	"ddns.service.provider.cloudflare"=16;
+	"interface.ethernet"=17;
+	"interface.list"=18;
+	"ip.address"=19;
+	"ip.dhcp.client"=20;
+	"ip.dhcp.server"=21;
 	"ip.firewall.address"=22;
 	"ip.firewall.address.watcher"=23;
-	"ip.firewall.raw"=24;
+	"ip.pool"=24;
 	"ip.route"=25;
 	"rospm"=26;
 	"rospm.action"=27;
@@ -412,9 +398,9 @@
 	"rospm.state"=31;
 	"routing.rule"=32;
 	"routing.table"=33;
-	"tool.file"=34;
-	"tool.http"=35;
-	"tool.remote"=36;
+	"tool.http"=34;
+	"tool.remote"=35;
+	"tool.sms"=36;
 	"tool.template"=37;
 }
 
@@ -424,10 +410,12 @@
 	"global-functions";
 	"global-functions.array";
 	"global-functions.string";
-	"global-functions.cache";
+	"global-functions.network";
 	"global-functions.datetime";
+	"global-functions.random";
 	"global-functions.package";
 	"global-functions.config";
+	"global-functions.runner";
 	"global-functions.unicode";
 	"global-functions.misc";
 	"tool.http";
