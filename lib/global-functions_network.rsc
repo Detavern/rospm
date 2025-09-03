@@ -33,7 +33,7 @@
 		"ToIPPrefix";
 		"IsCIDR";
 		"ParseCIDR";
-		"GetAddressPool";
+		"GetAddressRange";
 	};
 };
 

@@ -14,8 +14,8 @@
 	"description"="This package provides global functions for generating random numbers and selections.";
 	"global"=true;
 	"global-functions"={
-		"Random20CharHex";
-		"RandomNumber";
+		"RandomString";
+		"RandomStringSymbol";
 		"RandomChoice";
 	};
 };
