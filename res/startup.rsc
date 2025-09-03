@@ -7,10 +7,12 @@
 	"global-functions";
 	"global-functions_array";
 	"global-functions_string";
-	"global-functions_cache";
+	"global-functions_network";
 	"global-functions_datetime";
+	"global-functions_random";
 	"global-functions_package";
 	"global-functions_config";
+	"global-functions_runner";
 	"global-functions_unicode";
 	"global-functions_misc";
 }
