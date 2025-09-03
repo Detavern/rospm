@@ -20,6 +20,7 @@
 		"GetKeys";
 		"IsSubset";
 		"IsSuperset";
+		"ArrayDiff";
 	};
 };
 

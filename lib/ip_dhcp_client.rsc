@@ -3,7 +3,7 @@
 # |       ROSPM Packages      |   ip.dhcp.client
 # ===================================================================
 # ALL package level functions follows lower camel case.
-# This package provides functions to manage DHCP clients and servers for IP allocation.
+# This package provides functions to manage DHCP clients for IP allocation.
 #
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
