@@ -32,6 +32,38 @@
 };
 
 
+# $Count
+# args: <str>                   string
+# args: <str>                   sub string
+# return: <num>                 count
+:global Count do={
+	# global declare
+	:global IsNil;
+	# local
+	:local string [:tostr $1];
+	:local ss [:tostr $2];
+
+	:local cnt 0;
+	:local flag true;
+	:local cursor -1;
+	:local pos -1;
+
+	:while ($flag) do={
+		# find first/next sub string
+		:set pos [:find $string $ss $cursor];
+		:if ([$IsNil $pos]) do={
+			:set flag false;
+		} else {
+			# set new cursor
+			:set cursor ($pos + [:len $ss] - 1);
+			# count
+			:set cnt ($cnt + 1);
+		};
+	};
+	:return $cnt;
+}
+
+
 # $Replace
 # args: <str>                   string
 # args: <str>                   old
@@ -41,9 +73,9 @@
 	# global declare
 	:global IsNil;
 	# local
-	:local string $1;
-	:local old $2;
-	:local new $3;
+	:local string [:tostr $1];
+	:local old [:tostr $2];
+	:local new [:tostr $3];
 
 	:local result "";
 	:local flag true;
@@ -82,8 +114,8 @@
 	:global IsNothing;
 	:global IsNil;
 	# local
-	:local string $1;
-	:local sub $2;
+	:local string [:tostr $1];
+	:local sub [:tostr $2];
 	:local maxCount $3;
 	:if ([$IsNothing $maxCount]) do={
 		set maxCount -1;
@@ -136,8 +168,8 @@
 	:global IsNil;
 	:global Reverse;
 	# local
-	:local string $1;
-	:local sub $2;
+	:local string [:tostr $1];
+	:local sub [:tostr $2];
 	:local maxCount $3;
 	:if ([$IsNothing $maxCount]) do={
 		set maxCount -1;
@@ -196,8 +228,8 @@
 # args: <str>                   sub string
 # return: <bool>                true or not
 :global StartsWith do={
-	:local string $1;
-	:local sub $2;
+	:local string [:tostr $1];
+	:local sub [:tostr $2];
 	# pick
 	if ([:pick $string 0 [:len $sub]] = $sub) do={
 		return true;
@@ -212,8 +244,8 @@
 # args: <str>                   sub string
 # return: <bool>                true or not
 :global EndsWith do={
-	:local string $1;
-	:local sub $2;
+	:local string [:tostr $1];
+	:local sub [:tostr $2];
 	# pick
 	if ([:pick $string ([:len $string] - [:len $sub]) [:len $string]] = $sub) do={
 		return true;
