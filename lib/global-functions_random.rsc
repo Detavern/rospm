@@ -8,7 +8,6 @@
 # Copyright (c) 2020-2025 detavern <detavern@live.com>
 # https://github.com/Detavern/rospm/blob/master/LICENSE.md
 #
-# Reference from [GPLv3]https://github.dev/eworm-de/routeros-scripts/global-functions
 :local metaInfo {
 	"name"="global-functions.random";
 	"version"="0.7.0";
@@ -22,41 +21,37 @@
 };
 
 
-
-# $Random20CharHex
-# generate random 20 chars hex (0-9 and a-f)
-# return: <str>                 random 20 char
-:global Random20CharHex do={
-	:return ([/certificate/scep-server/otp/generate minutes-valid=0 as-value]->"password");
+# $RandomString
+# args: <num>                   length of string
+# return: <str>                 random string
+:global RandomString do={
+	#DEFINE global
+	:global IsNil;
+	:global IsNothing;
+	# read opt
+	:local strlen 16;
+	:local strdict "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	:if (![$IsNothing $1]) do={
+		:set strlen [:tonum $1];
+	}
+	:return [:rndstr length=$strlen from=$strdict];
 }
 
 
-# $RandomNumber
-# generate random number from $1 to $2(both include)
-# args: <num>                   x num(include)
-# args: <num>                   y num(include)
-# return: <num>                 random
-:global RandomNumber do={
+# $RandomStringSymbol
+# args: <num>                   length of string
+# return: <str>                 random string
+:global RandomStringSymbol do={
 	#DEFINE global
+	:global IsNil;
 	:global IsNothing;
-	:global Random20CharHex;
-	:global HexToNum;
-	# local
-	:local max 4294967295;
-	:local x [:tonum $1];
-	:local y [:tonum $2];
-	:local d ($y - $x);
-	:if ($d = 0) do={
-		:return $x;
+	# read opt
+	:local strlen 16;
+	:local strdict "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#\$%^&*()-=_+";
+	:if (![$IsNothing $1]) do={
+		:set strlen [:tonum $1];
 	}
-	:if ($d < 0) do={
-		:error "Global.RandomNumber: \$2 should bigger than \$1";
-	}
-	:if ($d > $max) do={
-		:error "Global.RandomNumber: difference of \$1 and \$2 should smaller than 2^32";
-	}
-	:local r ([$HexToNum [:pick [$Random20CharHex ] 0 15]] % ($d + 1));
-	:return ($r + $x);
+	:return [:rndstr length=$strlen from=$strdict];
 }
 
 
@@ -67,13 +62,12 @@
 :global RandomChoice do={
 	#DEFINE global
 	:global IsEmpty;
-	:global RandomNumber;
 	# local
 	:if ([$IsEmpty $1]) do={
 		:error "Global.RandomChoice: \$1 shoud be a not empty array";
 	}
 	:local l [:len $1];
-	:local i [$RandomNumber 0 ($l - 1)];
+	:local i [:rndnum 0 ($l - 1)];
 	:local c 0;
 	:foreach k,v in $1 do={
 		:if ($c = $i) do={

@@ -137,37 +137,39 @@
 }
 
 
-# $GetAddressPool
-# Return a valid ip pool notation by specify a first offset & a last offset.
-# args: <CIDR>                  cidr
-# args: <num>                   first offset
-# args: <num>                   last offset
-# return: <str>                 ip pool notation like 192.168.0.100-192.168.0.199
-:global GetAddressPool do={
+# $GetAddressRange
+# Return a valid ip pool notation by specify a start offset & a pool length.
+# args: <var>           cidr or ip-prefix or cidr-str
+# args: <num>           start offset
+# args: <num>           pool length
+# return: <str>         ip pool notation like 192.168.0.100-192.168.0.199
+:global GetAddressRange do={
 	# global declare
 	:global IsNil;
 	:global IsCIDR;
+	:global ParseCIDR;
 	# check
-	:if (![$IsCIDR $1]) do={
-		:error "Global.network.GetAddressPool: \$1 should be a CIDR array!";
+	:local cidr $1;
+	:if (![$IsCIDR $cidr]) do={
+		:set cidr [$ParseCIDR $1];
+		:if ([$IsNil $cidr]) do={
+			:error "Global.Network.GetAddressRange: invalid CIDR input!";
+		}
 	};
-	:local offsetF [:tonum $2];
-	:local offsetL [:tonum $3];
-	:if (($1->"prefix") > 24) do={
-		:error "Global.network.GetAddressPool: CIDR prefix larger than /24!";
+	:local offset [:tonum $2];
+	:local length [:tonum $3];
+	:if (($cidr->"prefix") > 28) do={
+		:error "Global.Network.GetAddressRange: CIDR prefix larger than /28!";
 	}
-	:if ($offsetF < 0 or $offsetL < 0) do={
-		:error "Global.network.GetAddressPool: both \$2 and \$3 must be positive!";
+	:if ($offset < 1 or $length < 1) do={
+		:error "Global.Network.GetAddressRange: both \$2 and \$3 must be positive!";
 	}
-	:if ($offsetF >= $offsetL) do={
-		:error "Global.network.GetAddressPool: \$3 should larger than \$2!";
-	}
-	:if (($offsetL - $offsetF) >= ($1->"usable")) do={
-		:error "Global.network.GetAddressPool: not enough usable ips!";
+	:if (($offset + $length - 1) > ($cidr->"usable")) do={
+		:error "Global.Network.GetAddressRange: range exceeds network boundaries!";
 	}
 	# do
-	:local ipF (($1->"network") + $offsetF);
-	:local ipL (($1->"network") + $offsetL);
+	:local ipF (($cidr->"network") + $offset);
+	:local ipL ($ipF + $length - 1);
 	:return "$ipF-$ipL";
 }
 

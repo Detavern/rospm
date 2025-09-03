@@ -52,6 +52,7 @@
 		:global IsNothing;
 		:global IsNum;
 		:global IsStr;
+		:global IsBool;
 		:global StartsWith;
 		# invalid
 		:if ([$IsNil $Value] or [$IsNothing $Value] or [$IsNum $Key]) do={
@@ -71,8 +72,16 @@
 			:return " $Key=\"\$[$vbody]\"";
 		}
 		# string
-		:if ([$IsStr $Value]) do={
+		:if ([$IsStr $Value] and !($Value~"^yes|no|true|false\$")) do={
 			:return " $Key=\"$Value\"";
+		}
+		# bool
+		:if ([$IsBool $Value]) do={
+			:if ($Value) do={
+				:return " $Key=yes";
+			} else {
+				:return " $Key=no";
+			}
 		}
 		:return " $Key=$Value";
 	}
@@ -217,20 +226,27 @@
 	:global IsNothing;
 	:global IsEmpty;
 	:global TypeofBool;
+	:global TypeofArray;
 	:global ReadOption;
 	:global StartsWith;
+	:global ArrayDiff;
 	:global BuildCommandParams;
 	# check
 	:if (![$StartsWith $1 "/"]) do={
 		:error "Global.Runner.GetOrCreateEntity: \$1 should be a command."
 	}
+	# read opt
+	:local diffArray;
 	:local cmdBody [$BuildCommandParams $2];
-	:local filterBody [$BuildCommandParams $2 IsFilter=true];
-	:if (![$IsNothing $Filter]) do={
-		:set filterBody [$BuildCommandParams $Filter IsFilter=true];
+	:local filterArray [$ReadOption $Filter $TypeofArray];
+	:if ([$IsNil $filterArray]) do={
+		:set $filterArray $2;
+	} else {
+		:set diffArray [$ArrayDiff $2 $filterArray];
 	}
-	# local
 	:local disabledFlag [$ReadOption $Disabled $TypeofBool];
+	:local filterBody [$BuildCommandParams $filterArray IsFilter=true];
+	# local
 	:local filterFunc [:parse "$1/find $filterBody"];
 	:local idList [$filterFunc];
 	# create if not found
@@ -250,6 +266,12 @@
 			:local enableFunc [:parse "$1/enable numbers=$iid"];
 			[$enableFunc];
 		}
+	}
+	# diff array
+	:if (![$IsNothing $diffArray]) do={
+		:local diffBody [$BuildCommandParams $diffArray];
+		:local updateFunc [:parse "$1/set numbers=$iid $diffBody"];
+		[$updateFunc];
 	}
 	# comment
 	:if (![$IsNothing ($2->"comment")]) do={

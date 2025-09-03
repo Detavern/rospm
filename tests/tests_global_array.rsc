@@ -58,3 +58,12 @@
 	:local b [$NewArray ];
 	:put [$IsSubset $a $b];
 }
+
+## ArrayDiff
+
+{
+	:local a {"a"=1;"b"=2;"c"=3};
+	:local b {"b"=2;"c"=3;"d"=4};
+	:put [$ArrayDiff $a $b];
+	:put [$ArrayDiff $b $a];
+}
