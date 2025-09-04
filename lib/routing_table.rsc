@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="routing.table";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package provides functions to manage and ensure routing tables on the device.";
 };
 

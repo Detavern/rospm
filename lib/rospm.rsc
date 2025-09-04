@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="rospm";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package provides the main entrypoints and management functions for ROSPM packages.";
 };
 
@@ -116,6 +116,7 @@
 	:global TypeofBool;
 	:global InKeys;
 	:global ValidateMetaInfo;
+	:global CompareVersion;
 	# env
 	:global EnvROSPMBaseURL;
 	:global EnvROSPMVersion;
@@ -134,7 +135,7 @@
 	:local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
 	# check core
 	:put "Checking core packages...";
-	:if ($version >= $resVersion) do={
+	:if ([$CompareVersion $version $resVersion] >= 0) do={
 		:put "Core package list is up-to-date.";
 		:set newConfigExt $configExt;
 	} else {

@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="tool.sms";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package offers tools for SMS.";
 };
 

@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.random";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package provides global functions for generating random numbers and selections.";
 	"global"=true;
 	"global-functions"={

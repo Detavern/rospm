@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="rospm.feature";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package contains feature management tools for ROSPM, such as global cache control.";
 };
 

@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="rospm.action";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
 };
 
@@ -372,6 +372,7 @@
 	:global ReadOption;
 	:global FindPackage;
 	:global LoadPackage;
+	:global CompareVersion;
 	:global GlobalCacheFuncRemovePrefix;
 	# env
 	:global EnvROSPMVersionBaseURL;
@@ -411,10 +412,10 @@
 	:if (($report->"configName") != $configPkgName) do={
 		:error "rospm.action.downgrade: only support core package now!";
 	}
-	:if ($version >= $versionR) do={
+	:if ([$CompareVersion $version $versionR] >= 0) do={
 		:error "rospm.action.downgrade: target version($version) is higher than the remote.";
 	}
-	if ($version = $versionL) do={
+	if ([$CompareVersion $version $versionL] = 0) do={
 		:error "rospm.action.downgrade: target version($version) is same with local";
 	}
 	# determine pkg url
