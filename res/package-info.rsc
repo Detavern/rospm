@@ -5,7 +5,7 @@
 	{
 		"name"="global-variables";
 		"description"="This package defines global variables for use throughout the ROSPM framework.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-variables"={
 			"Nothing";
@@ -39,7 +39,7 @@
 	{
 		"name"="global-functions";
 		"description"="This package provides global functions for type checking, input, and array operations in ROSPM.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"IsNil";
@@ -73,7 +73,7 @@
 	{
 		"name"="global-functions.array";
 		"description"="Global functions are designed to perform array related operation.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"Insert";
@@ -88,9 +88,10 @@
 	{
 		"name"="global-functions.string";
 		"description"="This package provides global functions for string manipulation and conversion in ROSPM.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
+			"Count";
 			"Replace";
 			"Split";
 			"RSplit";
@@ -110,7 +111,7 @@
 	{
 		"name"="global-functions.network";
 		"description"="This package provides global functions for network calculations and CIDR parsing.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"ToIPPrefix";
@@ -122,7 +123,7 @@
 	{
 		"name"="global-functions.datetime";
 		"description"="Global functions are designed to perform datetime calcuation.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"IsSDT";
@@ -145,7 +146,7 @@
 	{
 		"name"="global-functions.random";
 		"description"="This package provides global functions for generating random numbers and selections.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"RandomString";
@@ -156,7 +157,7 @@
 	{
 		"name"="global-functions.package";
 		"description"="Global functions are vital for the package operation.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"FindPackage";
@@ -174,12 +175,13 @@
 			"SetGlobalVar";
 			"LoadGlobalVar";
 			"UnsetGlobalVar";
+			"CompareVersion";
 		};
 	};
 	{
 		"name"="global-functions.config";
 		"description"="Global functions are vital for the configuration management.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"LoadGlobalEnv";
@@ -195,7 +197,7 @@
 	{
 		"name"="global-functions.runner";
 		"description"="This package provides global functions for building and running commands and managing entities.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"BuildCommandParams";
@@ -209,7 +211,7 @@
 	{
 		"name"="global-functions.unicode";
 		"description"="This package provides global functions for unicode and UTF-8 encoding and decoding operations.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"ByteToChar";
@@ -224,7 +226,7 @@
 	{
 		"name"="global-functions.misc";
 		"description"="Provides global functions for miscellaneous utilities.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 		"global"=true;
 		"global-functions"={
 			"UniqueArray";
@@ -233,132 +235,132 @@
 	{
 		"name"="cidr";
 		"description"="Provides functions for managing collections of special CIDRs.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ddns";
 		"description"="Provides a simple DDNS scheduler framework for RouterOS.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ddns.ip.provider";
 		"description"="Provides functions for obtaining IP addresses from various DDNS providers.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ddns.service.provider";
 		"description"="Provides functions for updating IP records with DDNS service providers.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ddns.service.provider.cloudflare";
 		"description"="Provides functions for managing DNS records using the Cloudflare API.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="interface.ethernet";
 		"description"="This package provides utilities for renaming and resetting ethernet interfaces in RouterOS.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="interface.list";
 		"description"="This package provides functions for managing interface lists and their members in RouterOS.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ip.address";
 		"description"="This package provides utilities for managing and querying IP addresses in RouterOS.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ip.dhcp.client";
 		"description"="This package provides functions to manage DHCP clients for IP allocation.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ip.dhcp.server";
 		"description"="This package provides functions to manage DHCP servers for IP allocation.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ip.firewall.address";
 		"description"="This package provides utilities for managing firewall address lists in RouterOS.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ip.firewall.address.watcher";
 		"description"="This package provides tools to watch and store addresses on specific interfaces using scheduled tasks.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ip.pool";
 		"description"="This package provides functions to manage IP address pools.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="ip.route";
 		"description"="This package provides functions to facilitate routing and manage IP routes in RouterOS.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="rospm";
 		"description"="This package provides the main entrypoints and management functions for ROSPM packages.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="rospm.action";
 		"description"="The real action(like: install, upgrade, etc) behind the scenes. Should not be used directly.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="rospm.config";
 		"description"="This package provides configuration management tools for ROSPM, including URL and version generation.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="rospm.feature";
 		"description"="This package contains feature management tools for ROSPM, such as global cache control.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="rospm.reset";
 		"description"="This package provides tools for resetting ROSPM configuration and cleaning global variables.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="rospm.state";
 		"description"="This package provides tools for checking and managing the state of ROSPM packages.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="routing.rule";
 		"description"="This package offers tools for managing and ensuring routing rules in RouterOS.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="routing.table";
 		"description"="This package provides functions to manage and ensure routing tables on the device.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="tool.http";
 		"description"="This package provides HTTP utility functions for making requests and handling responses.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="tool.remote";
 		"description"="This package offers tools for loading and parsing remote scripts from URLs.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="tool.sms";
 		"description"="This package offers tools for SMS.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 	{
 		"name"="tool.template";
 		"description"="This package provides a simple template utility for variable substitution in scripts.";
-		"version"="0.7.0";
+		"version"="0.7.0.a";
 	};
 };
 

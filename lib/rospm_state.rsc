@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="rospm.state";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package provides tools for checking and managing the state of ROSPM packages.";
 };
 
@@ -30,6 +30,7 @@
 	:global GlobalEnvInfo;
 	:global GetCurrentDatetime;
 	:global GetTimeDiff;
+	:global CompareVersion;
 	# env
 	:global EnvROSPMVersion;
 	:global EnvROSPMBaseURL;
@@ -59,7 +60,7 @@
 	:set (($config->"environment")->"ROSPMVersion") $versionR;
 	:local versionL $EnvROSPMVersion;
 	[$UpdateConfig $configPkgName $config];
-	:return ($versionL >= $versionR);
+	:return ([$CompareVersion $versionL $versionR] >= 0);
 }
 
 
@@ -112,6 +113,7 @@
 	:global GetMetaSafe;
 	:global ReadOption;
 	:global TypeofBool;
+	:global CompareVersion;
 	# check
 	:if (![$IsStr $Package]) do={
 		:error "rospm.state.checkState: \$Package should be str.";
@@ -251,8 +253,8 @@
 			:set ($adviceList->[:len $adviceList]) "Local package $Package can only be removed(version: $versionScript).";
 			:set ($adviceList->[:len $adviceList]) "Using \"rospm.remove\" to remove this package.";
 		}
-		# TODO: better version compare
-		:if (!$flagLocal and $versionConfig < $versionScript) do={
+		# version compare
+		:if (!$flagLocal and ([$CompareVersion $versionConfig $versionScript] < 0)) do={
 			:set state "LT";
 			:set ($actionList->[:len $actionList]) "remove";
 			:set ($actionList->[:len $actionList]) "reinstall";
@@ -262,7 +264,7 @@
 			:set ($adviceList->[:len $adviceList]) "Using \"rospm.install\" to reinstall this package.";
 			:set ($adviceList->[:len $adviceList]) "Using \"rospm.downgrade\" to downgrade this package.";
 		}
-		:if (!$flagLocal and $versionConfig = $versionScript) do={
+		:if (!$flagLocal and ([$CompareVersion $versionConfig $versionScript] = 0)) do={
 			:set state "SAME";
 			:set ($actionList->[:len $actionList]) "remove";
 			:set ($actionList->[:len $actionList]) "reinstall";
@@ -272,7 +274,7 @@
 			:set ($adviceList->[:len $adviceList]) "Using \"rospm.install\" to reinstall this package.";
 			:set ($adviceList->[:len $adviceList]) "Using \"rospm.downgrade\" to downgrade this package.";
 		}
-		:if (!$flagLocal and $versionConfig > $versionScript) do={
+		:if (!$flagLocal and ([$CompareVersion $versionConfig $versionScript] > 0)) do={
 			:set state "GT";
 			:set ($actionList->[:len $actionList]) "remove";
 			:set ($actionList->[:len $actionList]) "upgrade";

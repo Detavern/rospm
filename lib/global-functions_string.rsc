@@ -10,10 +10,11 @@
 #
 :local metaInfo {
 	"name"="global-functions.string";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package provides global functions for string manipulation and conversion in ROSPM.";
 	"global"=true;
 	"global-functions"={
+		"Count";
 		"Replace";
 		"Split";
 		"RSplit";

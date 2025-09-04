@@ -38,7 +38,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.datetime";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="Global functions are designed to perform datetime calcuation.";
 	"global"=true;
 	"global-functions"={

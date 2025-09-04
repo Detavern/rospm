@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="tool.remote";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package offers tools for loading and parsing remote scripts from URLs.";
 };
 

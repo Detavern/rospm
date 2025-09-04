@@ -14,7 +14,7 @@
 #
 :local metaInfo {
 	"name"="tool.template";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package provides a simple template utility for variable substitution in scripts.";
 };
 

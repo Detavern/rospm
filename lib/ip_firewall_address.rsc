@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.firewall.address";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package provides utilities for managing firewall address lists in RouterOS.";
 };
 

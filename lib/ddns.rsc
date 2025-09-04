@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ddns";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="Provides a simple DDNS scheduler framework for RouterOS.";
 };
 

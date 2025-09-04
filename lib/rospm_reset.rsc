@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="rospm.reset";
-	"version"="0.7.0";
+	"version"="0.7.0.a";
 	"description"="This package provides tools for resetting ROSPM configuration and cleaning global variables.";
 };
 
