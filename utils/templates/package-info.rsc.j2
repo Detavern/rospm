@@ -10,9 +10,8 @@
 		{% endif %}
 		"description"="{{ meta.description }}";
 		"version"="{{ meta.version }}";
-		{% if meta.global == True %}
-		"global"=true;
-		{% endif %}
+		"essential"={{ "true" if meta.essential else "false" }};
+		"global"={{ "true" if meta.global else "false" }};
 		{% if meta["global-variables"] %}
 		"global-variables"={
 			{% for var in meta["global-variables"] %}

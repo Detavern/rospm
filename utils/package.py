@@ -151,6 +151,17 @@ class PackageMetainfoModifier:
     def __init__(self):
         self._updates = []
 
+    def get_default_metainfo(self):
+        return {
+            "name": "",
+            "version": "",
+            "description": "",
+            "essential": False,
+            "global": False,
+            "global-variables": [],
+            "global-functions": [],
+        }
+
     def bump_version(self, path):
         print(f'Parsing library file from folder: {path}')
         for p in os.listdir(path):
@@ -221,7 +232,8 @@ class PackageMetainfoModifier:
         # parse it into node list
         pp = PackageParser.from_file(fp)
         meta_node = pp.get_metainfo()
-        metainfo = meta_node.value
+        metainfo = self.get_default_metainfo()
+        metainfo.update(meta_node.value)
         # self.update_version(metainfo)
         self.update_global_functions(metainfo, pp)
         self.update_global_variables(metainfo, pp)
@@ -244,12 +256,15 @@ class PackageMetainfoModifier:
             # parse it into node list
             pp = PackageParser.from_file(fp)
             meta_node = pp.get_metainfo()
-            metainfo = meta_node.value
+            metainfo = self.get_default_metainfo()
+            metainfo.update(meta_node.value)
             # self.update_version(metainfo)
             self.update_global_functions(metainfo, pp)
             self.update_global_variables(metainfo, pp)
             if metainfo['name'] not in ignore_exec_check:
                 self.check_exec(metainfo, pp)
+            if metainfo['name'] in ESSENTIAL_PACKAGE_LIST:
+                metainfo['essential'] = True
             # do update
             metainfo_str = self.make_metainfo(metainfo)
             header_str = self.make_header(metainfo, pp)
