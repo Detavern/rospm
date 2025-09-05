@@ -23,6 +23,7 @@
 # return: <bool>                        latest or not
 :local checkVersion do={
 	#DEFINE global
+	:global IsNil;
 	:global IsNothing;
 	:global TypeofBool;
 	:global ReadOption;
@@ -34,35 +35,38 @@
 	:global GetTimeDiff;
 	:global CompareVersion;
 	# env
-	:global EnvROSPMVersion;
 	:global EnvROSPMBaseURL;
+	:global EnvROSPMInfoVersion;
+	:global EnvROSPMLatestVersion;
 	# check
 	:if ([$IsNothing $GlobalEnvInfo]) do={
 		:error "rospm.state.checkVersion: \$GlobalEnvInfo is nothing!";
 	}
-	:if ([$IsNothing $EnvROSPMVersion]) do={
-		:error "rospm.state.checkVersion: \$EnvROSPMVersion is nothing!";
+	:if ([$IsNothing $EnvROSPMInfoVersion]) do={
+		:error "rospm.state.checkVersion: \$EnvROSPMInfoVersion is nothing!";
+	}
+	:if ([$IsNothing $EnvROSPMLatestVersion]) do={
+		:error "rospm.state.checkVersion: \$EnvROSPMLatestVersion is nothing!";
 	}
 	# local
 	:local forceUpdate [$ReadOption $ForceUpdate $TypeofBool false];
 	:local configPkgName "config.rospm.package";
-	:local td 00:30:00;
+	:local td 00:15:00;
 	# check DT
 	:if (!$forceUpdate) do={
-		:local sdt ((($GlobalEnvInfo->"data")->"EnvROSPMVersion")->"updateDT");
+		:local sdt ((($GlobalEnvInfo->"data")->"EnvROSPMLatestVersion")->"updateDT");
 		:local cdt [$GetCurrentDatetime];
 		:local ctd [$GetTimeDiff $sdt $cdt];
-		# return true if in expire time
-		:if ($ctd < $td) do={:return true};
+		# compare version if in expire time
+		:if ($ctd < $td) do={:return ([$CompareVersion $EnvROSPMInfoVersion $EnvROSPMLatestVersion] >= 0)};
 	}
 	# do update
 	:local versionURL ($EnvROSPMBaseURL . "res/version.rsc");
-	:local versionR [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
+	:local versionLatest [[$GetFunc "tool.remote.loadRemoteVar"] URL=$versionURL];
 	:local config [$GetConfig $configPkgName];
-	:set (($config->"environment")->"ROSPMVersion") $versionR;
-	:local versionL $EnvROSPMVersion;
-	[$UpdateConfig $configPkgName $config];
-	:return ([$CompareVersion $versionL $versionR] >= 0);
+	:set (($config->"environment")->"ROSPMLatestVersion") $versionLatest;
+	[$UpdateConfig $configPkgName ({"environment"=($config->"environment")})];
+	:return ([$CompareVersion $EnvROSPMInfoVersion $versionLatest] >= 0);
 }
 
 
@@ -307,6 +311,7 @@
 # return: <array->report>
 :local checkAllState do={
 	#DEFINE global
+	:global IsNil;
 	:global NewArray;
 	:global FindPackage;
 	:global GetConfig;

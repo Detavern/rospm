@@ -395,8 +395,7 @@
 		:error "rospm.action.downgrade: action not found.";
 	}
 	# check is essential or not
-	:local epkgList ($config->"essentialPackageList");
-	:if ([$InValues $pkgName $epkgList]) do={
+	:if ((($report->"metaScript")->"essential")) do={
 		:put "Package $pkgName is an essential package for ROSPM.";
 		:put "Downgrading this package may corrupt ROSPM.";
 		:error "rospm.action.downgrade: target package is essential.";
