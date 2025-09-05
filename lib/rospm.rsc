@@ -157,7 +157,7 @@
 		}
 		:set (($config->"environment")->"ROSPMInfoVersion") $resVersion;
 		:set (($config->"environment")->"ROSPMLatestVersion") $resVersion;
-		[$UpdateConfig $configPkgName ({"environment"=($config->"environment")})];
+		[$UpdateConfig $configPkgName $config];
 		# update package-info-ext
 		:local packageInfoExtURL ($EnvROSPMBaseURL . "res/package-info-ext.rsc");
 		:put "Get: $packageInfoExtURL";
