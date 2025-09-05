@@ -388,6 +388,7 @@
 :local upgradeAll do={
 	#DEFINE global
 	:global Nil;
+	:global IsNil;
 	:global IsNothing;
 	:global GetFunc;
 	:global GetConfig;
@@ -395,7 +396,6 @@
 	:global NewArray;
 	:global FindPackage;
 	:global LoadPackage;
-	:global GlobalCacheFuncFlush;
 	# env
 	:global EnvROSPMBaseURL;
 	:global EnvROSPMOwner;

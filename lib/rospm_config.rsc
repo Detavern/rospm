@@ -90,7 +90,7 @@
 	:local configName "config.rospm";
 	:local description "Auto-generated rospm base configuration.";
 	:local environment {
-		"GlobalCacheFuncEnabled"=true;
+		"GlobalCacheFuncEnabled"=false;
 		"GlobalCacheFuncSize"=10;
 	};
 	:local configList {

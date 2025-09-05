@@ -33,7 +33,8 @@
 # args: <str>                   <config package name>
 # args: <array>                 <env array>
 :global LoadGlobalEnv do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global IsStrN;
 	:global IsArray;
 	:global IsNothing;
@@ -117,7 +118,8 @@
 # $PrintGlobalEnv
 # Print out GlobalEnvInfo.
 :global PrintGlobalEnv do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global IsNothing;
 	:global NewArray;
 	:global Join;
@@ -152,7 +154,8 @@
 # args: <str>                   <package name>
 # return: <array->var>          config named array
 :global GetConfig do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global FindPackage;
 	:global IsArrayN;
 	:global ValidateMetaInfo;
@@ -184,8 +187,9 @@
 # args: <array>                 config array
 # opt kwargs: Output=<str>      output format: file(default), str, array
 :global UpdateConfig do={
-	# global declare
+	#DEFINE global
 	:global Nil;
+	:global IsNil;
 	:global IsStrN;
 	:global IsArray;
 	:global IsArrayN;
@@ -281,7 +285,8 @@
 # And load its environment into global.
 # args: <str>                   <package name>
 :global RegisterConfig do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global IsArrayN;
 	:global FindPackage;
 	:global GetConfig;
@@ -324,7 +329,8 @@
 # opt kwargs: Description=<str>     script description
 # opt kwargs: Force=<bool>          remove existing file if true, default false
 :global CreateConfig do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global IsStrN;
 	:global IsArray;
 	:global IsArrayN;
@@ -439,7 +445,8 @@
 # Remove existing configuration package.
 # args: <str>                       <config package name>
 :global RemoveConfig do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global IsStrN;
 	:global IsArrayN;
 	:global IsNothing;
@@ -494,7 +501,7 @@
 # $ListAllGlobals
 # List all existing global variables, global functions & envs.
 :global ListAllGlobals do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsNothing;
 	:global NewArray;

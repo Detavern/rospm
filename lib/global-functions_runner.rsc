@@ -30,7 +30,7 @@
 # opt kwargs: IsFilter=<bool>   filter mode flag, attributes like comment will be ignored
 # return: <str>                 params string
 :global BuildCommandParams do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsNothing;
 	:global IsStr;
@@ -106,7 +106,7 @@
 # args: <array->str>            params
 # return: <obj>                 object
 :global RunCommand do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
     :global StartsWith;
 	:global BuildCommandParams;
@@ -130,7 +130,7 @@
 # args: <array->id>         array of id
 # opt args: <str>           attribute name
 :global ListAttributes do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsNothing;
 	:global IsArray;
@@ -163,7 +163,7 @@
 # args: <array->str>            params
 # return: <id>                  internal ID
 :global CreateEntity do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
     :global StartsWith;
 	:global BuildCommandParams;
@@ -186,7 +186,7 @@
 # args: <array->str>            filter
 # opt kwargs: Attribute=<str>   attribute name
 :global FindEntities do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsStr;
 	:global IsBool;
@@ -221,7 +221,7 @@
 # opt kwargs: Disabled=<array->str> disabled flag, if present, disable/enable the entity
 # return: <id>                      internal ID
 :global GetOrCreateEntity do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsNothing;
 	:global IsEmpty;

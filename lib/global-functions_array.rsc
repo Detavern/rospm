@@ -32,7 +32,7 @@
 # args: <num>                   insert position
 # return: <array>               new array
 :global Insert do={
-	# global declare
+	#DEFINE global
 	:global NewArray;
 	# local
 	:local pre [$NewArray ];
@@ -56,7 +56,7 @@
 # args: <num>                   extend position
 # return: <array>               new array
 :global Extend do={
-	# global declare
+	#DEFINE global
 	:global NewArray;
 	:global TypeofNum;
 	:global ReadOption;
@@ -80,7 +80,7 @@
 # args: <array>                 target array
 # return: <array>               new array
 :global Reverse do={
-	# global declare
+	#DEFINE global
 	:global NewArray;
 	# local
 	:local result [$NewArray ];
@@ -96,7 +96,7 @@
 # args: <array>                 target array
 # return: <array>               new array
 :global GetKeys do={
-	# global declare
+	#DEFINE global
 	:global NewArray;
 	# local
 	:local keys [$NewArray ];
@@ -113,7 +113,7 @@
 # args: <array>                 array B
 # return: <bool>                flag
 :global IsSubset do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global NewArray;
 	# local
@@ -139,7 +139,7 @@
 # args: <array>                 array B
 # return: <bool>                flag
 :global IsSuperset do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global NewArray;
 	# local
@@ -165,7 +165,7 @@
 # args: <array>                 array B
 # return: <array>               array A - B
 :global ArrayDiff do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsNothing;
 	:global NewArray;
