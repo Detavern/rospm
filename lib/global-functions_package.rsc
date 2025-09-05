@@ -12,6 +12,7 @@
 	"name"="global-functions.package";
 	"version"="0.7.0";
 	"description"="Global functions are vital for the package operation.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"FindPackage";

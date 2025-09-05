@@ -12,6 +12,8 @@
 	"name"="ip.route";
 	"version"="0.7.0";
 	"description"="This package provides functions to facilitate routing and manage IP routes in RouterOS.";
+	"essential"=false;
+	"global"=false;
 };
 
 

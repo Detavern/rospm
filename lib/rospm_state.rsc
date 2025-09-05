@@ -12,6 +12,8 @@
 	"name"="rospm.state";
 	"version"="0.7.0";
 	"description"="This package provides tools for checking and managing the state of ROSPM packages.";
+	"essential"=true;
+	"global"=false;
 };
 
 

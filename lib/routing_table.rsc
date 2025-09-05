@@ -12,6 +12,8 @@
 	"name"="routing.table";
 	"version"="0.7.0";
 	"description"="This package provides functions to manage and ensure routing tables on the device.";
+	"essential"=false;
+	"global"=false;
 };
 
 

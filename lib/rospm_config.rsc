@@ -12,6 +12,8 @@
 	"name"="rospm.config";
 	"version"="0.7.0";
 	"description"="This package provides configuration management tools for ROSPM, including URL and version generation.";
+	"essential"=true;
+	"global"=false;
 };
 
 

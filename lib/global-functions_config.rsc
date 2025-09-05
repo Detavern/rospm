@@ -12,6 +12,7 @@
 	"name"="global-functions.config";
 	"version"="0.7.0";
 	"description"="Global functions are vital for the configuration management.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"LoadGlobalEnv";

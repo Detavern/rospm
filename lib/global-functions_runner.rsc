@@ -12,6 +12,7 @@
 	"name"="global-functions.runner";
 	"version"="0.7.0";
 	"description"="This package provides global functions for building and running commands and managing entities.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"BuildCommandParams";

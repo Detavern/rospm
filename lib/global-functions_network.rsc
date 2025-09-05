@@ -28,6 +28,7 @@
 	"name"="global-functions.network";
 	"version"="0.7.0";
 	"description"="This package provides global functions for network calculations and CIDR parsing.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"ToIPPrefix";

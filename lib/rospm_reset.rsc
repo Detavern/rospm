@@ -12,6 +12,8 @@
 	"name"="rospm.reset";
 	"version"="0.7.0";
 	"description"="This package provides tools for resetting ROSPM configuration and cleaning global variables.";
+	"essential"=true;
+	"global"=false;
 };
 
 

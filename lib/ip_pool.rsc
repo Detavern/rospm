@@ -12,6 +12,8 @@
 	"name"="ip.pool";
 	"version"="0.7.0";
 	"description"="This package provides functions to manage IP address pools.";
+	"essential"=false;
+	"global"=false;
 };
 
 

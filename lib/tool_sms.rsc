@@ -12,6 +12,8 @@
 	"name"="tool.sms";
 	"version"="0.7.0";
 	"description"="This package offers tools for SMS.";
+	"essential"=false;
+	"global"=false;
 };
 
 
