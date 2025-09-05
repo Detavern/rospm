@@ -31,6 +31,7 @@
 	:local context [$ReadOption $Context $TypeofArray];
 	:local repoType ($context->"ROSPMRepoType");
 	:local repoName ($context->"ROSPMRepoName");
+	:local proxy ($context->"ROSPMProxy");
 	:if (![$IsStr $repoType]) do={
 		:error "rospm.config.generateBaseURL: need ROSPMRepoType in \$Context";
 	};
@@ -40,7 +41,7 @@
 	# github
 	:if ($repoType = "github") do={
 		:local branch ($context->"ROSPMBranch");
-		:return "https://raw.githubusercontent.com/$repoName/$branch/";
+		:return ($proxy . "https://raw.githubusercontent.com/$repoName/$branch/");
 	}
 	# NOTE: add other types here
 	# fallback
@@ -63,6 +64,7 @@
 	:local repoType ($context->"ROSPMRepoType");
 	:local repoName ($context->"ROSPMRepoName");
 	:local version ($context->"ROSPMVersion");
+	:local proxy ($context->"ROSPMProxy");
 	:if (![$IsStr $repoType]) do={
 		:error "rospm.config.generateVersionBaseURL: need ROSPMRepoType in \$Context";
 	};
@@ -74,7 +76,7 @@
 	};
 	# github
 	:if ($repoType = "github") do={
-		:return "https://raw.githubusercontent.com/$repoName/v$version/";
+		:return ($proxy . "https://raw.githubusercontent.com/$repoName/v$version/");
 	}
 	# NOTE: add other types here
 	# fallback
@@ -129,7 +131,6 @@
 	:global NewArray;
 	:global GetFunc;
 	:global CreateConfig;
-	:global FindPackage;
 	# check
 	:local context [$ReadOption $Context $TypeofArray];
 	:if ([$IsNil $context]) do={:set context [$NewArray ]};
@@ -141,6 +142,7 @@
 			"ROSPMRepoName"="Detavern/rospm";
 			"ROSPMBranch"="master";
 			"ROSPMOwner"="rospm";
+			"ROSPMProxy"="";
 		};
 	}
 	# update environment from context
@@ -158,6 +160,8 @@
 	:local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
 	# add ROSPMVersion as current version
 	:set (($config->"environment")->"ROSPMVersion") $resVersion;
+	:set (($config->"environment")->"ROSPMInfoVersion") $resVersion;
+	:set (($config->"environment")->"ROSPMLatestVersion") $resVersion;
 	# add ROSPMVersionBaseURL
 	:if ([$IsNothing (($config->"environment")->"ROSPMVersionBaseURL")]) do={
 		:set (($config->"environment")->"ROSPMVersionBaseURL") \
@@ -191,7 +195,6 @@
 	:global GetFunc;
 	:global GetConfig;
 	:global CreateConfig;
-	:global FindPackage;
 	# check
 	:local context [$ReadOption $Context $TypeofArray];
 	:if ([$IsNil $context]) do={:set context [$NewArray ]};
@@ -224,6 +227,50 @@
 }
 
 
+# $updatePackageConfig
+# Update package configurations based on incoming context.
+# kwargs: Context=<array>       context
+:local updatePackageConfig do={
+	#DEFINE GLOBAL
+	:global IsNil;
+	:global IsNothing;
+	:global TypeofArray;
+	:global ReadOption;
+	:global NewArray;
+	:global GetFunc;
+	:global GetConfig;
+	:global UpdateConfig;
+	# read opt
+	:local context [$ReadOption $Context $TypeofArray [$NewArray ]];
+	# const
+	:local configName "config.rospm.package";
+	:local config [$GetConfig $configName];
+	# update environment from context
+	:foreach k,v in $context do={
+		:set (($config->"environment")->$k) $v;
+	}
+	# update ROSPMBaseURL
+	:set (($config->"environment")->"ROSPMBaseURL") \
+		[[$GetFunc "rospm.config.generateBaseURL"] Context=($config->"environment")];
+	# update ROSPMVersionBaseURL
+	:set (($config->"environment")->"ROSPMVersionBaseURL") \
+		[[$GetFunc "rospm.config.generateVersionBaseURL"] Context=($config->"environment")];
+	# update info version
+	:if ([$IsNothing (($config->"environment")->"ROSPMInfoVersion")]) do={
+		:set (($config->"environment")->"ROSPMInfoVersion") \
+			(($config->"environment")->"ROSPMVersion");
+	}
+	# update latest version
+	:if ([$IsNothing (($config->"environment")->"ROSPMLatestVersion")]) do={
+		:set (($config->"environment")->"ROSPMLatestVersion") \
+			(($config->"environment")->"ROSPMVersion");
+	}
+	# update
+	[$UpdateConfig $configName ({"environment"=($config->"environment")})];
+	:return ($config->"environment");
+}
+
+
 :local package {
 	"metaInfo"=$metaInfo;
 	"generateBaseURL"=$generateBaseURL;
@@ -231,5 +278,6 @@
 	"generateConfig"=$generateConfig;
 	"generatePackageConfig"=$generatePackageConfig;
 	"generatePackageExtConfig"=$generatePackageExtConfig;
+	"updatePackageConfig"=$updatePackageConfig;
 }
 :return $package;

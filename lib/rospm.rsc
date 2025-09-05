@@ -22,6 +22,7 @@
 :local firstRun do={
 	#DEFINE global
 	:global Nil;
+	:global IsNil;
 	:global TypeofArray;
 	:global ReadOption;
 	:global GetFunc;
@@ -55,8 +56,7 @@
 		# not exist in local repository, use config to install it
 		:if ($state = "NES") do={
 			:local pn (($report->"metaConfig")->"name");
-			:local epkgList ($packageInfo->"essentialPackageList");
-			:if ([$InValues $pn $epkgList]) do={
+			:if ((($report->"metaConfig")->"essential")) do={
 				[[$GetFunc "rospm.action.install"] Report=$report];
 			}
 		};
@@ -105,10 +105,11 @@
 
 # $update
 # Update local package configuration file.
-# kwargs: Package=<str>         package name
+# kwargs: Force=<bool>          package name
 :local update do={
 	#DEFINE global
 	:global Nil;
+	:global IsNil;
 	:global NewArray;
 	:global GetFunc;
 	:global GetConfig;
@@ -120,16 +121,19 @@
 	:global ValidateMetaInfo;
 	:global CompareVersion;
 	# env
+	:global EnvROSPMProxy;
 	:global EnvROSPMBaseURL;
 	:global EnvROSPMVersion;
+	:global EnvROSPMInfoVersion;
 	# local
+	:local forceFlag [$ReadOption $Force $TypeofBool false];
 	:local configPkgName "config.rospm.package";
 	:local configExtPkgName "config.rospm.package.ext";
 	:put "Loading local core package list...";
 	:local config [$GetConfig $configPkgName];
 	:put "Loading local extension package list...";
 	:local configExt [$GetConfig $configExtPkgName];
-	:local version $EnvROSPMVersion;
+	:local version $EnvROSPMInfoVersion;
 	:local newConfigExt;
 	# add resource version
 	:local resVersionURL ($EnvROSPMBaseURL . "res/version.rsc");
@@ -137,11 +141,12 @@
 	:local resVersion [[$GetFunc "tool.remote.loadRemoteVar"] URL=$resVersionURL];
 	# check core
 	:put "Checking core packages...";
-	:if ([$CompareVersion $version $resVersion] >= 0) do={
+	:if ([$CompareVersion $version $resVersion] >= 0 and !$forceFlag) do={
 		:put "Core package list is up-to-date.";
 		:set newConfigExt $configExt;
 	} else {
-		:put "Latest version is $resVersion, your current version is $version";
+		:put "Latest package list version is $resVersion";
+		:put "Local package list version is $version, installed package version is based on $EnvROSPMVersion";
 		# update package-info
 		:local packageInfoURL ($EnvROSPMBaseURL . "res/package-info.rsc");
 		:put "Get: $packageInfoURL";
@@ -150,8 +155,9 @@
 		:foreach k,v in $packageInfo do={
 			:set ($config->$k) $v;
 		}
-		:set (($config->"environment")->"ROSPMVersion") $resVersion;
-		[$UpdateConfig $configPkgName $config];
+		:set (($config->"environment")->"ROSPMInfoVersion") $resVersion;
+		:set (($config->"environment")->"ROSPMLatestVersion") $resVersion;
+		[$UpdateConfig $configPkgName ({"environment"=($config->"environment")})];
 		# update package-info-ext
 		:local packageInfoExtURL ($EnvROSPMBaseURL . "res/package-info-ext.rsc");
 		:put "Get: $packageInfoExtURL";
@@ -197,7 +203,8 @@
 		:if ($flagL) do={
 			:put "Package $extName:$extVerL is a local package, skipped.";
 		} else {
-			:local pkgURL [$ReadOption ($meta->"proxyUrl") $TypeofStr ($meta->"url")];
+			:local pkgURL [$ReadOption ($meta->"url") $TypeofStr];
+			:set pkgURL ($EnvROSPMProxy . $pkgURL);
 			# load remote package check version
 			:put "Get: $pkgURL";
 			:local pkgExt [[$GetFunc "tool.remote.loadRemoteVar"] URL=$pkgURL];
@@ -236,6 +243,7 @@
 :local register do={
 	#DEFINE global
 	:global Nil;
+	:global IsNil;
 	:global GetFunc;
 	# opt
 	:local pkgName $Package;
@@ -267,6 +275,7 @@
 :local install do={
 	#DEFINE global
 	:global Nil;
+	:global IsNil;
 	:global InputV;
 	:global GetFunc;
 	:global ReadOption;
@@ -276,8 +285,8 @@
 	:local pkgName $Package;
 	:local pURL [$ReadOption $URL $TypeofStr ""];
 	:local pSuggestion [$ReadOption $Suggestion $TypeofBool yes];
-	# TODO: use specific version
-	:local isLatest [[$GetFunc "rospm.state.checkVersion"] ];
+	# use specific version
+	:local isLatest [[$GetFunc "rospm.state.checkVersion"]];
 	:if (!$isLatest) do={
 		:error "rospm.install: local package list is out of date, please update first.";
 	}
@@ -366,6 +375,7 @@
 :local upgrade do={
 	#DEFINE global
 	:global Nil;
+	:global IsNil;
 	:global GetFunc;
 	# opt
 	:local pkgName $Package;
@@ -392,15 +402,16 @@
 	:global Nil;
 	:global IsNil;
 	:global IsNothing;
+	:global NewArray;
 	:global GetFunc;
 	:global GetConfig;
-	:global InValues;
-	:global NewArray;
-	:global FindPackage;
-	:global LoadPackage;
+	:global UpdateConfig;
+	:global CompareVersion;
 	# env
 	:global EnvROSPMBaseURL;
 	:global EnvROSPMOwner;
+	:global EnvROSPMVersion;
+	:global EnvROSPMInfoVersion;
 	# local
 	:local configPkgName "config.rospm.package";
 	:local configExtPkgName "config.rospm.package.ext";
@@ -409,13 +420,17 @@
 	:put "Loading local extension package list...";
 	:local configExt [$GetConfig $configExtPkgName];
 	# check latest
-	:local isLatest [[$GetFunc "rospm.state.checkVersion"] ];
+	:local isLatest [[$GetFunc "rospm.state.checkVersion"]];
 	:if (!$isLatest) do={
-		# TODO: interactive to update
 		:error "rospm.upgradeAll: local package list is out of date, please update first.";
 	}
+	# check version
+	:if ([$CompareVersion $EnvROSPMVersion $EnvROSPMInfoVersion] >= 0) do={
+		:put "All packages are up-to-date, version is $EnvROSPMVersion";
+		:return $Nil;
+	}
 	# generate upgrade list
-	:local reportList [[$GetFunc "rospm.state.checkAllState"] ];
+	:local reportList [[$GetFunc "rospm.state.checkAllState"]];
 	:local upgradeList [$NewArray ];
 	:foreach report in $reportList do={
 		:if (($report->"state") = "GT") do={
@@ -423,13 +438,33 @@
 		}
 	};
 	# do upgrade
-	:local lenUpradeList [:len $upgradeList];
-	# TODO: improve prompt
-	:put "$lenUpradeList packages need upgrade.";
-	:foreach report in $upgradeList do={
-		[[$GetFunc "rospm.action.upgrade"] Report=$report];
+	:local upradeListLen [:len $upgradeList];
+	:if ($upradeListLen > 0) do={
+		:put "$upradeListLen packages need upgrade.";
+		:foreach report in $upgradeList do={
+			[[$GetFunc "rospm.action.upgrade"] Report=$report];
+		};
+		:put "$upradeListLen packages have been upgraded.";
+	}
+	# generate install list for new essential packages
+	:local installList [$NewArray ];
+	:foreach report in $reportList do={
+		:if (($report->"state") = "NES" and (($report->"metaConfig")->"essential")) do={
+			:set ($installList->[:len $installList]) $report;
+		}
 	};
-	:put "$lenUpradeList packages have been upgraded.";
+	# do install
+	:local installListLen [:len $installList];
+	:if ($installListLen > 0) do={
+		:put "$installListLen packages need install.";
+		:foreach report in $installList do={
+			[[$GetFunc "rospm.action.install"] Report=$report];
+		};
+		:put "$installListLen packages have been installed.";
+	}
+	# upgrade base version
+	:set (($config->"environment")->"ROSPMVersion") $EnvROSPMInfoVersion;
+	[$UpdateConfig $configPkgName ({"environment"=($config->"environment")})];
 	:return $Nil;
 }
 
