@@ -12,6 +12,7 @@
 	"name"="global-functions.string";
 	"version"="0.7.0";
 	"description"="This package provides global functions for string manipulation and conversion in ROSPM.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"Count";

@@ -12,6 +12,8 @@
 	"name"="ip.dhcp.server";
 	"version"="0.7.0";
 	"description"="This package provides functions to manage DHCP servers for IP allocation.";
+	"essential"=false;
+	"global"=false;
 };
 
 

@@ -12,6 +12,8 @@
 	"name"="tool.remote";
 	"version"="0.7.0";
 	"description"="This package offers tools for loading and parsing remote scripts from URLs.";
+	"essential"=true;
+	"global"=false;
 };
 
 

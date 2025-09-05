@@ -12,6 +12,8 @@
 	"name"="ddns";
 	"version"="0.7.0";
 	"description"="Provides a simple DDNS scheduler framework for RouterOS.";
+	"essential"=false;
+	"global"=false;
 };
 
 

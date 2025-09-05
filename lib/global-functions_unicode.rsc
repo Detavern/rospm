@@ -12,6 +12,7 @@
 	"name"="global-functions.unicode";
 	"version"="0.7.0";
 	"description"="This package provides global functions for unicode and UTF-8 encoding and decoding operations.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"ByteToChar";

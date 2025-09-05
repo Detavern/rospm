@@ -12,6 +12,7 @@
 	"name"="global-functions.random";
 	"version"="0.7.0";
 	"description"="This package provides global functions for generating random numbers and selections.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"RandomString";

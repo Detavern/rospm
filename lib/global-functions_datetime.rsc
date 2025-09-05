@@ -40,6 +40,7 @@
 	"name"="global-functions.datetime";
 	"version"="0.7.0";
 	"description"="Global functions are designed to perform datetime calcuation.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"IsSDT";

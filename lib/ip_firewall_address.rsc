@@ -12,6 +12,8 @@
 	"name"="ip.firewall.address";
 	"version"="0.7.0";
 	"description"="This package provides utilities for managing firewall address lists in RouterOS.";
+	"essential"=false;
+	"global"=false;
 };
 
 

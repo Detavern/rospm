@@ -12,6 +12,8 @@
 	"name"="ddns.service.provider";
 	"version"="0.7.0";
 	"description"="Provides functions for updating IP records with DDNS service providers.";
+	"essential"=false;
+	"global"=false;
 };
 
 

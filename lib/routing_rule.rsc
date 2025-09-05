@@ -12,6 +12,8 @@
 	"name"="routing.rule";
 	"version"="0.7.0";
 	"description"="This package offers tools for managing and ensuring routing rules in RouterOS.";
+	"essential"=false;
+	"global"=false;
 };
 
 

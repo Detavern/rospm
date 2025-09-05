@@ -12,6 +12,7 @@
 	"name"="global-functions.misc";
 	"version"="0.7.0";
 	"description"="Provides global functions for miscellaneous utilities.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"UniqueArray";

@@ -12,6 +12,7 @@
 	"name"="global-functions";
 	"version"="0.7.0";
 	"description"="This package provides global functions for type checking, input, and array operations in ROSPM.";
+	"essential"=true;
 	"global"=true;
 	"global-functions"={
 		"IsNil";

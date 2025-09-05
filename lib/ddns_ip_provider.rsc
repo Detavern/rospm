@@ -12,6 +12,8 @@
 	"name"="ddns.ip.provider";
 	"version"="0.7.0";
 	"description"="Provides functions for obtaining IP addresses from various DDNS providers.";
+	"essential"=false;
+	"global"=false;
 };
 
 
