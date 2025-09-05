@@ -1,4 +1,4 @@
-# global declare
+#DEFINE global
 :global IsNil;
 :global IsEmpty;
 :global IsNothing;

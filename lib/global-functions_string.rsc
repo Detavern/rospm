@@ -38,7 +38,7 @@
 # args: <str>                   sub string
 # return: <num>                 count
 :global Count do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	# local
 	:local string [:tostr $1];
@@ -71,7 +71,7 @@
 # args: <str>                   new
 # return: <str>                 string replaced
 :global Replace do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	# local
 	:local string [:tostr $1];
@@ -110,7 +110,7 @@
 # opt args: <num>               split count
 # return: <array>               array
 :global Split do={
-	# global declare
+	#DEFINE global
 	:global NewArray;
 	:global IsNothing;
 	:global IsNil;
@@ -163,7 +163,7 @@
 # opt args: <num>               split count
 # return: <array>               array
 :global RSplit do={
-	# global declare
+	#DEFINE global
 	:global NewArray;
 	:global IsNothing;
 	:global IsNil;
@@ -262,7 +262,7 @@
 # opt kwargs: Mode=<str>        mode: b(both,default), l(left), r(right)
 # return: <str>                 stripped string
 :global Strip do={
-	# global declare
+	#DEFINE global
 	:global TypeofStr;
 	:global ReadOption;
 	:global NewArray;
@@ -326,7 +326,7 @@
 # args: <array>                 array of concatenation
 # return: <str>                 result
 :global Join do={
-	# global declare
+	#DEFINE global
 	:local result "";
 	:local sl ([:len $2]-1);
 	:foreach k,v in $2 do={
@@ -347,7 +347,7 @@
 
 # :put [$SimpleLoad <str> ]
 :global SimpleLoad do={
-	# global declare
+	#DEFINE global
 	:global Nil;
 	:global IsStr;
 	:global TypeofStr;

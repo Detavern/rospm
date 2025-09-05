@@ -65,7 +65,7 @@
 # args: <var>                   var
 # return: <bool>                flag
 :global IsSDT do={
-	# global declare
+	#DEFINE global
 	:global IsArrayN;
 	:global GetKeys;
 	:global IsSubset;
@@ -85,7 +85,7 @@
 # args: <var>                   var
 # return: <bool>                flag
 :global IsDatetime do={
-	# global declare
+	#DEFINE global
 	:global IsNum;
 	:global MonthsOfTheYear;
 	# local
@@ -132,7 +132,7 @@
 # args: <var>                   var
 # return: <bool>                flag
 :global IsTimedelta do={
-	# global declare
+	#DEFINE global
 	:global IsArrayN;
 	:global GetKeys;
 	:global IsSubset;
@@ -151,7 +151,7 @@
 # jan/02/1970 or 1970-01-02, and the first type will be choose.
 # return: <str>                 date
 :global GetCurrentDate do={
-	# global declare
+	#DEFINE global
 	:global Split;
 	:global MonthsName;
 	# local
@@ -186,7 +186,7 @@
 # Get current SDT from system clock.
 # return: <SDT>                 SDT array
 :global GetCurrentSDT do={
-	# global declare
+	#DEFINE global
 	:global GetCurrentDate;
 	# local
 	:local clock [/system/clock/print as-value];
@@ -203,7 +203,7 @@
 # args: <time> or <Timedelta>       time or timedelta
 # return: <Timedelta>               complete timedelta array
 :global ToTimedelta do={
-	# global declare
+	#DEFINE global
 	:global NewArray;
 	:global IsNil;
 	:global IsNothing;
@@ -273,7 +273,7 @@
 # args: <var>                   <SDT>
 # return: <Datetime>            datetime array
 :global ToDatetime do={
-	# global declare
+	#DEFINE global
 	:global IsSDT;
 	:global IsNothing;
 	:global Split;
@@ -320,7 +320,7 @@
 # Get current datetime from system clock.
 # return: <Datetime>            datetime array
 :global GetCurrentDatetime do={
-	# global declare
+	#DEFINE global
 	:global GetCurrentSDT;
 	:global ToDatetime;
 	# local
@@ -334,7 +334,7 @@
 # args: <var>                   <Datetime>
 # return: <SDT>                 SDT array
 :global ToSDT do={
-	# global declare
+	#DEFINE global
 	:global IsDatetime;
 	:global IsNothing;
 	:global MonthsName;
@@ -387,7 +387,7 @@
 # args: <time> or <Timedelta>       time or timedelta
 # return: <Datetime>                shifted datetime array
 :global ShiftDatetime do={
-	# global declare
+	#DEFINE global
 	:global IsNothing;
 	:global IsDatetime;
 	:global TypeofTime;
@@ -524,7 +524,7 @@
 # args: <Datetime>              datetime
 # return: <num>                 1: $1 > $2, -1: $1 < $2, 0: same
 :global CompareDatetime do={
-	# global declare
+	#DEFINE global
 	:global IsNothing;
 	:global IsDatetime;
 	# check
@@ -552,7 +552,7 @@
 # args: <Datetime>              end point datetime array
 # return: <time>                the difference of two datetime arrays
 :global GetTimeDiff do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global NewArray;
 	:global IsDatetime;
@@ -659,7 +659,7 @@
 # args: <Datetime>              end point datetime array
 # return: <Timedelta>           the difference of two datetime arrays
 :global GetTimedeltaDiff do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsDatetime;
 	:global GetTimeDiff;

@@ -292,7 +292,7 @@
 # TODO: embbed array
 # args: <var>                   variable
 :global Print do={
-	# global declare
+	#DEFINE global
 	:global IsArray;
 	:global IsEmpty;
 	# put type first
@@ -316,7 +316,7 @@
 # Print the keys of an array.
 # args: <array>                 array
 :global PrintK do={
-	# global declare
+	#DEFINE global
 	:global IsArray;
 	# check
 	:if ([$IsArray $1]) do={
@@ -372,7 +372,7 @@
 # opt args: <var>               default value of $1
 # return: <var>                 <value or default>
 :global ReadOption do={
-	# global declare
+	#DEFINE global
 	:global Nil;
 	:global IsNothing;
 	:global IsNil;
@@ -504,7 +504,7 @@
 # opt kwargs: Default=<var>     default value
 # return: <var>                 recovered input value
 :global InputV do={
-	# global declare
+	#DEFINE global
 	:global Nil;
 	:global IsNothing;
 	:global IsStr;

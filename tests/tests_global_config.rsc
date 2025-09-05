@@ -1,7 +1,11 @@
-## GetConfig
-$Print [$GetConfig "config.rospm"];
+# global config
 
-## create config, check env
+## GetConfig
+{
+	$Print [$GetConfig "config.rospm"];
+}
+
+## CreateConfig
 
 {
 	:local config {
@@ -16,7 +20,7 @@ $Print [$GetConfig "config.rospm"];
 	$PrintGlobalEnv;
 }
 
-## update config, check env
+## UpdateConfig
 
 {
 	:local config {
@@ -31,7 +35,7 @@ $Print [$GetConfig "config.rospm"];
 	$Print $EnvTest1;
 }
 
-## remove config, check env
+## RemoveConfig
 
 {
 	[$RemoveConfig "config.test"];

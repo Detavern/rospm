@@ -233,7 +233,6 @@
 	:global ReadOption;
 	:global FindPackage;
 	:global LoadPackage;
-	:global GlobalCacheFuncRemovePrefix;
 	# env
 	:global EnvROSPMBaseURL;
 	:global EnvROSPMOwner;
@@ -272,8 +271,6 @@
 	:set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
 	:put "Writing source into repository...";
 	/system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvROSPMOwner;
-	:put "Clean function cache...";
-	[$GlobalCacheFuncRemovePrefix $pkgName];
 	# if global, load it
 	:if ((($report->"metaConfig")->"global")) do={
 		:put "Loading global package...";
@@ -300,7 +297,6 @@
 	:global ReadOption;
 	:global FindPackage;
 	:global LoadPackage;
-	:global GlobalCacheFuncRemovePrefix;
 	# env
 	:global EnvROSPMBaseURL;
 	:global EnvROSPMOwner;
@@ -340,8 +336,6 @@
 	:set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
 	:put "Writing source into repository...";
 	/system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvROSPMOwner;
-	:put "Clean function cache...";
-	[$GlobalCacheFuncRemovePrefix $pkgName];
 	# if global, load it
 	:if ((($report->"metaConfig")->"global")) do={
 		:put "Loading global package...";
@@ -373,7 +367,6 @@
 	:global FindPackage;
 	:global LoadPackage;
 	:global CompareVersion;
-	:global GlobalCacheFuncRemovePrefix;
 	# env
 	:global EnvROSPMVersionBaseURL;
 	:global EnvROSPMOwner;
@@ -427,8 +420,6 @@
 	:set pkgStr [[$GetFunc "tool.remote.loadRemoteSource"] URL=$pkgUrl Normalize=true];
 	:put "Writing source into repository...";
 	/system/script/set [$FindPackage $pkgName] source=$pkgStr owner=$EnvROSPMOwner;
-	:put "Clean function cache...";
-	[$GlobalCacheFuncRemovePrefix $pkgName];
 	# if global, load it
 	:if ((($report->"metaConfig")->"global")) do={
 		:put "Loading global package...";
@@ -456,7 +447,6 @@
 	:global GetConfig;
 	:global UpdateConfig;
 	:global FindPackage;
-	:global GlobalCacheFuncRemovePrefix;
 	# init
 	:local configPkgName "config.rospm.package";
 	:local configExtPkgName "config.rospm.package.ext";
@@ -483,8 +473,6 @@
 	# remove
 	:put "Removing the package $pkgName...";
 	/system/script/remove [$FindPackage $pkgName];
-	:put "Clean function cache...";
-	[$GlobalCacheFuncRemovePrefix $pkgName];
 	# if global, remove it
 	:if ((($report->"metaScript")->"global")) do={
 		:put "Removing global functions and variables from environment...";

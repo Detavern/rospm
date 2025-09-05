@@ -38,7 +38,8 @@
 # args: <str>                   <package name>
 # return: <id> or nil           id of package in /system script
 :global FindPackage do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global Replace;
 	# replace
 	:local pkgName $1;
@@ -67,6 +68,7 @@
 # args: <array->str>(<va>)          validate array
 # return: <array->str>(<result>)    validate result
 :global ValidateMetaInfo do={
+	:global IsNil;
 	:global InKeys;
 	:global IsArray;
 	:global ReadOption;
@@ -151,7 +153,8 @@
 # args: <str>                   <package name>
 # return: <str>                 source of package
 :global GetSource do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global Replace;
 	:global IsEmpty;
 	# replace
@@ -174,7 +177,7 @@
 # opt kwargs: VA=<array->str>   validate array
 # return: <array->str>          meta named array
 :global GetMeta do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsNothing;
 	:global Replace;
@@ -232,7 +235,7 @@
 # args: <str>                   code string
 # return: <array->str>          meta named array
 :global ParseMetaSafe do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsStr;
 	# local
@@ -291,7 +294,7 @@
 # opt kwargs: VA=<array->str>   validate array
 # return: <array->str>          meta named array
 :global GetMetaSafe do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsNothing;
 	:global Replace;
@@ -350,8 +353,9 @@
 # args: <str>                   <package name>
 # return: <array->var>          env named array
 :global GetEnv do={
-	# global declare
+	#DEFINE global
 	:global Nil;
+	:global IsNil;
 	:global RSplit;
 	:global Replace;
 	:global IsEmpty;
@@ -383,7 +387,7 @@
 # $PrintPackageInfo
 # args: <str>                   <package name>
 :global PrintPackageInfo do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global GetMetaSafe;
 	# local
@@ -402,7 +406,7 @@
 # $LoadPackage
 # args: <str>                   <package name>
 :global LoadPackage do={
-	# global declare
+	#DEFINE global
 	:global TypeofStr;
 	:global ReadOption;
 	:global Replace;
@@ -427,36 +431,25 @@
 # args: <str>                   <package name>.<func name>
 # return: <code>                target function
 :global GetFunc do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
+	:global IsNum;
+	:global IsEmpty;
+	:global IsNothing;
 	:global RSplit;
 	:global Replace;
-	:global IsArrayN;
-	:global IsNil;
-	:global IsNothing;
-	:global IsNum;
 	:global FindPackage;
-	:global GlobalCacheFuncGet;
-	:global GlobalCacheFuncPut;
 	:global ValidateMetaInfo;
-	# env
-	:global EnvGlobalCacheFuncEnabled;
 	# local
 	:local pkg;
 	:local func;
-	# try global cache
-	:if ($EnvGlobalCacheFuncEnabled) do={
-		:set func [$GlobalCacheFuncGet $1];
-		:if (![$IsNil $func]) do={
-			:return $func;
-		}
-	}
 	# split package & function
 	:local splitted [$RSplit $1 "." 1];
 	:local pkgName ($splitted->0);
 	:local funcName ($splitted->1);
 	:local fileName [$Replace $pkgName "." "_"];
 	:local idList [/system/script/find name=$fileName];
-	:if (![$IsArrayN $idList]) do={
+	:if ([$IsEmpty $idList]) do={
 		:error "Global.Package.GetFunc: script \"$fileName\" not found.";
 	}
 	# parse code and get result
@@ -475,12 +468,6 @@
 	:set func ($pkg->$funcName);
 	:if ([$IsNothing $func]) do={
 		:error "Global.Package.GetFunc: function $funcName not found in package.";
-	} else {
-		:local idList [$FindPackage "config.rospm"];
-		:if ($EnvGlobalCacheFuncEnabled and [$IsArrayN $idList]) do={
-			# put into global cache
-			[$GlobalCacheFuncPut $1 $func];
-		}
 	}
 	:return $func;
 }
@@ -496,14 +483,15 @@
 # opt kwargs: Global=<bool>         default false, use global declaration if true
 # opt kwargs: Return=<bool>         default true
 :global DumpVar do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
+	:global IsStr;
+	:global IsArray;
+	:global IsArrayN;
 	:global NewArray;
 	:global ReadOption;
 	:global Extend;
 	:global Join;
-	:global IsStr;
-	:global IsArray;
-	:global IsArrayN;
 	:global StartsWith;
 	:global TypeofArray;
 	:global TypeofStr;
@@ -660,12 +648,11 @@
 # args: <var>                       variable's value, not nil
 # opt kwargs: Timeout=<time>        timeout(sec)
 :global SetGlobalVar do={
-	# global declare
-	:global IsStr;
+	#DEFINE global
 	:global IsNil;
+	:global IsEmpty;
 	:global IsNothing;
 	:global IsStr;
-	:global IsEmpty;
 	:global Join;
 	:global TypeofStr;
 	:global TypeofTime;
@@ -733,10 +720,10 @@
 # args: <str>                       variable's name
 # return: <var>                     value, return nil if not found
 :global LoadGlobalVar do={
-	# global declare
+	#DEFINE global
 	:global Nil;
-	:global IsStr;
 	:global IsNil;
+	:global IsStr;
 	:global IsEmpty;
 	:global IsNothing;
 	# check
@@ -764,7 +751,8 @@
 # Unset a global variable.
 # args: <str>                       variable's name
 :global UnsetGlobalVar do={
-	# global declare
+	#DEFINE global
+	:global IsNil;
 	:global IsStrN;
 	:global IsEmpty;
 	# check
@@ -784,7 +772,7 @@
 # args: <str>                       version2
 # return: <num>                     positive if version1 > version2
 :global CompareVersion do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global Count;
 	:global RSplit;

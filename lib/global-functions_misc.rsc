@@ -24,7 +24,7 @@
 # args: <array>                 target array
 # return: <array>               array
 :global UniqueArray do={
-	# global declare
+	#DEFINE global
 	:global NewArray;
 	:global SimpleDump;
 	:global SimpleLoad;

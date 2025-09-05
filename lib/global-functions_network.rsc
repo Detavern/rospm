@@ -41,7 +41,7 @@
 # $ToIPPrefix
 # Convert string to ip-prefix. Return nil if not ip-prefix.
 :global ToIPPrefix do={
-	# global declare
+	#DEFINE global
 	:global Nil;
 	:global IsNil;
 	:global IsStr;
@@ -75,7 +75,7 @@
 # args: <var>                   <CIDR>
 # return: <bool>                flag
 :global IsCIDR do={
-	# global declare
+	#DEFINE global
 	:global IsArrayN;
 	:global GetKeys;
 	:global IsSubset;
@@ -97,7 +97,7 @@
 # args: <var>                   ip, ip-prefix, str
 # return: <CIDR> or nil         CIDR
 :global ParseCIDR do={
-	# global declare
+	#DEFINE global
 	:global Nil;
 	:global IsNil;
 	:global IsStr;
@@ -144,7 +144,7 @@
 # args: <num>           pool length
 # return: <str>         ip pool notation like 192.168.0.100-192.168.0.199
 :global GetAddressRange do={
-	# global declare
+	#DEFINE global
 	:global IsNil;
 	:global IsCIDR;
 	:global ParseCIDR;

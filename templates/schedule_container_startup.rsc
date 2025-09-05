@@ -1,7 +1,7 @@
 # wait for ROSPM initialized
 :delay 10s;
 
-# global declare
+#DEFINE global
 :global IsNil;
 :global IsEmpty;
 :global StartsWith;
