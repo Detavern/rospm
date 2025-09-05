@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.pool";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package provides functions to manage IP address pools.";
 };
 

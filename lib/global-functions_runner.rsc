@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.runner";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package provides global functions for building and running commands and managing entities.";
 	"global"=true;
 	"global-functions"={
@@ -288,4 +288,5 @@
 	"metaInfo"=$metaInfo;
 }
 :return $package;
+
 

@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="ip.address";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package provides utilities for managing and querying IP addresses in RouterOS.";
 };
 

@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-variables";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package defines global variables for use throughout the ROSPM framework.";
 	"global"=true;
 	"global-variables"={

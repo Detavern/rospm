@@ -26,7 +26,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.network";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package provides global functions for network calculations and CIDR parsing.";
 	"global"=true;
 	"global-functions"={

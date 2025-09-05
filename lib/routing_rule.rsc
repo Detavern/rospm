@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="routing.rule";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package offers tools for managing and ensuring routing rules in RouterOS.";
 };
 
