@@ -1,19 +1,36 @@
 # rospm dev
 
-## default branch
+## get rospm package configurations
 {
-	:global EnvROSPMBaseURL "https://raw.githubusercontent.com/Detavern/rospm/master/";
+	$Print [[$GetFunc "rospm.config.updatePackageConfig"]];
+}
+
+## update proxy
+{
+	:local context {"ROSPMProxy"="https://ghfast.top/"};
+	$Print [[$GetFunc "rospm.config.updatePackageConfig"] Context=$context];
+}
+
+## reset version
+{
+	:local context {"ROSPMVersion"="0.5.3"};
+	$Print [[$GetFunc "rospm.config.updatePackageConfig"] Context=$context];
 }
 
 ## update to another branch
-# first update config_package & env
+
+### first update config_package & env
 {
-	:local envConfig ([$GetConfig "config.rospm.package"]->"environment");
 	:local branch [$InputV ("Enter branch name to switch to (e.g., master, dev, ...): ")];
-	:local baseURL "https://raw.githubusercontent.com/Detavern/rospm/$branch/";
-	:set ($envConfig->"ROSPMBaseURL") $baseURL;
-	:set ($envConfig->"ROSPMBranch") $branch;
-	[$UpdateConfig "config.rospm.package" ({"environment"=$envConfig})];
+	:local context {"ROSPMBranch"=$branch};
+	[[$GetFunc "rospm.config.updatePackageConfig"] Context=$context];
+}
+
+### update && upgrade
+{
+	[[$GetFunc "rospm.update"]];
+	$Print [[$GetFunc "rospm.state.checkAllState"]];
+	[[$GetFunc "rospm.upgradeAll"]];
 }
 
 
