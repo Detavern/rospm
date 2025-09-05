@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="cidr";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="Provides functions for managing collections of special CIDRs.";
 };
 

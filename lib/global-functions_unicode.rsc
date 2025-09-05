@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-functions.unicode";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package provides global functions for unicode and UTF-8 encoding and decoding operations.";
 	"global"=true;
 	"global-functions"={

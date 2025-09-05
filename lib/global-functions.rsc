@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="global-functions";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package provides global functions for type checking, input, and array operations in ROSPM.";
 	"global"=true;
 	"global-functions"={

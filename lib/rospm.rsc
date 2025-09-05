@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="rospm";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package provides the main entrypoints and management functions for ROSPM packages.";
 };
 

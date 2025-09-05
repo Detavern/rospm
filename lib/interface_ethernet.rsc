@@ -10,7 +10,7 @@
 #
 :local metaInfo {
 	"name"="interface.ethernet";
-	"version"="0.7.0.a";
+	"version"="0.7.0";
 	"description"="This package provides utilities for renaming and resetting ethernet interfaces in RouterOS.";
 };
 
