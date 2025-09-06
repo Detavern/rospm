@@ -1,5 +1,12 @@
 # rospm dev
 
+## turn off cache
+{
+	:local envConfig ([$GetConfig "config.rospm"]->"environment");
+	:set ($envConfig->"GlobalCacheFuncEnabled") false;
+	[$UpdateConfig "config.rospm" ({"environment"=$envConfig})];
+}
+
 ## get rospm package configurations
 {
 	$Print [[$GetFunc "rospm.config.updatePackageConfig"]];
@@ -23,7 +30,7 @@
 {
 	:local branch [$InputV ("Enter branch name to switch to (e.g., master, dev, ...): ")];
 	:local context {"ROSPMBranch"=$branch};
-	[[$GetFunc "rospm.config.updatePackageConfig"] Context=$context];
+	$Print [[$GetFunc "rospm.config.updatePackageConfig"] Context=$context];
 }
 
 ### update && upgrade
