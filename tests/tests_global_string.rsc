@@ -16,6 +16,24 @@
 	:put [$ToUpper $s];
 }
 
+## QuoteString
+{
+	:put "testing QuoteString...";
+	:global Assert;
+	:global QuoteString;
+
+	:local a "\\\"\$\r\n\t\v";
+	:local qa [$QuoteString $a];
+	:local va ":local a \"$qa\";\n:return \$a";
+	:local fa [:parse $va];
+	:local ra [$fa];
+
+	$Assert (([$QuoteString ("\r\n\t\v")])=("\\r\\n\\t\\v")) "quote string failed at case 1";
+	$Assert (([$QuoteString ("\\\"\$")])=("\\\\\\\"\\\$")) "quote string failed at case 2";
+	$Assert ($a=$ra) "quote string failed at case 3";
+}
+
+
 ## QuoteRegexMeta
 
 ### meta echo
