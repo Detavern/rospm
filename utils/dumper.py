@@ -70,8 +70,8 @@ class ObjectDumper:
             raise ValueError(f"unknown type: {type(obj)}")
 
     def format_str(self, obj):
-        if self.TOKEN_SUBS in obj:
-            return self.format_str_subs(obj)
+        if obj.startswith(f'{self.TOKEN_SUBS}[') and obj.endswith(']'):
+            obj = f"!SUBS[{obj[2:-1]}]"
 
         v = ''
         for ch in obj:
@@ -84,11 +84,6 @@ class ObjectDumper:
                 v = f'{v}{ch}'
 
         return f'"{v}"'
-    
-    def format_str_subs(self, v):
-        if v.startswith(f'{self.TOKEN_SUBS}[') and v.endswith(']'):
-            return f'"!SUBS[{v[2:-1]}]"'
-        return f'("{v}")'
 
     def format_dict(self, obj, indent_level):
         if not obj:
