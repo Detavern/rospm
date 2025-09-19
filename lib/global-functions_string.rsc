@@ -503,6 +503,47 @@
 }
 
 
+# $QuoteString
+# Quote a string that contains special characters.
+# args: <str>                   string may contains regex meta
+# return: <str>                 escaped string
+:global QuoteString do={
+	# global
+	:global IsNil;
+	:global IsNothing;
+	# local
+	:local s [:tostr $1];
+	:local m "\\\"\$";
+	# escape
+	:local ch "";
+	:local escaped "";
+	:for i from=0 to=([:len $s] - 1) do={
+		:set ch [:pick $s $i];
+		# meta
+		:if (![$IsNil [:find $m $ch]]) do={
+			:set ch ("\\" . $ch);
+		} else {
+			# special meta
+			:if ($ch = "\r") do={
+				:set ch ("\\r");
+			}
+			:if ($ch = "\n") do={
+				:set ch ("\\n");
+			}
+			:if ($ch = "\t") do={
+				:set ch ("\\t");
+			}
+			:if ($ch = "\v") do={
+				:set ch ("\\v");
+			}
+		}
+		# concat
+		:set escaped ($escaped . $ch);
+	}
+	:return $escaped;
+}
+
+
 # $QuoteRegexMeta
 # Quote regex meta in string.
 # args: <str>                   string may contains regex meta
