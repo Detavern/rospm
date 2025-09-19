@@ -491,6 +491,7 @@
 	:global IsArrayN;
 	:global NewArray;
 	:global ReadOption;
+	:global QuoteString;
 	:global Extend;
 	:global Join;
 	:global StartsWith;
@@ -518,7 +519,8 @@
 	# str
 	:if ($flagType and [$IsStr $2]) do={
 		:set flagType false;
-		:set ($LSL->0) "$si:$declare $1 \"$2\";";
+		:local v [$QuoteString $2];
+		:set ($LSL->0) "$si:$declare $1 \"$v\";";
 	}
 	# array empty
 	:if ($flagType and [$IsArray $2] and ([:len $2] = 0)) do={
@@ -564,6 +566,7 @@
 						:if ([:typeof $k] = $TypeofNum) do={
 							:set ks "";
 						} else {
+							:set k [$QuoteString $k];
 							:set ks "\"$k\"="
 						}
 						# type specific
@@ -592,10 +595,11 @@
 							:local lineStr;
 							:local noquote "noquote:";
 							:if ([$StartsWith $v $noquote]) do={
-								:local vs [:pick $v [:len $noquote] [:len $v]];
+								:local vs [$QuoteString [:pick $v [:len $noquote] [:len $v]]];
 								:set lineStr "$ind$ks$vs;";
 							} else {
-								:set lineStr "$ind$ks\"$v\";";
+								:local vs [$QuoteString $v];
+								:set lineStr "$ind$ks\"$vs\";";
 							}
 							:set ($subLSL->[:len $subLSL]) $lineStr;
 						}
