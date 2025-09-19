@@ -284,10 +284,79 @@
 }
 
 
+# $UpdateOrCreateEntity
+# Update an entity by a filter. Create one if not found.
+# args: <str>                       command
+# args: <array->str>                entity
+# opt kwargs: Filter=<array->str>   filter
+# opt kwargs: Disabled=<array->str> disabled flag, if present, disable/enable the entity
+# return: <id>                      internal ID
+:global UpdateOrCreateEntity do={
+	#DEFINE global
+	:global IsNil;
+	:global IsNothing;
+	:global IsEmpty;
+	:global TypeofBool;
+	:global TypeofArray;
+	:global ReadOption;
+	:global StartsWith;
+	:global ArrayDiff;
+	:global BuildCommandParams;
+	# check
+	:if (![$StartsWith $1 "/"]) do={
+		:error "Global.Runner.UpdateOrCreateEntity: \$1 should be a command."
+	}
+	# read opt
+	:local diffArray;
+	:local cmdBody [$BuildCommandParams $2];
+	:local filterArray [$ReadOption $Filter $TypeofArray];
+	:if ([$IsNil $filterArray]) do={
+		:set $filterArray $2;
+	} else {
+		:set diffArray [$ArrayDiff $2 $filterArray];
+	}
+	:local disabledFlag [$ReadOption $Disabled $TypeofBool];
+	:local filterBody [$BuildCommandParams $filterArray IsFilter=true];
+	# local
+	:local filterFunc [:parse "$1/find $filterBody"];
+	:local idList [$filterFunc];
+	# create if not found
+	:if ([$IsEmpty $idList]) do={
+		:local addFunc [:parse "$1/add $cmdBody"];
+		:local iid [$addFunc];
+		:return $iid;
+	}
+	# flag present
+	:local iid ($idList->0);
+	:if (![$IsNil $disabledFlag]) do={
+		:if ($disabledFlag) do={
+			# disable if disabled
+			:local disableFunc [:parse "$1/disable numbers=$iid"];
+			[$disableFunc];
+		} else {
+			:local enableFunc [:parse "$1/enable numbers=$iid"];
+			[$enableFunc];
+		}
+	}
+	# diff array
+	:if (![$IsNothing $diffArray]) do={
+		:local diffBody [$BuildCommandParams $diffArray];
+		:local updateFunc [:parse "$1/set numbers=$iid $diffBody"];
+		[$updateFunc];
+	}
+	# comment
+	:if (![$IsNothing ($2->"comment")]) do={
+		:local cmnt ($2->"comment");
+		:local cmntFunc [:parse "$1/set numbers=$iid comment=$cmnt"];
+		[$cmntFunc];
+	}
+	:return $iid;
+}
+
+
 # package info
 :local package {
 	"metaInfo"=$metaInfo;
 }
 :return $package;
-
 
