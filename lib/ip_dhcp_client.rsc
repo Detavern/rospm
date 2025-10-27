@@ -58,7 +58,7 @@
 		:set ($params->"use-peer-ntp") no;
 	}
 	# local
-	:local iid [$GetOrCreateEntity "/ip/dhcp-client" $params]
+	:local iid [$GetOrCreateEntity "/ip/dhcp-client" $params Filter=({"interface"=$intf})];
 	:return $iid;
 }
 

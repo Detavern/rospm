@@ -595,7 +595,7 @@
 							:local lineStr;
 							:local noquote "noquote:";
 							:if ([$StartsWith $v $noquote]) do={
-								:local vs [$QuoteString [:pick $v [:len $noquote] [:len $v]]];
+								:local vs [:pick $v [:len $noquote] [:len $v]];
 								:set lineStr "$ind$ks$vs;";
 							} else {
 								:local vs [$QuoteString $v];
